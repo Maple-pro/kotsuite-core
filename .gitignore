@@ -16,3 +16,4 @@ gradle-app.setting
 # IDE
 .idea/
 *.iml
+/src/test/targets-resources/generated/
