@@ -47,6 +47,9 @@ dependencies {
     implementation("org.soot-oss:sootup.callgraph:1.0.0")
     // https://mvnrepository.com/artifact/org.soot-oss/sootup.analysis
     implementation("org.soot-oss:sootup.analysis:1.0.0")
+
+    // https://mvnrepository.com/artifact/junit/junit
+    testImplementation("junit:junit:4.13.2")
 }
 
 tasks.test {

@@ -1,4 +1,4 @@
-package SimpleClass
+package analysis
 
 class Example {
     fun foo() {
