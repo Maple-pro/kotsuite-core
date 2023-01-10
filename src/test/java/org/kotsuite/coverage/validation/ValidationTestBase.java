@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.kotsuite.coverage.validation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -30,8 +30,8 @@ import org.kotsuite.coverage.InstrumentingLoader;
 import org.kotsuite.coverage.TargetLoader;
 import org.kotsuite.coverage.validation.Source.Line;
 import org.kotsuite.coverage.validation.targets.Stubs;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Base class for validation tests. It executes the given class under code
@@ -60,7 +60,7 @@ public abstract class ValidationTestBase {
         this.target = target;
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         final ExecutionDataStore store = execute();
         analyze(store);
@@ -115,11 +115,14 @@ public abstract class ValidationTestBase {
 
     @Test
     public void last_line_in_coverage_data_should_be_less_or_equal_to_number_of_lines_in_source_file() {
-        assertTrue(String.format(
+        assertTrue(
+                source.getCoverage().getLastLine() <= source.getLines().size(),
+                String.format(
                         "Last line in coverage data (%d) should be less or equal to number of lines in source file (%d)",
                         Integer.valueOf(source.getCoverage().getLastLine()),
-                        Integer.valueOf(source.getLines().size())),
-                source.getCoverage().getLastLine() <= source.getLines().size());
+                        Integer.valueOf(source.getLines().size())
+                )
+        );
     }
 
     @Test
@@ -129,9 +132,10 @@ public abstract class ValidationTestBase {
             c = c.increment(line.getCoverage().getInstructionCounter());
         }
         assertEquals(
-                "sum of missed instructions of all lines should be equal to missed instructions of file",
                 source.getCoverage().getInstructionCounter().getMissedCount(),
-                c.getMissedCount());
+                c.getMissedCount(),
+                "sum of missed instructions of all lines should be equal to missed instructions of file"
+        );
     }
 
     @Test
@@ -141,8 +145,10 @@ public abstract class ValidationTestBase {
             c = c.increment(line.getCoverage().getBranchCounter());
         }
         assertEquals(
-                "sum of branch counters of all lines should be equal to branch counter of file",
-                source.getCoverage().getBranchCounter(), c);
+                source.getCoverage().getBranchCounter(),
+                c,
+                "sum of branch counters of all lines should be equal to branch counter of file"
+        );
     }
 
     /*
@@ -155,12 +161,14 @@ public abstract class ValidationTestBase {
 
         String msg = String.format("Instructions (%s)", line);
         final int actualStatus = coverage.getInstructionCounter().getStatus();
-        assertEquals(msg, STATUS_NAME[insnStatus], STATUS_NAME[actualStatus]);
+        assertEquals(STATUS_NAME[insnStatus], STATUS_NAME[actualStatus], msg);
 
         msg = String.format("Branches (%s)", line);
-        assertEquals(msg,
+        assertEquals(
                 CounterImpl.getInstance(missedBranches, coveredBranches),
-                coverage.getBranchCounter());
+                coverage.getBranchCounter(),
+                msg
+        );
     }
 
     public void assertFullyCovered(final Line line, final int missedBranches,
@@ -201,7 +209,7 @@ public abstract class ValidationTestBase {
         final Method getter = Class
                 .forName(Stubs.class.getName(), false, loader)
                 .getMethod("getLogEvents");
-        assertEquals("Log events", Arrays.asList(events), getter.invoke(null));
+        assertEquals(Arrays.asList(events), getter.invoke(null), "Log events");
     }
 
     protected void assertMethodCount(final int expectedTotal) {

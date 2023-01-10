@@ -48,8 +48,11 @@ dependencies {
     // https://mvnrepository.com/artifact/org.soot-oss/sootup.analysis
     implementation("org.soot-oss:sootup.analysis:1.0.0")
 
-    // https://mvnrepository.com/artifact/junit/junit
-    testImplementation("junit:junit:4.13.2")
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
+
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
 }
 
 tasks.test {

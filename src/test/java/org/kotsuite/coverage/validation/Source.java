@@ -36,7 +36,7 @@ import org.jacoco.core.analysis.ISourceFileCoverage;
  */
 public class Source {
 
-    private static final String SRC_LOCATION = "src/";
+    private static final String SRC_LOCATION = "src/test/java/";
 
     private static final String SRC_ENCODING = "UTF-8";
 
