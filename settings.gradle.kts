@@ -1,3 +1,7 @@
+rootProject.name = "kotsuite"
 
-rootProject.name = "kotsuite-core"
-
+include("kotsuite-client")
+include("kotsuite-analysis")
+include("kotsuite-ga")
+include("kotsuite-reuse")
+include("kotsuite-agent")
