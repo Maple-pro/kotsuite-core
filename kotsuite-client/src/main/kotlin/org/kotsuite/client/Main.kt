@@ -1,4 +1,5 @@
 package org.kotsuite.client
 
-class Main {
+fun main(args: Array<String>) {
+    println(args[0])
 }
