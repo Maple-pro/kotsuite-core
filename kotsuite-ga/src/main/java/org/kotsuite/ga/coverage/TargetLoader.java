@@ -10,7 +10,7 @@
  *    Marc R. Hoffmann - initial API and implementation
  *
  *******************************************************************************/
-package org.kotsuite.coverage;
+package org.kotsuite.ga.coverage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

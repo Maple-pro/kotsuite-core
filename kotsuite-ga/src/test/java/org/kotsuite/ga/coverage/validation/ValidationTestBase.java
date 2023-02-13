@@ -10,7 +10,7 @@
  *    Marc R. Hoffmann - initial API and implementation
  *
  *******************************************************************************/
-package org.kotsuite.coverage.validation;
+package org.kotsuite.ga.coverage.validation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,10 +27,13 @@ import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.internal.analysis.CounterImpl;
 import org.junit.jupiter.api.Assertions;
-import org.kotsuite.coverage.InstrumentingLoader;
-import org.kotsuite.coverage.TargetLoader;
-import org.kotsuite.coverage.validation.Source.Line;
-import org.kotsuite.coverage.validation.targets.Stubs;
+import org.kotsuite.ga.coverage.InstrumentingLoader;
+import org.kotsuite.ga.coverage.TargetLoader;
+import org.kotsuite.ga.coverage.validation.Source;
+import org.kotsuite.ga.coverage.validation.Source.Line;
+import org.kotsuite.ga.coverage.validation.StatementExecutor;
+import org.kotsuite.ga.coverage.validation.StatementParser;
+import org.kotsuite.ga.coverage.validation.targets.Stubs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

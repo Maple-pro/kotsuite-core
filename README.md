@@ -1,4 +1,4 @@
-# KotSuite-Core
+# KotSuite
 
 ## How to transform Kotlin source code to bytecode?
 

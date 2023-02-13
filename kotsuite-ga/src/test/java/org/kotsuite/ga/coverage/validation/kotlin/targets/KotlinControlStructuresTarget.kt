@@ -10,9 +10,9 @@
  *    Evgeny Mandrikov - initial API and implementation
  *
  *******************************************************************************/
-package org.kotsuite.coverage.validation.kotlin.targets
+package org.kotsuite.ga.coverage.validation.kotlin.targets
 
-import org.kotsuite.coverage.validation.targets.Stubs.*
+import org.kotsuite.ga.coverage.validation.targets.Stubs.*
 
 /**
  * Test target for Kotlin control structures.

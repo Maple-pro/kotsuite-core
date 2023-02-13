@@ -10,7 +10,7 @@
  *    Marc R. Hoffmann - initial API and implementation
  *
  *******************************************************************************/
-package org.kotsuite.coverage.validation;
+package org.kotsuite.ga.coverage.validation;
 
 import java.lang.reflect.InvocationTargetException;
 

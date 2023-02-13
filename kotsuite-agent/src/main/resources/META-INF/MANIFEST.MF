@@ -1,0 +1,4 @@
+Premain-Class: org.kotsuite.agent.Main
+Agent-Class: org.kotsuite.agent.Main
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true

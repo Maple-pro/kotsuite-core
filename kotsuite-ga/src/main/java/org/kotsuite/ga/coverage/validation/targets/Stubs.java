@@ -10,7 +10,7 @@
  *    Marc R. Hoffmann - initial API and implementation
  *
  *******************************************************************************/
-package org.kotsuite.coverage.validation.targets;
+package org.kotsuite.ga.coverage.validation.targets;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,7 +10,7 @@
  *    Evgeny Mandrikov - initial API and implementation
  *
  *******************************************************************************/
-package org.kotsuite.coverage.validation;
+package org.kotsuite.ga.coverage.validation;
 
 /**
  * Parsed value of "java.version" system property.

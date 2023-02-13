@@ -10,12 +10,19 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":kotsuite-analysis"))
+    implementation(project(":kotsuite-ga"))
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-
-//    implementation()
 }
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "org.kotsuite.client.Main"
+    }
 }
