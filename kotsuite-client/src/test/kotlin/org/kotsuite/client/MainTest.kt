@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test
 class MainTest {
     @Test
     fun testMain() {
-        val args = arrayOf("/path/to/bytecodes/")
+        val myApplicationPath = "../data/MyApplication"
+        val args = arrayOf(myApplicationPath)
         main(args)
     }
 }

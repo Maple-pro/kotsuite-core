@@ -1,15 +1,21 @@
 package org.kotsuite.client
 
+import org.kotsuite.analysis.Analyzer
+import org.slf4j.LoggerFactory
+
 /**
  * This class represents a KotSuite client.
  */
-class Client {
+class Client(private var dataDir: String) {
+
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
     /**
      * Analysis the given bytecode using soot.
      */
     fun analysis() {
-
+        log.info("===Analysis===")
+        Analyzer(dataDir).analysis()
     }
 
     /**
