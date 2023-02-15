@@ -1,3 +1,7 @@
+# Data files
+!data/MyApplication/app/build/
+!data/MyApplication/build/
+
 .gradle
 build/
 
@@ -19,3 +23,4 @@ gradle-app.setting
 
 # Other resources file
 /kotsuite-analysis/src/test/targets-resources/generated/
+
