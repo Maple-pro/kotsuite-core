@@ -1,7 +1,3 @@
-# Data files
-!data/MyApplication/app/build/
-!data/MyApplication/build/
-
 .gradle
 build/
 
