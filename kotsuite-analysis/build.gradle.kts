@@ -10,18 +10,21 @@ repositories {
 }
 
 dependencies {
+    implementation("org.soot-oss:soot:4.4.1")
+
+//    implementation("org.soot-oss:sootup.core:1.0.0")
+//    implementation("org.soot-oss:sootup.java.core:1.0.0")
+//    implementation("org.soot-oss:sootup.java.sourcecode:1.0.0")
+//    implementation("org.soot-oss:sootup.java.bytecode:1.0.0")
+//    implementation("org.soot-oss:sootup.jimple.parser:1.0.0")
+//    implementation("org.soot-oss:sootup.callgraph:1.0.0")
+//    implementation("org.soot-oss:sootup.analysis:1.0.0")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 
-    implementation("org.soot-oss:soot:4.4.1")
-
-    implementation("org.soot-oss:sootup.core:1.0.0")
-    implementation("org.soot-oss:sootup.java.core:1.0.0")
-    implementation("org.soot-oss:sootup.java.sourcecode:1.0.0")
-    implementation("org.soot-oss:sootup.java.bytecode:1.0.0")
-    implementation("org.soot-oss:sootup.jimple.parser:1.0.0")
-    implementation("org.soot-oss:sootup.callgraph:1.0.0")
-    implementation("org.soot-oss:sootup.analysis:1.0.0")
+    implementation("org.slf4j:slf4j-api:2.0.6")
+    testImplementation("org.slf4j:slf4j-simple:2.0.6")
 }
 
 tasks.getByName<Test>("test") {
