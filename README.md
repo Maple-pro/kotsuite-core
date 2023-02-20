@@ -10,3 +10,9 @@ kotlinc -include-runtime -d output.jar ./Example.kt
 cp ./src/test/targets-resources/src/SimpleClass/output.jar ./src/test/targets-resources/generated/
 jar xf output.jar
 ```
+## About gradle
+
+```bash
+# Logging options
+gradlew build -i
+```

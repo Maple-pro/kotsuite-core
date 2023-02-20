@@ -1,12 +1,13 @@
 package org.kotsuite.client
 
 import org.kotsuite.analysis.Analyzer
+import org.kotsuite.analysis.MethodSignature
 import org.slf4j.LoggerFactory
 
 /**
  * This class represents a KotSuite client.
  */
-class Client(private var dataDir: String) {
+class Client(private var exampleProjectDir: String, private val classesOrPackagesToAnalyze: Collection<String>) {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -14,8 +15,8 @@ class Client(private var dataDir: String) {
      * Analysis the given bytecode using soot.
      */
     fun analysis() {
-        log.info("===Analysis===")
-        Analyzer(dataDir).analysis()
+        log.info("[Analysis Phase]")
+        Analyzer(exampleProjectDir, classesOrPackagesToAnalyze).analyze()
     }
 
     /**

@@ -17,6 +17,13 @@ dependencies {
     testImplementation("org.slf4j:slf4j-simple:2.0.6")
 }
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+tasks.jar {
+    manifest {
+        attributes(
+            "Premain-Class" to "org.kotsuite.agent.Main",
+            "Agent-Class" to "org.kotsuite.agent.Main",
+            "Can-Redefine-Classes" to "true",
+            "Can-Retransfrom-Classes" to "true"
+        )
+    }
 }

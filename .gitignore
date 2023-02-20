@@ -18,5 +18,5 @@ gradle-app.setting
 *.iml
 
 # Other resources file
-/kotsuite-analysis/src/test/targets-resources/generated/
+/kotsuite-analyzer/src/test/targets-resources/generated/
 
