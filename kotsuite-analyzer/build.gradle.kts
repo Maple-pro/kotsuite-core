@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 plugins {
     kotlin("jvm")
 }
@@ -20,8 +22,8 @@ dependencies {
 //    implementation("org.soot-oss:sootup.callgraph:1.0.0")
 //    implementation("org.soot-oss:sootup.analysis:1.0.0")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
     implementation("org.slf4j:slf4j-api:2.0.6")
     testImplementation("org.slf4j:slf4j-simple:2.0.6")
@@ -29,4 +31,13 @@ dependencies {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+tasks.register("compileTargetsResources") {
+    val directory = file("./src/test/targets-resources")
+
+    doLast {
+        Files.createDirectories(directory.toPath())
+        fileTree("./src/test/targets-resources").map { println(it.path) }
+    }
 }
