@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     val exampleProjectDir = args[0]
     val classesOrPackagesToAnalyze = args[1].split('&')
     val client = Client(exampleProjectDir, classesOrPackagesToAnalyze)
-    client.analysis()
+    client.analyze()
     client.generateTestSuite()
 }
 

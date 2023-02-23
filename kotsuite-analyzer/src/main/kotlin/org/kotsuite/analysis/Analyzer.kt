@@ -3,11 +3,11 @@ package org.kotsuite.analysis
 import org.slf4j.LoggerFactory
 import soot.*
 import soot.jimple.Jimple
-import soot.jimple.JimpleBody
 import soot.jimple.NullConstant
 import soot.options.Options
 import java.io.File
 import java.util.Collections
+import kotlin.streams.toList
 
 /**
  * Each analyzer corresponds to a project to be tested.
@@ -16,45 +16,35 @@ class Analyzer(private val exampleProjectDir: String, private val classesOrPacka
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     private val classesDir = "${exampleProjectDir}/app/build/tmp/kotlin-classes/debug/"
-    private var sootClasses: Array<SootClass> = arrayOf()
-    private var jimpleClasses: Array<Jimple> = arrayOf()
-
-    companion object {
-        /**
-         * Method Signature: <Analyzer: Boolean analyze()>
-         */
-        private fun methodSigFromComponents(clazz: String, subSig: String): String {
-            return String.format("<%s: %s>", clazz, subSig)
-        }
-
-        private fun methodSigFromComponents(
-            clazz: String, returnType: String, methodName: String, params: Array<String>): String {
-            return methodSigFromComponents(
-                clazz, String.format("%s %s(%s)", returnType, methodName, params.joinToString(",")))
-        }
-    }
+    var classes = listOf<SootClass>()  // All classes under `classesOrPackagesToAnalyze`
+    val sootScene = Scene.v()
 
     /**
-     * Analysis classes in the data directory, and transform them into jimple.
+     * Analyze classes in the data directory, and transform them into jimple.
      */
     fun analyze(): Boolean {
-        // TODO
-        log.info("Analysis: $exampleProjectDir")
+        log.info("Analysis project: project($exampleProjectDir)")
 
-        val file = File(classesDir)
-        if (!file.isDirectory) {
-            log.error("Classes Directory not exists.")
+        val res = setupSoot()
+        if (!res) {
             return false
         }
+        Scene.v().loadNecessaryClasses()
 
-
-//        prepareTarget()
+        classes = Scene.v().classes.stream().filter{ classesOrPackagesToAnalyze.contains(it.packageName) }.toList()
 
         return true
     }
 
+    /**
+     * Analyze method
+     *
+     * @param methodSig the method signature to be analyzed
+     * @return the corresponding soot method
+     */
     fun analyzeMethod(methodSig: MethodSignature): SootMethod {
-        log.info("Prepare Target: ${methodSig.methodName}, $classesOrPackagesToAnalyze")
+        log.info("Analyze method: " +
+                "project($exampleProjectDir), class($classesOrPackagesToAnalyze), method name(${methodSig.methodName})")
 
         setupSoot()
         Scene.v().loadNecessaryClasses()
@@ -67,8 +57,17 @@ class Analyzer(private val exampleProjectDir: String, private val classesOrPacka
         return sootMethod
     }
 
-    private fun setupSoot() {
+    /**
+     * Set up soot parameters
+     */
+    private fun setupSoot(): Boolean {
         log.info("Setup Soot: $classesOrPackagesToAnalyze, $exampleProjectDir")
+
+        val file = File(classesDir)
+        if (!file.isDirectory) {
+            log.error("Classes Directory not exists: $classesDir")
+            return false
+        }
 
         G.reset()
         with(Options.v()) {
@@ -81,19 +80,36 @@ class Analyzer(private val exampleProjectDir: String, private val classesOrPacka
             set_process_dir(listOf(classesDir))
             set_validate(true)
         }
+        return true
     }
 
+    /**
+     * Run soot
+     */
     private fun runSoot() {
         log.info("Run Soot")
         PackManager.v().runPacks()
     }
 
+    /**
+     * Get exclude packages or classes
+     */
     private fun getExcludes(): ArrayList<String> {
         val excludeList = ArrayList<String>()
 
         return excludeList
     }
 
+    /**
+     * Create soot method of the target method.
+     *
+     * Create a dummy main method which calls the target method.
+     * Then set the dummy main class as the application class,
+     * and set the dummy main method as the entry point of soot.
+     *
+     * @param methodSig method signature of the target method
+     * @return the soot method of the target method
+     */
     private fun createTestTarget(methodSig: MethodSignature): SootMethod {
         val sootTestMethod = getMethodForSig(methodSig)
         val targetClass = makeDummyClass(sootTestMethod)
@@ -104,6 +120,12 @@ class Analyzer(private val exampleProjectDir: String, private val classesOrPacka
         return sootTestMethod
     }
 
+    /**
+     * Create a dummy main class and dummy main method which calls the target method.
+     *
+     * @param sootTestMethod the target soot method
+     * @return the dummy main class
+     */
     private fun makeDummyClass(sootTestMethod: SootMethod): SootClass {
         val sootClass = SootClass("dummyClass")
         val argsParameterType = ArrayType.v(RefType.v("java.lang.String"), 1)
@@ -142,45 +164,15 @@ class Analyzer(private val exampleProjectDir: String, private val classesOrPacka
         return sootClass
     }
 
+    /**
+     * Get the soot method for the given method signature
+     *
+     * @param methodSig the given method signature
+     * @return the soot method
+     */
     private fun getMethodForSig(methodSig: MethodSignature): SootMethod {
         val sootClass = Scene.v().getSootClass(methodSig.clazz)
         return sootClass.getMethodByName(methodSig.methodName)
     }
 
-    // The following are deprecated functions
-
-    /**
-     * Set up soot parameters.
-     */
-    fun setupSoot(className: String, methodNames: Array<String>) {
-        log.info("Setup soot: $className, $methodNames")
-
-        G.reset()
-        with(Options.v()) {
-            set_prepend_classpath(true)
-            set_allow_phantom_elms(true)
-            set_soot_classpath(exampleProjectDir)
-            set_output_format(Options.output_format_jimple)
-        }
-        val sootClass = Scene.v().loadClassAndSupport(className)
-        sootClass.setApplicationClass()
-        Scene.v().loadNecessaryClasses()
-    }
-
-    /**
-     * Run soot.
-     */
-    fun runSoot(className: String, methodNames: Array<String>) {
-        log.info("Run Soot: $className, $methodNames")
-
-        val mainClass = Scene.v().getSootClass(className)
-        for (methodName in methodNames) {
-            val sootMethod = mainClass.getMethodByName(methodName)
-            val jimpleBody = sootMethod.retrieveActiveBody() as JimpleBody
-
-            println("Transforming $methodName ...")
-
-            println(jimpleBody)
-        }
-    }
 }
