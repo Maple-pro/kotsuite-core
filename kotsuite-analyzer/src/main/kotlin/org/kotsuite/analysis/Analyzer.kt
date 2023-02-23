@@ -54,8 +54,6 @@ object Analyzer {
         val sootMethod = createTestTarget(methodSig)
         runSoot()
 
-        log.info(sootMethod.retrieveActiveBody().toString())
-
         return sootMethod
     }
 
@@ -63,7 +61,7 @@ object Analyzer {
      * Set up soot parameters
      */
     private fun setupSoot(): Boolean {
-        log.info("Setup Soot: $classesOrPackagesToAnalyze, $exampleProjectDir")
+        log.info("Setup Soot: class($classesOrPackagesToAnalyze), project($exampleProjectDir")
 
         val classesDir = "${exampleProjectDir}/app/build/tmp/kotlin-classes/debug/"
         val file = File(classesDir)

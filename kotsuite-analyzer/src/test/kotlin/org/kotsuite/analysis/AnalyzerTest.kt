@@ -1,6 +1,8 @@
 package org.kotsuite.analysis
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import kotlin.streams.toList
 
 class AnalyzerTest  {
 
@@ -17,7 +19,9 @@ class AnalyzerTest  {
 
         Analyzer.exampleProjectDir = myApplicationPath
         Analyzer.classesOrPackagesToAnalyze = classesOrPackagesToAnalyze.split("&")
-        Analyzer.analyzeMethod(methodSig)
+        val sootMethod = Analyzer.analyzeMethod(methodSig)
+
+        assert(sootMethod.activeBody != null)
     }
 
     @Test
@@ -29,6 +33,14 @@ class AnalyzerTest  {
         Analyzer.classesOrPackagesToAnalyze = classesOrPackagesToAnalyze.split("&")
         Analyzer.analyze()
 
-        println(Analyzer.classes)
+        val expectedClasses = listOf(
+            "com.example.myapplication.FirstFragment",
+            "com.example.myapplication.MainActivity\$inlined\$sam\$i\$androidx_navigation_ui_AppBarConfiguration_OnNavigateUpListener\$0",
+            "com.example.myapplication.MainActivity\$inlined\$sam\$i\$androidx_navigation_ui_AppBarConfiguration_OnNavigateUpListener",
+            "com.example.myapplication.MainActivity\$onCreate\$\$inlined\$AppBarConfiguration\$default\$1",
+            "com.example.myapplication.MainActivity",
+            "com.example.myapplication.SecondFragment"
+        )
+        assertEquals(expectedClasses, Analyzer.classes.stream().map { it.name }.toList())
     }
 }
