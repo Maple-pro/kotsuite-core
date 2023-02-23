@@ -12,10 +12,12 @@ import kotlin.streams.toList
 /**
  * Each analyzer corresponds to a project to be tested.
  */
-class Analyzer(private val exampleProjectDir: String, private val classesOrPackagesToAnalyze: Collection<String>) {
+object Analyzer {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    private val classesDir = "${exampleProjectDir}/app/build/tmp/kotlin-classes/debug/"
+    var exampleProjectDir = ""
+    var classesOrPackagesToAnalyze = listOf<String>()
+
     var classes = listOf<SootClass>()  // All classes under `classesOrPackagesToAnalyze`
     val sootScene = Scene.v()
 
@@ -63,6 +65,7 @@ class Analyzer(private val exampleProjectDir: String, private val classesOrPacka
     private fun setupSoot(): Boolean {
         log.info("Setup Soot: $classesOrPackagesToAnalyze, $exampleProjectDir")
 
+        val classesDir = "${exampleProjectDir}/app/build/tmp/kotlin-classes/debug/"
         val file = File(classesDir)
         if (!file.isDirectory) {
             log.error("Classes Directory not exists: $classesDir")

@@ -1,12 +1,13 @@
 package org.kotsuite.client
 
 import org.kotsuite.analysis.Analyzer
+import org.kotsuite.ga.Generator
 import org.slf4j.LoggerFactory
 
 /**
  * This class represents a KotSuite client.
  */
-class Client(private var exampleProjectDir: String, private val classesOrPackagesToAnalyze: Collection<String>) {
+class Client(private var exampleProjectDir: String, private val classesOrPackagesToAnalyze: List<String>) {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -15,16 +16,20 @@ class Client(private var exampleProjectDir: String, private val classesOrPackage
      */
     fun analyze() {
         log.info("[Analysis Phase]")
-        val analyzer = Analyzer(exampleProjectDir, classesOrPackagesToAnalyze)
-        analyzer.analyze()
-        println(analyzer.classes)
+
+        Analyzer.exampleProjectDir = exampleProjectDir
+        Analyzer.classesOrPackagesToAnalyze = classesOrPackagesToAnalyze
+        Analyzer.analyze()
+
     }
 
     /**
      * Generate test suite for the give bytecode.
      */
     fun generateTestSuite() {
+        log.info("[Generate Phase]")
 
+        Generator.generate()
     }
 
     /**

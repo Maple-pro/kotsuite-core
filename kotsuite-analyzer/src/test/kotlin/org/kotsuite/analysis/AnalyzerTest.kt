@@ -15,8 +15,9 @@ class AnalyzerTest  {
         val params = arrayOf<String>()
         val methodSig = MethodSignature(className, returnType, methodName, params)
 
-        val analyzer = Analyzer(myApplicationPath, classesOrPackagesToAnalyze.split("&"))
-        analyzer.analyzeMethod(methodSig)
+        Analyzer.exampleProjectDir = myApplicationPath
+        Analyzer.classesOrPackagesToAnalyze = classesOrPackagesToAnalyze.split("&")
+        Analyzer.analyzeMethod(methodSig)
     }
 
     @Test
@@ -24,7 +25,10 @@ class AnalyzerTest  {
         val myApplicationPath = "../example-projects/MyApplication"
         val classesOrPackagesToAnalyze = "com.example.myapplication" // Use '&' to joint multiple classes or packages
 
-        val analyzer = Analyzer(myApplicationPath, classesOrPackagesToAnalyze.split("&"))
-        analyzer.analyze()
+        Analyzer.exampleProjectDir = myApplicationPath
+        Analyzer.classesOrPackagesToAnalyze = classesOrPackagesToAnalyze.split("&")
+        Analyzer.analyze()
+
+        println(Analyzer.classes)
     }
 }
