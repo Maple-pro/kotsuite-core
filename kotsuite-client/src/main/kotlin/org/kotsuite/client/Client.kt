@@ -2,12 +2,15 @@ package org.kotsuite.client
 
 import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.Generator
+import org.kotsuite.ga.StrategyHelper
 import org.slf4j.LoggerFactory
 
 /**
  * This class represents a KotSuite client.
  */
-class Client(private var exampleProjectDir: String, private val classesOrPackagesToAnalyze: List<String>) {
+class Client(private var exampleProjectDir: String,
+             private val classesOrPackagesToAnalyze: List<String>,
+             private val gaStrategy: String) {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -29,6 +32,7 @@ class Client(private var exampleProjectDir: String, private val classesOrPackage
     fun generateTestSuite() {
         log.info("[Generate Phase]")
 
+        Generator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
         Generator.generate()
     }
 

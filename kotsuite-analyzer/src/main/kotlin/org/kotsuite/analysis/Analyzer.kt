@@ -7,7 +7,6 @@ import soot.jimple.NullConstant
 import soot.options.Options
 import java.io.File
 import java.util.Collections
-import kotlin.streams.toList
 
 /**
  * Each analyzer corresponds to a project to be tested.
@@ -33,7 +32,10 @@ object Analyzer {
         }
         Scene.v().loadNecessaryClasses()
 
-        classes = Scene.v().classes.stream().filter{ classesOrPackagesToAnalyze.contains(it.packageName) }.toList()
+        classes = Scene.v().classes.filter{
+            sootClass ->
+            classesOrPackagesToAnalyze.any { sootClass.name.startsWith(it) }
+        }
 
         return true
     }

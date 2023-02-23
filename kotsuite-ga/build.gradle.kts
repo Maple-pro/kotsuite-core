@@ -11,6 +11,9 @@ repositories {
 
 dependencies {
     implementation(project(":kotsuite-reuse"))
+    implementation(project(":kotsuite-analyzer"))
+
+    implementation("org.soot-oss:soot:4.4.1")
 
     testImplementation("org.jacoco:org.jacoco.agent:0.8.8")
     implementation("org.jacoco:org.jacoco.core:0.8.8")
