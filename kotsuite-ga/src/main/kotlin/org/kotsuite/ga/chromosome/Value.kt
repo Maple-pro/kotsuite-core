@@ -6,4 +6,6 @@ class Value(val builtInType: BuiltInType): Element() {
     override fun accept(visitor: ElementVisitor) {
         visitor.visit(this)
     }
+
+    var value: Any? = null
 }

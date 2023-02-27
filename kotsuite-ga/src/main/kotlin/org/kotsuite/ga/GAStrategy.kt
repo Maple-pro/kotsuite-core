@@ -31,7 +31,7 @@ abstract class GAStrategy {
         return testClass
     }
 
-    abstract fun generateTestCasesForMethod(sootMethod: SootMethod): List<TestCase>
+    abstract fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase>
 
     open fun filterMethod(sootMethod: SootMethod): Boolean {
         return !(sootMethod.subSignature.equals("void <init>()") || sootMethod.name.equals("<init>"))

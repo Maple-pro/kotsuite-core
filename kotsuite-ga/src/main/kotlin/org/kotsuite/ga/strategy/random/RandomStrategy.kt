@@ -6,10 +6,21 @@ import soot.SootMethod
 
 class RandomStrategy: GAStrategy() {
 
-    override fun generateTestCasesForMethod(sootMethod: SootMethod): List<TestCase>{
+    /**
+     * Generate test cases for the target method.
+     * This strategy only generates one test case.
+     * And the generated test case only contains two actions: CONSTRUCTOR and METHOD_CALL.
+     * The first action build a new object of the targetClass,
+     * and the second action issues a call to the target method on the object.
+     * @param targetMethod the target method needs to be generated
+     */
+    override fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase>{
         // TODO: Generate TestCases for method
         val testCases = ArrayList<TestCase>()
-        println(sootMethod.signature)
+
+        val targetClass = targetMethod.declaringClass
+
+        println(targetMethod.signature)
 
 
 
