@@ -1,9 +1,9 @@
 package org.kotsuite.ga.chromosome
 
-class TestClass: Element() {
+import org.kotsuite.ga.chromosome.type.BuiltInType
+
+class Value(val builtInType: BuiltInType): Element() {
     override fun accept(visitor: ElementVisitor) {
         visitor.visit(this)
     }
-
-    val testCases = mutableListOf<TestCase>()
 }

@@ -1,9 +1,9 @@
 package org.kotsuite.ga
 
-import org.kotsuite.ga.random.RandomStrategy
+import org.kotsuite.ga.strategy.random.RandomStrategy
 import org.slf4j.LoggerFactory
 
-object Generator {
+object TestSuiteGenerator {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 

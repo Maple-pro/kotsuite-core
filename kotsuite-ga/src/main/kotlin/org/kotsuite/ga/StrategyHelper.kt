@@ -1,6 +1,6 @@
 package org.kotsuite.ga
 
-import org.kotsuite.ga.random.RandomStrategy
+import org.kotsuite.ga.strategy.random.RandomStrategy
 
 object StrategyHelper {
     fun getGAStrategy(strategy: String): GAStrategy {

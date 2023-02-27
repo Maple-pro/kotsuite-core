@@ -1,4 +1,4 @@
 package org.kotsuite.ga.chromosome
 
-class Chromosome {
+class Variable(val id: String) {
 }

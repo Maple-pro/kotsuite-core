@@ -1,7 +1,7 @@
 package org.kotsuite.client
 
 import org.kotsuite.analysis.Analyzer
-import org.kotsuite.ga.Generator
+import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.StrategyHelper
 import org.slf4j.LoggerFactory
 
@@ -32,8 +32,8 @@ class Client(private var exampleProjectDir: String,
     fun generateTestSuite() {
         log.info("[Generate Phase]")
 
-        Generator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
-        Generator.generate()
+        TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
+        TestSuiteGenerator.generate()
     }
 
     /**

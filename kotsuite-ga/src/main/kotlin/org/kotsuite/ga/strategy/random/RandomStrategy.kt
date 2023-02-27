@@ -1,4 +1,4 @@
-package org.kotsuite.ga.random
+package org.kotsuite.ga.strategy.random
 
 import org.kotsuite.ga.GAStrategy
 import org.kotsuite.ga.chromosome.TestCase
