@@ -125,6 +125,22 @@ object Analyzer {
 
     /**
      * Create a dummy main class and dummy main method which calls the target method.
+     * Example main method:
+     *     public static void main(java.lang.String[])
+     *     {
+     *         com.example.myapplication.FirstFragment dummyObj;
+     *         java.lang.String[] args;
+     *
+     *         args := @parameter0: java.lang.String[];
+     *
+     *         dummyObj = new com.example.myapplication.FirstFragment;
+     *
+     *         specialinvoke dummyObj.<com.example.myapplication.FirstFragment: void <init>()>();
+     *
+     *         virtualinvoke dummyObj.<com.example.myapplication.FirstFragment: void onDestroyView()>();
+     *
+     *         return;
+     *     }
      *
      * @param sootTestMethod the target soot method
      * @return the dummy main class
@@ -163,6 +179,8 @@ object Analyzer {
         val args = Collections.nCopies(sootTestMethod.parameterCount, NullConstant.v())
         units.add(jimple.newInvokeStmt(jimple.newVirtualInvokeExpr(allocatedTestObj, sootTestMethod.makeRef(), args)))
         units.add(jimple.newReturnVoidStmt())
+
+        println(sootClass)
 
         return sootClass
     }

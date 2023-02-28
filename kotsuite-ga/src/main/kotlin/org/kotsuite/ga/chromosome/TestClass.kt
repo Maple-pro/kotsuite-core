@@ -1,6 +1,6 @@
 package org.kotsuite.ga.chromosome
 
-class TestClass: Element() {
+class TestClass(val testClassName: String): Element() {
     override fun accept(visitor: ElementVisitor) {
         visitor.visit(this)
     }

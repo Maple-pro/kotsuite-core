@@ -33,7 +33,7 @@ class Client(private var exampleProjectDir: String,
         log.info("[Generate Phase]")
 
         TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
-        TestSuiteGenerator.generate()
+        val testClasses = TestSuiteGenerator.generate()
     }
 
     /**

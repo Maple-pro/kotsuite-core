@@ -1,5 +1,6 @@
 package org.kotsuite.ga
 
+import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.strategy.random.RandomStrategy
 import org.slf4j.LoggerFactory
 
@@ -9,9 +10,9 @@ object TestSuiteGenerator {
 
     var gaStrategy: GAStrategy = RandomStrategy()
 
-    fun generate() {
+    fun generate(): List<TestClass> {
         log.info("Generator Strategy: $gaStrategy")
 
-        gaStrategy.generateTestSuite()
+        return gaStrategy.generateTestSuite()
     }
 }

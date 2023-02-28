@@ -18,7 +18,8 @@ abstract class GAStrategy {
 
     open fun generateTestClassForClass(sootClass: SootClass): TestClass {
         // Generate TestClass for target class
-        val testClass = TestClass()
+        val testClassName = "${sootClass.shortName}Test"
+        val testClass = TestClass(testClassName)
 
         // Generate TestCases for each method in the target class
         val testCases = sootClass.methods
