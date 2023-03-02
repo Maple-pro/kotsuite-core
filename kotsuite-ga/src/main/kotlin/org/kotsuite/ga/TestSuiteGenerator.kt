@@ -8,7 +8,7 @@ object TestSuiteGenerator {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    var gaStrategy: GAStrategy = RandomStrategy()
+    var gaStrategy: GAStrategy = RandomStrategy
 
     fun generate(): List<TestClass> {
         log.info("Generator Strategy: $gaStrategy")

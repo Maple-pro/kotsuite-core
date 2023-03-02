@@ -1,12 +1,20 @@
 package org.kotsuite.ga.strategy.random
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type
 import org.kotsuite.ga.GAStrategy
-import org.kotsuite.ga.chromosome.Action
-import org.kotsuite.ga.chromosome.TestCase
+import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.type.ActionType
+import org.kotsuite.ga.chromosome.type.ParameterType
+import soot.BooleanType
+import soot.IntType
+import soot.PrimType
+import soot.SootClass
 import soot.SootMethod
+import soot.jimple.NullConstant
+import java.util.*
+import kotlin.collections.ArrayList
 
-class RandomStrategy: GAStrategy() {
+object RandomStrategy: GAStrategy() {
 
     /**
      * Generate test cases for the target method.
@@ -32,15 +40,59 @@ class RandomStrategy: GAStrategy() {
         val testCase = TestCase(testCaseName)
         val targetClass = targetMethod.declaringClass
 
-        val constructorAction = Action(ActionType.CONSTRUCTOR)
-        // Note: constructor in Action can be RefType.v(targetClass)
+        var valueIndex = 0
 
+        // Add constructor action
+        val constructorAction = Action(ActionType.CONSTRUCTOR)
+        constructorAction.variable = Variable("obj")
+        val constructor = getConstructor(targetClass)
+        constructorAction.constructor = constructor
+        valueIndex = dealWithMethodCallParams(testCase, constructorAction, constructor, valueIndex)
+
+        // Add method call action
         val methodCallAction = Action(ActionType.METHOD_CALL)
+        methodCallAction.variable = constructorAction.variable
+        methodCallAction.method = targetMethod
+        valueIndex = dealWithMethodCallParams(testCase, methodCallAction, targetMethod, valueIndex)
 
         testCase.actions.add(constructorAction)
         testCase.actions.add(methodCallAction)
 
         return testCase
+    }
+
+    private fun dealWithMethodCallParams(testCase: TestCase, action: Action, method: SootMethod, valueIndex: Int): Int {
+        var returnValueIndex = valueIndex
+        method.parameterTypes.forEach {
+            if (it is PrimType) {
+                val parameter = Parameter(ParameterType.BUILTIN_TYPE)
+                parameter.primType = it
+                parameter.valueIndex = returnValueIndex
+                returnValueIndex++
+                action.parameters.add(parameter)
+
+                val value = Value(it)
+                value.value = when (value.primType) {
+                    is IntType -> 0
+                    is BooleanType -> false
+                    else -> null
+                }
+                testCase.values.add(value)
+            } else {
+                val parameter = Parameter(ParameterType.VARIABLE)
+                action.parameters.add(parameter)
+            }
+        }
+
+        return returnValueIndex
+    }
+
+    private fun getConstructor(sootClass: SootClass): SootMethod {
+        return try {
+            sootClass.getMethod("void <init>()")
+        } catch (ex: RuntimeException) {
+            sootClass.getMethodByName("<init>")
+        }
     }
 
 }

@@ -174,10 +174,18 @@ object Analyzer {
         }
 
         val constructorArgs = Collections.nCopies(method.parameterCount, NullConstant.v())
-        units.add(jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(allocatedTestObj, method.makeRef(), constructorArgs)))
+        units.add(
+            jimple.newInvokeStmt(
+                jimple.newSpecialInvokeExpr(allocatedTestObj, method.makeRef(), constructorArgs)
+            )
+        )
 
         val args = Collections.nCopies(sootTestMethod.parameterCount, NullConstant.v())
-        units.add(jimple.newInvokeStmt(jimple.newVirtualInvokeExpr(allocatedTestObj, sootTestMethod.makeRef(), args)))
+        units.add(
+            jimple.newInvokeStmt(
+                jimple.newVirtualInvokeExpr(allocatedTestObj, sootTestMethod.makeRef(), args)
+            )
+        )
         units.add(jimple.newReturnVoidStmt())
 
         println(sootClass)

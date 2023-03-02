@@ -1,8 +1,8 @@
 package org.kotsuite.ga.chromosome
 
-import org.kotsuite.ga.chromosome.type.BuiltInType
+import soot.PrimType
 
-class Value(val builtInType: BuiltInType): Element() {
+class Value(val primType: PrimType): Element() {
     override fun accept(visitor: ElementVisitor) {
         visitor.visit(this)
     }
