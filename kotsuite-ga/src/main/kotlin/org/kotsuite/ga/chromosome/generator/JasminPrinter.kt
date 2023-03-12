@@ -9,11 +9,11 @@ import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
 
-class JasminPrinter(outputFileDir: String) {
+class JasminPrinter(private val outputFileDir: String) {
     fun printJasminFile(sootClass: SootClass) {
         val fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class)
-        println("111 $fileName")
-        val streamOut = JasminOutputStream(FileOutputStream(fileName))
+        val finalDir = "$outputFileDir/$fileName"
+        val streamOut = JasminOutputStream(FileOutputStream(finalDir))
         val writeOut = PrintWriter(OutputStreamWriter(streamOut))
         val jasminClass = JasminClass(sootClass)
         jasminClass.print(writeOut)

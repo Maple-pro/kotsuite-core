@@ -36,7 +36,7 @@ class Client(private var exampleProjectDir: String,
     fun generateTestSuite() {
         log.info("[Generate Phase]")
 
-        val outputFileDir = "$exampleProjectDir/jimple/"
+        val outputFileDir = exampleProjectDir
 
         TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
         val testClasses = TestSuiteGenerator.generate()

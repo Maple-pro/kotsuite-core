@@ -14,6 +14,7 @@ import soot.jimple.JimpleBody
 import soot.jimple.Stmt
 import java.lang.Exception
 import soot.Value
+import soot.jimple.internal.JimpleLocal
 
 class JimpleGeneratorVisitor(jimpleFilesDir: String): ElementVisitor {
 
@@ -44,9 +45,10 @@ class JimpleGeneratorVisitor(jimpleFilesDir: String): ElementVisitor {
         method.activeBody = body
 
         // Create this local
-        val classType = RefType.v(sootClass)
-        val thisObj = Jimple.v().newLocal("this", classType)
-        body.locals.add(thisObj)
+        val thisLocal = JimpleLocal("this", sootClass.type)
+        body.locals.add(thisLocal)
+        val thisStmt = Jimple.v().newIdentityStmt(thisLocal, Jimple.v().newThisRef(sootClass.type))
+        body.units.add(thisStmt)
 
         testCase.actions.forEach { createStatement(it, method, testCase.values) }
         body.units.add(Jimple.v().newReturnVoidStmt())
@@ -75,7 +77,7 @@ class JimpleGeneratorVisitor(jimpleFilesDir: String): ElementVisitor {
             }
             ActionType.METHOD_CALL -> {
                 val methodArgs = action.parameters.map { values[it.valueIndex] }
-                val allocatedObj = body.locals.first  // TODO: fix it
+                val allocatedObj = body.locals.last  // TODO: fix it
                 body.units.add(
                     jimple.newInvokeStmt(
                         jimple.newVirtualInvokeExpr(allocatedObj, action.method?.makeRef(), methodArgs)
