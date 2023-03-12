@@ -3,9 +3,11 @@ package org.kotsuite.client
 import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.StrategyHelper
+import org.kotsuite.ga.chromosome.generator.JasminPrinter
 import org.kotsuite.ga.chromosome.generator.JimpleGenerator
 import org.kotsuite.ga.chromosome.generator.JimpleGeneratorVisitor
 import org.slf4j.LoggerFactory
+import javax.xml.transform.SourceLocator
 
 /**
  * This class represents a KotSuite client.
@@ -34,9 +36,15 @@ class Client(private var exampleProjectDir: String,
     fun generateTestSuite() {
         log.info("[Generate Phase]")
 
+        val outputFileDir = "$exampleProjectDir/jimple/"
+
         TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
         val testClasses = TestSuiteGenerator.generate()
-        JimpleGenerator("$exampleProjectDir/jimple/").generateJimple(testClasses)
+        val jimpleClasses = JimpleGenerator(outputFileDir).generateJimple(testClasses)
+
+        jimpleClasses.forEach {
+            JasminPrinter(outputFileDir).printJasminFile(it)
+        }
     }
 
     /**

@@ -6,7 +6,7 @@ import soot.PrimType
 class Parameter(val parameterType: ParameterType) {
     // ParameterType.BUILTIN_TYPE
     var primType: PrimType? = null
-    var valueIndex: Int? = null
+    var valueIndex: Int = -1
 
     // ParameterType.VARIABLE
     val variable: Variable? = null

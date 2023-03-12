@@ -1,15 +1,11 @@
 package org.kotsuite.ga.chromosome
 
-import org.kotsuite.ga.chromosome.Action
-import org.kotsuite.ga.chromosome.TestCase
-import org.kotsuite.ga.chromosome.TestClass
+import soot.SootClass
 
 interface ElementVisitor {
-    fun visit(element: TestClass)
+    fun visit(element: TestClass): SootClass
 
     fun visit(element: TestCase)
 
     fun visit(element: Action)
-
-    fun visit(element: Value)
 }

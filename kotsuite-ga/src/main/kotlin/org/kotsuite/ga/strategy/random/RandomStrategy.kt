@@ -10,6 +10,8 @@ import soot.IntType
 import soot.PrimType
 import soot.SootClass
 import soot.SootMethod
+import soot.dava.internal.javaRep.DIntConstant
+import soot.jimple.IntConstant
 import soot.jimple.NullConstant
 import java.util.*
 import kotlin.collections.ArrayList
@@ -71,13 +73,14 @@ object RandomStrategy: GAStrategy() {
                 returnValueIndex++
                 action.parameters.add(parameter)
 
-                val value = Value(it)
-                value.value = when (value.primType) {
-                    is IntType -> 0
-                    is BooleanType -> false
+                val value = when (parameter.primType) {
+                    is IntType -> IntConstant.v(0)
+                    is BooleanType -> DIntConstant.v(0, BooleanType.v())
                     else -> null
                 }
-                testCase.values.add(value)
+                if (value != null) {
+                    testCase.values.add(value)
+                }
             } else {
                 val parameter = Parameter(ParameterType.VARIABLE)
                 action.parameters.add(parameter)
