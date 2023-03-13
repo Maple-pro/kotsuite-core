@@ -40,7 +40,7 @@ class JimpleGeneratorVisitor: ElementVisitor {
         sootClass.addMethod(initMethod)
 
         // Create main method
-        val mainMethod = createMainMethod(sootMethods.first())
+        val mainMethod = createMainMethod(sootMethods)
         sootClass.addMethod(mainMethod)
 
         return sootClass
@@ -162,7 +162,7 @@ class JimpleGeneratorVisitor: ElementVisitor {
         return constructorMethod
     }
 
-    private fun createMainMethod(targetMethod: SootMethod): SootMethod {
+    private fun createMainMethod(targetMethods: List<SootMethod>): SootMethod {
         val argsParameterType = ArrayType.v(RefType.v("java.lang.String"), 1)
         val mainMethod = SootMethod("main",
             listOf(argsParameterType),
@@ -180,7 +180,7 @@ class JimpleGeneratorVisitor: ElementVisitor {
         locals.add(argsParameter)
         units.add(jimple.newIdentityStmt(argsParameter, jimple.newParameterRef(argsParameterType, 0)))
 
-        val targetClassType = RefType.v(targetMethod.declaringClass)
+        val targetClassType = RefType.v(targetMethods.first().declaringClass)
         val allocatedTargetObj = jimple.newLocal("dummyObj", targetClassType)
         locals.add(allocatedTargetObj)
         units.add(jimple.newAssignStmt(allocatedTargetObj, jimple.newNewExpr(targetClassType)))
@@ -193,12 +193,14 @@ class JimpleGeneratorVisitor: ElementVisitor {
             )
         )
 
-        val targetMethodArgs = Collections.nCopies(targetMethod.parameterCount, NullConstant.v())
-        units.add(
-            jimple.newInvokeStmt(
-                jimple.newVirtualInvokeExpr(allocatedTargetObj, targetMethod.makeRef(), targetMethodArgs)
+        targetMethods.forEach {
+            val targetMethodArgs = Collections.nCopies(it.parameterCount, NullConstant.v())
+            units.add(
+                jimple.newInvokeStmt(
+                    jimple.newVirtualInvokeExpr(allocatedTargetObj, it.makeRef(), targetMethodArgs)
+                )
             )
-        )
+        }
 
         units.add(jimple.newReturnVoidStmt())
 
