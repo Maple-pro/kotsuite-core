@@ -5,6 +5,7 @@ import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.StrategyHelper
 import org.kotsuite.ga.chromosome.generator.JasminPrinter
 import org.kotsuite.ga.chromosome.generator.JimpleGenerator
+import org.kotsuite.ga.coverage.CoverageGenerator
 import org.slf4j.LoggerFactory
 
 /**
@@ -44,6 +45,14 @@ class Client(private var exampleProjectDir: String,
         jimpleClasses.forEach {
             JasminPrinter(outputFileDir).printJasminFile(it)
         }
+
+        val coverageGenerator = CoverageGenerator(
+            "$exampleProjectDir/sootOutput/kotsuite/MyApplication.jar",
+            "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/",
+            "$exampleProjectDir/sootOutput/report/jacoco-MyApplication.exec",
+        )
+        coverageGenerator.generateExecFile("ExampleTest", "*")
+        coverageGenerator.getCoverageInfo()
     }
 
     /**
