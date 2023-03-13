@@ -13,6 +13,7 @@ class JasminPrinter(private val outputFileDir: String) {
     fun printJasminFile(sootClass: SootClass) {
         val fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class)
         val finalDir = "$outputFileDir/$fileName"
+//        val finalDir = "$outputFileDir/${sootClass.shortName}.class"
         val streamOut = JasminOutputStream(FileOutputStream(finalDir))
         val writeOut = PrintWriter(OutputStreamWriter(streamOut))
         val jasminClass = JasminClass(sootClass)

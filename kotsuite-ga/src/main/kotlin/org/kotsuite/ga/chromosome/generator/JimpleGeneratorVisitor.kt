@@ -2,21 +2,21 @@ package org.kotsuite.ga.chromosome.generator
 
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.type.ActionType
+import soot.ArrayType
 import soot.Modifier
 import soot.RefType
 import soot.Scene
 import soot.SootClass
 import soot.SootMethod
 import soot.VoidType
-import soot.jimple.IntConstant
 import soot.jimple.Jimple
-import soot.jimple.JimpleBody
-import soot.jimple.Stmt
 import java.lang.Exception
 import soot.Value
+import soot.jimple.NullConstant
 import soot.jimple.internal.JimpleLocal
+import java.util.Collections
 
-class JimpleGeneratorVisitor(jimpleFilesDir: String): ElementVisitor {
+class JimpleGeneratorVisitor: ElementVisitor {
 
 
     override fun visit(element: TestClass): SootClass {
@@ -33,6 +33,14 @@ class JimpleGeneratorVisitor(jimpleFilesDir: String): ElementVisitor {
         // Create methods
         val sootMethods = element.testCases.map { createMethod(it, sootClass) }
         sootMethods.forEach { sootClass.addMethod(it) }
+
+        // Create <init> method
+        val initMethod = createInitMethod(sootClass)
+        sootClass.addMethod(initMethod)
+
+        // Create main method
+        val mainMethod = createMainMethod(sootMethods.first())
+        sootClass.addMethod(mainMethod)
 
         return sootClass
     }
@@ -88,6 +96,67 @@ class JimpleGeneratorVisitor(jimpleFilesDir: String): ElementVisitor {
                 throw Exception("Not implement yet.")
             }
         }
+    }
+
+    private fun createInitMethod(sootClass: SootClass): SootMethod {
+        val jimple = Jimple.v()
+
+        val constructorMethod = SootMethod("<init>", null, VoidType.v(), Modifier.PUBLIC)
+
+        val body = jimple.newBody(constructorMethod)
+        constructorMethod.activeBody = body
+
+        val thisLocal = jimple.newLocal("this", sootClass.type)
+        body.locals.add(thisLocal)
+        val thisStmt = jimple.newIdentityStmt(thisLocal, jimple.newThisRef(sootClass.type))
+        body.units.add(thisStmt)
+
+        body.units.add(jimple.newReturnVoidStmt())
+
+        return constructorMethod
+    }
+
+    private fun createMainMethod(targetMethod: SootMethod): SootMethod {
+        val argsParameterType = ArrayType.v(RefType.v("java.lang.String"), 1)
+        val mainMethod = SootMethod("main",
+            listOf(argsParameterType),
+            VoidType.v(),
+            Modifier.PUBLIC or Modifier.STATIC
+        )
+
+        val jimple = Jimple.v()
+        val jimpleBody = jimple.newBody(mainMethod)
+        mainMethod.activeBody = jimpleBody
+        val locals = jimpleBody.locals
+        val units = jimpleBody.units
+
+        val argsParameter = jimple.newLocal("args", argsParameterType)
+        locals.add(argsParameter)
+        units.add(jimple.newIdentityStmt(argsParameter, jimple.newParameterRef(argsParameterType, 0)))
+
+        val targetClassType = RefType.v(targetMethod.declaringClass)
+        val allocatedTargetObj = jimple.newLocal("dummyObj", targetClassType)
+        locals.add(allocatedTargetObj)
+        units.add(jimple.newAssignStmt(allocatedTargetObj, jimple.newNewExpr(targetClassType)))
+
+        val constructorMethod = targetClassType.sootClass.getMethod("void <init>()")
+        val constructorArgs = Collections.nCopies(constructorMethod.parameterCount, NullConstant.v())
+        units.add(
+            jimple.newInvokeStmt(
+                jimple.newSpecialInvokeExpr(allocatedTargetObj, constructorMethod.makeRef(), constructorArgs)
+            )
+        )
+
+        val targetMethodArgs = Collections.nCopies(targetMethod.parameterCount, NullConstant.v())
+        units.add(
+            jimple.newInvokeStmt(
+                jimple.newVirtualInvokeExpr(allocatedTargetObj, targetMethod.makeRef(), targetMethodArgs)
+            )
+        )
+
+        units.add(jimple.newReturnVoidStmt())
+
+        return mainMethod
     }
 
     override fun visit(element: TestCase) {

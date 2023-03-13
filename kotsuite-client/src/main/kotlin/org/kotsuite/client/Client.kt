@@ -5,9 +5,7 @@ import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.StrategyHelper
 import org.kotsuite.ga.chromosome.generator.JasminPrinter
 import org.kotsuite.ga.chromosome.generator.JimpleGenerator
-import org.kotsuite.ga.chromosome.generator.JimpleGeneratorVisitor
 import org.slf4j.LoggerFactory
-import javax.xml.transform.SourceLocator
 
 /**
  * This class represents a KotSuite client.
@@ -36,11 +34,12 @@ class Client(private var exampleProjectDir: String,
     fun generateTestSuite() {
         log.info("[Generate Phase]")
 
+//        val outputFileDir = "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/"
         val outputFileDir = exampleProjectDir
 
         TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
         val testClasses = TestSuiteGenerator.generate()
-        val jimpleClasses = JimpleGenerator(outputFileDir).generateJimple(testClasses)
+        val jimpleClasses = JimpleGenerator().generateJimple(testClasses)
 
         jimpleClasses.forEach {
             JasminPrinter(outputFileDir).printJasminFile(it)

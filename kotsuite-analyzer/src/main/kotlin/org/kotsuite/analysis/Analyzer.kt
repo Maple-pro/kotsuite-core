@@ -18,7 +18,6 @@ object Analyzer {
     var classesOrPackagesToAnalyze = listOf<String>()
 
     var classes = listOf<SootClass>()  // All classes under `classesOrPackagesToAnalyze`
-    val sootScene = Scene.v()
 
     /**
      * Analyze classes in the data directory, and transform them into jimple.
@@ -187,8 +186,6 @@ object Analyzer {
             )
         )
         units.add(jimple.newReturnVoidStmt())
-
-        println(sootClass)
 
         return sootClass
     }
