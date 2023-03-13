@@ -101,16 +101,25 @@ class JimpleGeneratorVisitor: ElementVisitor {
     private fun createInitMethod(sootClass: SootClass): SootMethod {
         val jimple = Jimple.v()
 
+        // Create a constructor method
         val constructorMethod = SootMethod("<init>", null, VoidType.v(), Modifier.PUBLIC)
 
         val body = jimple.newBody(constructorMethod)
         constructorMethod.activeBody = body
 
+        // Add `this` local variable to the constructor body
         val thisLocal = jimple.newLocal("this", sootClass.type)
         body.locals.add(thisLocal)
         val thisStmt = jimple.newIdentityStmt(thisLocal, jimple.newThisRef(sootClass.type))
         body.units.add(thisStmt)
 
+        // Call the superclass constructor using `super()`
+        val objectClass = Scene.v().getSootClass("java.lang.Object")
+        val objectConstructorRef = Scene.v().makeConstructorRef(objectClass, listOf())
+        val superInvokeStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(thisLocal, objectConstructorRef))
+        body.units.add(superInvokeStmt)
+
+        // Add return void statement
         body.units.add(jimple.newReturnVoidStmt())
 
         return constructorMethod
