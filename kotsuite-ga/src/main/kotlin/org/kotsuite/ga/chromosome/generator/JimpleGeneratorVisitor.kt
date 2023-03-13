@@ -13,6 +13,7 @@ import soot.jimple.Jimple
 import java.lang.Exception
 import soot.Value
 import soot.jimple.NullConstant
+import soot.jimple.StringConstant
 import soot.jimple.internal.JimpleLocal
 import java.util.Collections
 
@@ -59,6 +60,10 @@ class JimpleGeneratorVisitor: ElementVisitor {
         body.units.add(thisStmt)
 
         testCase.actions.forEach { createStatement(it, method, testCase.values) }
+
+        // Create `println()` statement
+        createPrintlnStmt(method.name, method)
+
         body.units.add(Jimple.v().newReturnVoidStmt())
 
         return method
@@ -96,6 +101,38 @@ class JimpleGeneratorVisitor: ElementVisitor {
                 throw Exception("Not implement yet.")
             }
         }
+    }
+
+    private fun createPrintlnStmt(message: String, sootMethod: SootMethod) {
+        val body = sootMethod.activeBody
+        val jimple = Jimple.v()
+
+        // Add message local
+        val messageLocal = jimple.newLocal("message", RefType.v("java.lang.String"))
+        body.locals.add(messageLocal)
+        val messageAssign = jimple.newAssignStmt(messageLocal, StringConstant.v(message))
+        body.units.add(messageAssign)
+
+        // Add local: java.io.printStream tmpRef
+        val tmpRef = jimple.newLocal("tmpRef", RefType.v("java.io.PrintStream"))
+        body.locals.add(tmpRef)
+
+        // Add `tmpRef = java.lang.System.out`,
+        // note that System.out is an instance of java.io.printStream, and it is a static field of java.lang.System
+        body.units.add(
+            jimple.newAssignStmt(
+                tmpRef,
+                jimple.newStaticFieldRef((
+                        Scene.v().getField("<java.lang.System: java.io.PrintStream out>").makeRef()
+                )
+        )))
+
+        // Add `tmpRef.println(message)`
+        val printStreamClass = Scene.v().getSootClass("java.io.PrintStream")
+        val printlnMethod = printStreamClass.getMethod("void println(java.lang.String)")
+        body.units.add(jimple.newInvokeStmt(
+            jimple.newVirtualInvokeExpr(tmpRef, printlnMethod.makeRef(), messageLocal)
+        ))
     }
 
     private fun createInitMethod(sootClass: SootClass): SootMethod {
