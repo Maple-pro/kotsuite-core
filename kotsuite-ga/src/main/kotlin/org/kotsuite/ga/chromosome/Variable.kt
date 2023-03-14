@@ -1,4 +1,6 @@
 package org.kotsuite.ga.chromosome
 
-class Variable(val id: String) {
+import soot.RefType
+
+class Variable(val id: String, val refType: RefType?) {
 }

@@ -9,7 +9,7 @@ class Action(val actionType: ActionType): Element() {
         visitor.visit(this)
     }
 
-    var variable = Variable("")
+    var variable = Variable("", null)
 
     var constructor: SootMethod? = null  // CONSTRUCTOR
     var clazz: SootClass? = null  // NULL_ASSIGNMENT

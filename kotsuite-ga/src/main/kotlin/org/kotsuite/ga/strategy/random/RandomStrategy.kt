@@ -1,20 +1,21 @@
 package org.kotsuite.ga.strategy.random
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type
 import org.kotsuite.ga.GAStrategy
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.type.ActionType
 import org.kotsuite.ga.chromosome.type.ParameterType
 import soot.BooleanType
+import soot.DoubleType
 import soot.IntType
 import soot.PrimType
+import soot.RefType
 import soot.SootClass
 import soot.SootMethod
 import soot.dava.internal.javaRep.DIntConstant
+import soot.jimple.DoubleConstant
 import soot.jimple.IntConstant
-import soot.jimple.NullConstant
-import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 object RandomStrategy: GAStrategy() {
 
@@ -30,15 +31,16 @@ object RandomStrategy: GAStrategy() {
     override fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase>{
         val testCases = ArrayList<TestCase>()
 
-        val testCaseName = "test_${targetMethod.name}_1"
+        for (i in 1..5) {
+            val testCaseName = "test_${targetMethod.name}_$i"
 
-        testCases.add(generateTestCaseForMethod(targetMethod, testCaseName))
+            testCases.add(generateTestCaseForMethod(targetMethod, testCaseName))
+        }
 
         return testCases
     }
 
     private fun generateTestCaseForMethod(targetMethod: SootMethod, testCaseName: String): TestCase {
-        // TODO: Generate TestCase for method
         val testCase = TestCase(testCaseName)
         val targetClass = targetMethod.declaringClass
 
@@ -46,7 +48,7 @@ object RandomStrategy: GAStrategy() {
 
         // Add constructor action
         val constructorAction = Action(ActionType.CONSTRUCTOR)
-        constructorAction.variable = Variable("obj")
+        constructorAction.variable = Variable("obj", targetClass.type)
         val constructor = getConstructor(targetClass)
         constructorAction.constructor = constructor
         valueIndex = dealWithMethodCallParams(testCase, constructorAction, constructor, valueIndex)
@@ -64,6 +66,12 @@ object RandomStrategy: GAStrategy() {
     }
 
     private fun dealWithMethodCallParams(testCase: TestCase, action: Action, method: SootMethod, valueIndex: Int): Int {
+        // Candidate values
+        val intCandidates = listOf(-1000, -100, -10 , -3, -2, -1, 0, 1, 2, 3, 10, 100, 1000)
+        val booleanCandidates = listOf(0, 1)
+        val doubleCandidates = listOf(-1000.0, -100.0, -10.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 10.0, 100.0, 1000.0)
+        val stringCandidates = listOf("", "abc")
+
         var returnValueIndex = valueIndex
         method.parameterTypes.forEach {
             if (it is PrimType) {
@@ -74,15 +82,21 @@ object RandomStrategy: GAStrategy() {
                 action.parameters.add(parameter)
 
                 val value = when (parameter.primType) {
-                    is IntType -> IntConstant.v(0)
-                    is BooleanType -> DIntConstant.v(0, BooleanType.v())
-                    else -> null
+                    is IntType ->
+                        IntConstant.v(intCandidates[Random.nextInt(intCandidates.size)])
+                    is BooleanType ->
+                        DIntConstant.v(booleanCandidates[Random.nextInt(booleanCandidates.size)], BooleanType.v())
+                    is DoubleType ->
+                        DoubleConstant.v(doubleCandidates[Random.nextInt(doubleCandidates.size)])
+                    else ->
+                        null
                 }
                 if (value != null) {
                     testCase.values.add(value)
                 }
-            } else {
+            } else if (it is RefType) {
                 val parameter = Parameter(ParameterType.VARIABLE)
+                parameter.variable = Variable("var_${it.sootClass.shortName}", it)
                 action.parameters.add(parameter)
             }
         }

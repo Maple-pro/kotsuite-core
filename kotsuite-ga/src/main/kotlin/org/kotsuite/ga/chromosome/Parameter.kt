@@ -9,5 +9,5 @@ class Parameter(val parameterType: ParameterType) {
     var valueIndex: Int = -1
 
     // ParameterType.VARIABLE
-    val variable: Variable? = null
+    var variable: Variable? = null
 }

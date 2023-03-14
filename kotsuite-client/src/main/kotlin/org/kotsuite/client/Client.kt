@@ -47,7 +47,7 @@ class Client(private var exampleProjectDir: String,
         }
 
         val coverageGenerator = CoverageGenerator(
-            "$exampleProjectDir/sootOutput/kotsuite/MyApplication.jar",
+            "$exampleProjectDir/kotsuite/MyApplication.jar",
             "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/",
             "$exampleProjectDir/sootOutput/report/jacoco-MyApplication.exec",
         )
