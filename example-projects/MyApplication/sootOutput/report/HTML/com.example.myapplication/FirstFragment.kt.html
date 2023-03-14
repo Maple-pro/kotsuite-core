@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirstFragment.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">com.example.myapplication</a> &gt; <span class="el_source">FirstFragment.kt</span></div><h1>FirstFragment.kt</h1><pre class="source lang-java linenums">package com.example.myapplication
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import com.example.myapplication.databinding.FragmentFirstBinding
+
+/**
+ * A simple [Fragment] subclass as the default destination in the navigation.
+ */
+<span class="nc" id="L14">class FirstFragment : Fragment() {</span>
+
+    private var _binding: FragmentFirstBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+<span class="nc" id="L20">    private val binding get() = _binding!!</span>
+
+    override fun onCreateView(
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
+
+<span class="nc" id="L27">        _binding = FragmentFirstBinding.inflate(inflater, container, false)</span>
+<span class="nc" id="L28">        return binding.root</span>
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+<span class="nc" id="L33">        super.onViewCreated(view, savedInstanceState)</span>
+
+<span class="nc" id="L35">        binding.buttonFirst.setOnClickListener {</span>
+<span class="nc" id="L36">            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)</span>
+<span class="nc" id="L37">        }</span>
+<span class="nc" id="L38">    }</span>
+
+    override fun onDestroyView() {
+<span class="nc" id="L41">        super.onDestroyView()</span>
+<span class="nc" id="L42">        _binding = null</span>
+<span class="nc" id="L43">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

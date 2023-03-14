@@ -26,13 +26,13 @@ jar -cvf ../kotsuite/MyApplication.jar *.class com/
 
 # 2. Run the generated .jar file to validate
 cd example-projects/MyApplication/sootOutput
-java -cp ../kotsuite/MyApplication.jar ExampleTest
+java -cp "./example-projects/MyApplication/kotsuite/MyApplication.jar;./lib/kotlin-runtime-1.2.71.jar" ExampleTest
 
 # 3. Generate .exec file
-java -javaagent:./lib/jacocoagent.jar=includes=*,excludes=...,destfile=./example-projects/MyApplication/sootOutput/report/jacoco-MyApplication.exec,output=file -cp ./example-projects/MyApplication/sootOutput/kotsuite/MyApplication.jar ExampleTest
+java -javaagent:./lib/jacocoagent.jar=includes=*,destfile=./example-projects/MyApplication/sootOutput/report/jacoco-MyApplication.exec,output=file -cp ./example-projects/MyApplication/kotsuite/MyApplication.jar ExampleTest
 
 # 4. Generate coverage report
-java -jar ./lib/jacococli.jar report ./example-projects/MyApplication/sootOutput/report/jacoco-MyApplication.exec --classfile=./example-projects/MyApplication/sootOutput --html ./example-projects/MyApplication/sootOutput/report/HTML
+java -jar ./lib/jacococli.jar report ./example-projects/MyApplication/sootOutput/report/jacoco-MyApplication.exec --classfile=./example-projects/MyApplication/sootOutput --sourcefile=./example-projects/MyApplication/app/src/main/java --html ./example-projects/MyApplication/sootOutput/report/HTML
 ```
 
 1. Generate test class file

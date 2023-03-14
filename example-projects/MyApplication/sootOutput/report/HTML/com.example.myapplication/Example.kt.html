@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Example.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">com.example.myapplication</a> &gt; <span class="el_source">Example.kt</span></div><h1>Example.kt</h1><pre class="source lang-java linenums">package com.example.myapplication
+
+<span class="fc" id="L3">class Example {</span>
+    fun add(a: Int, b: Int): Int {
+<span class="fc" id="L5">        return a + b</span>
+    }
+
+    fun bar(x: Int, b: Boolean): Int {
+<span class="fc bfc" id="L9" title="All 2 branches covered.">        return if (b) {</span>
+<span class="fc" id="L10">            x + 10</span>
+        } else {
+<span class="fc" id="L12">            x - 10</span>
+        }
+    }
+
+    fun foo(callee: Callee) {
+<span class="fc" id="L17">        callee.printHello()</span>
+<span class="fc" id="L18">    }</span>
+
+    fun getTriangleType(side1: Double, side2: Double, side3: Double): String {
+<span class="fc bfc" id="L21" title="All 6 branches covered.">        if (side1 &lt;= 0 || side2 &lt;= 0 || side3 &lt;= 0) {</span>
+<span class="fc" id="L22">            return &quot;Invalid triangle: type 1&quot;</span>
+        }
+
+<span class="pc bpc" id="L25" title="3 of 6 branches missed.">        if ((side1 + side2 &lt;= side3) || (side1 + side3 &lt;= side2) || (side2 + side3 &lt;= side1)) {</span>
+<span class="fc" id="L26">            return &quot;Invalid triangle: type2&quot;</span>
+        }
+
+<span class="nc bnc" id="L29" title="All 8 branches missed.">        if (side1 == side2 &amp;&amp; side2 == side3) {</span>
+<span class="nc" id="L30">            return &quot;Equilateral triangle&quot;</span>
+<span class="nc bnc" id="L31" title="All 12 branches missed.">        } else if (side1 == side2 || side1 == side3 || side2 == side3) {</span>
+<span class="nc" id="L32">            return &quot;Isosceles triangle&quot;</span>
+        } else {
+<span class="nc" id="L34">            return &quot;Scalene triangle&quot;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
