@@ -4,13 +4,7 @@ import org.kotsuite.ga.GAStrategy
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.type.ActionType
 import org.kotsuite.ga.chromosome.type.ParameterType
-import soot.BooleanType
-import soot.DoubleType
-import soot.IntType
-import soot.PrimType
-import soot.RefType
-import soot.SootClass
-import soot.SootMethod
+import soot.*
 import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.DoubleConstant
 import soot.jimple.IntConstant
@@ -31,7 +25,7 @@ object RandomStrategy: GAStrategy() {
     override fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase>{
         val testCases = ArrayList<TestCase>()
 
-        for (i in 1..5) {
+        for (i in 1..10) {
             val testCaseName = "test_${targetMethod.name}_$i"
 
             testCases.add(generateTestCaseForMethod(targetMethod, testCaseName))
@@ -48,7 +42,7 @@ object RandomStrategy: GAStrategy() {
 
         // Add constructor action
         val constructorAction = Action(ActionType.CONSTRUCTOR)
-        constructorAction.variable = Variable("obj", targetClass.type)
+        constructorAction.variable = Variable("obj", targetClass.type, null)
         val constructor = getConstructor(targetClass)
         constructorAction.constructor = constructor
         valueIndex = dealWithMethodCallParams(testCase, constructorAction, constructor, valueIndex)
@@ -70,7 +64,6 @@ object RandomStrategy: GAStrategy() {
         val intCandidates = listOf(-1000, -100, -10 , -3, -2, -1, 0, 1, 2, 3, 10, 100, 1000)
         val booleanCandidates = listOf(0, 1)
         val doubleCandidates = listOf(-1000.0, -100.0, -10.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 10.0, 100.0, 1000.0)
-        val stringCandidates = listOf("", "abc")
 
         var returnValueIndex = valueIndex
         method.parameterTypes.forEach {
@@ -96,7 +89,11 @@ object RandomStrategy: GAStrategy() {
                 }
             } else if (it is RefType) {
                 val parameter = Parameter(ParameterType.VARIABLE)
-                parameter.variable = Variable("var_${it.sootClass.shortName}", it)
+                parameter.variable = Variable("var_${it.sootClass.shortName}", it, null)
+                action.parameters.add(parameter)
+            } else if (it is ArrayType) {
+                val parameter = Parameter(ParameterType.VARIABLE)
+                parameter.variable = Variable("var_array_int", null, it)
                 action.parameters.add(parameter)
             }
         }

@@ -42,6 +42,8 @@ class Client(private var exampleProjectDir: String,
         val testClasses = TestSuiteGenerator.generate()
         val jimpleClasses = JimpleGenerator().generateJimple(testClasses)
 
+//        print(jimpleClasses[1].methods[30].activeBody)
+
         jimpleClasses.forEach {
             JasminPrinter(outputFileDir).printJasminFile(it)
         }

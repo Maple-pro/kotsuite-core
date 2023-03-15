@@ -9,13 +9,14 @@ class CoverageGenerator(private val jarPath: String, private val classesFilePath
     private val jacocoAgentPath = "../lib/jacocoagent.jar"
     private val jacocoCliPath = "../lib/jacococli.jar"
     private val kotlinRunTimePath = "../lib/kotlin-runtime-1.2.71.jar"
+    private val kotlinStdLibPath = "../lib/kotlin-stdlib-1.8.10.jar"
 
     fun generateExecFile(mainClass: String, includeFiles: String) {
         log.info("Main class: $mainClass")
         log.info("Execution data path: $executionDataPath")
 
         val vmOption = "-javaagent:$jacocoAgentPath=includes=$includeFiles,excludes=CalleeTest,destfile=$executionDataPath,output=file"
-        val runtimeJars = "$jarPath;$kotlinRunTimePath"
+        val runtimeJars = "$jarPath;$kotlinRunTimePath;$kotlinStdLibPath"
         val args = arrayOf("java", vmOption, "-cp", runtimeJars, mainClass)
         try {
             val ps = Runtime.getRuntime().exec(args)

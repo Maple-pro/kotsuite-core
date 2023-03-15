@@ -4,6 +4,7 @@ import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.type.ActionType
 import org.kotsuite.ga.chromosome.type.ParameterType
 import soot.ArrayType
+import soot.IntType
 import soot.Modifier
 import soot.RefType
 import soot.Scene
@@ -13,11 +14,13 @@ import soot.VoidType
 import soot.jimple.Jimple
 import java.lang.Exception
 import soot.Value
+import soot.jimple.IntConstant
 import soot.jimple.NullConstant
 import soot.jimple.StringConstant
 import soot.jimple.internal.JimpleLocal
 import java.util.Collections
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 class JimpleGeneratorVisitor: ElementVisitor {
 
@@ -120,8 +123,46 @@ class JimpleGeneratorVisitor: ElementVisitor {
     private fun createParam(param: Parameter, sootMethod: SootMethod): Value {
         val localName = param.variable?.id
         val refType = param.variable?.refType
+        val arrayType = param.variable?.arrayType
 
-        return if (refType!!.equals("java.lang.String")) {
+        if (refType == null && arrayType != null) {
+            val baseType = arrayType.baseType
+            if (baseType == RefType.v("java.lang.Integer")) {
+                val randomArray = generateRandomIntArray()
+                val stringArrayType = ArrayType.v(RefType.v("java.lang.Integer"), 1)
+                val arrayLocal = Jimple.v().newLocal(localName, stringArrayType)
+                sootMethod.activeBody.locals.addFirst(arrayLocal)
+
+                (randomArray.indices).forEach {
+                    val arrayRef = Jimple.v().newArrayRef(arrayLocal, IntConstant.v(it))
+//                    val intLocal = Jimple.v().newLocal("tmp_$it", RefType.v("java.lang.Integer"))
+//                    val newAssignStmt = Jimple.v().newAssignStmt(intLocal, Jimple.v().newNewExpr(RefType.v("java.lang.Integer")))
+//                    val intAssignStmt = Jimple.v().newAssignStmt(intLocal, IntConstant.v(randomArray[it]))
+//                    sootMethod.activeBody.locals.addFirst(intLocal)
+//                    sootMethod.activeBody.units.addFirst(intAssignStmt)
+//                    sootMethod.activeBody.units.addFirst(newAssignStmt)
+
+//                    val assignStmt = Jimple.v().newAssignStmt(arrayRef, intLocal)
+                    val assignStmt = Jimple.v().newAssignStmt(arrayRef, IntConstant.v(randomArray[it]))
+                    sootMethod.activeBody.units.addFirst(assignStmt)
+                }
+
+                val arrayLocalAssignStmt = Jimple.v().newAssignStmt(
+                    arrayLocal,
+                    Jimple.v().newNewArrayExpr(
+                        RefType.v("java.lang.Integer"), IntConstant.v(randomArray.size)
+                    )
+                )
+                sootMethod.activeBody.units.addFirst(arrayLocalAssignStmt)
+
+                return arrayLocal
+
+            } else {
+                throw Exception("Unsupported parameter type: $arrayType")
+            }
+        }
+
+        return if (refType!! == RefType.v("java.lang.String")) {
             val stringLocal = Jimple.v().newLocal(localName!!, refType)
             val randomStringConstant = generateRandomString()
             val stringConstantAssignStmt = Jimple.v().newAssignStmt(stringLocal, StringConstant.v(randomStringConstant))
@@ -269,12 +310,22 @@ class JimpleGeneratorVisitor: ElementVisitor {
     private fun generateRandomString(): String {
         val charPool = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
-        val len = Random.nextInt(10)
+//        val len = Random.nextInt(10)
+        val len = if(Random.nextBoolean()) 0 else 10
         return if (len == 0) {
             ""
         } else {
             (1..len).map { Random.nextInt(0, charPool.size).let { charPool[it] } }.joinToString("")
         }
+    }
+
+    private fun generateRandomIntArray(): Array<Int> {
+        val maxLen = 10
+        val lowerBound = -100
+        val upperBound = 100
+
+        val len = Random.nextInt(maxLen)
+        return (0..len).map { Random.nextInt(lowerBound, upperBound) }.toTypedArray()
     }
 
     override fun visit(element: TestCase) {
