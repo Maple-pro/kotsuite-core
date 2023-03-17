@@ -1,10 +1,9 @@
-package org.kotsuite.ga.chromosome.generator
+package org.kotsuite.ga.chromosome.generator.jimple
 
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.type.ActionType
 import org.kotsuite.ga.chromosome.type.ParameterType
 import soot.ArrayType
-import soot.IntType
 import soot.Modifier
 import soot.RefType
 import soot.Scene
@@ -20,12 +19,12 @@ import soot.jimple.StringConstant
 import soot.jimple.internal.JimpleLocal
 import java.util.Collections
 import kotlin.random.Random
-import kotlin.random.nextInt
 
-class JimpleGeneratorVisitor: ElementVisitor {
+object TestClassGenerator {
 
+    private val jimple = Jimple.v()
 
-    override fun visit(element: TestClass): SootClass {
+    fun generate(element: TestClass): SootClass {
         // Resolve dependencies
         Scene.v().loadClassAndSupport("java.lang.Object")
 
@@ -36,50 +35,30 @@ class JimpleGeneratorVisitor: ElementVisitor {
         sootClass.superclass = Scene.v().getSootClass("java.lang.Object")
         Scene.v().addClass(sootClass)
 
-        // Create methods
-        val sootMethods = element.testCases.map { createMethod(it, sootClass) }
-        sootMethods.forEach { sootClass.addMethod(it) }
-
         // Create <init> method
         val initMethod = createInitMethod(sootClass)
-        sootClass.addMethod(initMethod)
+
+        // Create methods
+        val sootMethods = element.testCases.map { TestCaseGenerator.generate(it, sootClass) }
 
         // Create main method
+        var mainMethod: SootMethod? = null
         if (element.testClassName == "ExampleTest") {
-            val mainMethod = createMainMethod(sootMethods)
+            mainMethod = createMainMethod(sootMethods)
             sootClass.addMethod(mainMethod)
         }
+
+        // Add methods to class
+        val methods = listOf(initMethod) + sootMethods
+        methods.forEach { sootClass.addMethod(it) }
+        if (mainMethod != null) sootClass.addMethod(mainMethod)
 
         return sootClass
     }
 
-    private fun createMethod(testCase: TestCase, sootClass: SootClass): SootMethod {
-        val method = SootMethod(testCase.testCaseName, null, VoidType.v())
 
-        // Create the method body
-        val body = Jimple.v().newBody(method)
-        method.activeBody = body
-
-
-        testCase.actions.forEach { createStatement(it, method, testCase.values) }
-
-        // Create this local
-        val thisLocal = JimpleLocal("this", sootClass.type)
-        body.locals.addFirst(thisLocal)
-        val thisStmt = Jimple.v().newIdentityStmt(thisLocal, Jimple.v().newThisRef(sootClass.type))
-        body.units.addFirst(thisStmt)
-
-        // Create `println()` statement
-//        createPrintlnStmt(method.name, method)
-
-        body.units.add(Jimple.v().newReturnVoidStmt())
-
-        return method
-    }
-
-    private fun createStatement(action: Action, sootMethod: SootMethod, values: List<Value>){
+    private fun createStatement(action: Action, sootMethod: SootMethod, values: List<Value>){  // TODO: refactor this
         val body = sootMethod.activeBody
-        val jimple = Jimple.v()
 
         val args = action.parameters.map {
             when(it.parameterType) {
@@ -97,7 +76,7 @@ class JimpleGeneratorVisitor: ElementVisitor {
                 val sootClassType = RefType.v(action.constructor?.declaringClass)
                 val allocatedObj = jimple.newLocal(action.variable.id, action.variable.refType)
                 body.locals.add(allocatedObj)
-                body.units.add(jimple.newAssignStmt(allocatedObj, Jimple.v().newNewExpr(sootClassType)))
+                body.units.add(jimple.newAssignStmt(allocatedObj, jimple.newNewExpr(sootClassType)))
 
                 val constructorMethod = action.constructor
                 body.units.add(
@@ -130,26 +109,26 @@ class JimpleGeneratorVisitor: ElementVisitor {
             if (baseType == RefType.v("java.lang.Integer")) {
                 val randomArray = generateRandomIntArray()
                 val stringArrayType = ArrayType.v(RefType.v("java.lang.Integer"), 1)
-                val arrayLocal = Jimple.v().newLocal(localName, stringArrayType)
+                val arrayLocal = jimple.newLocal(localName, stringArrayType)
                 sootMethod.activeBody.locals.addFirst(arrayLocal)
 
                 (randomArray.indices).forEach {
-                    val arrayRef = Jimple.v().newArrayRef(arrayLocal, IntConstant.v(it))
-//                    val intLocal = Jimple.v().newLocal("tmp_$it", RefType.v("java.lang.Integer"))
-//                    val newAssignStmt = Jimple.v().newAssignStmt(intLocal, Jimple.v().newNewExpr(RefType.v("java.lang.Integer")))
-//                    val intAssignStmt = Jimple.v().newAssignStmt(intLocal, IntConstant.v(randomArray[it]))
+                    val arrayRef = jimple.newArrayRef(arrayLocal, IntConstant.v(it))
+//                    val intLocal = jimple.newLocal("tmp_$it", RefType.v("java.lang.Integer"))
+//                    val newAssignStmt = jimple.newAssignStmt(intLocal, jimple.newNewExpr(RefType.v("java.lang.Integer")))
+//                    val intAssignStmt = jimple.newAssignStmt(intLocal, IntConstant.v(randomArray[it]))
 //                    sootMethod.activeBody.locals.addFirst(intLocal)
 //                    sootMethod.activeBody.units.addFirst(intAssignStmt)
 //                    sootMethod.activeBody.units.addFirst(newAssignStmt)
 
-//                    val assignStmt = Jimple.v().newAssignStmt(arrayRef, intLocal)
-                    val assignStmt = Jimple.v().newAssignStmt(arrayRef, IntConstant.v(randomArray[it]))
+//                    val assignStmt = jimple.newAssignStmt(arrayRef, intLocal)
+                    val assignStmt = jimple.newAssignStmt(arrayRef, IntConstant.v(randomArray[it]))
                     sootMethod.activeBody.units.addFirst(assignStmt)
                 }
 
-                val arrayLocalAssignStmt = Jimple.v().newAssignStmt(
+                val arrayLocalAssignStmt = jimple.newAssignStmt(
                     arrayLocal,
-                    Jimple.v().newNewArrayExpr(
+                    jimple.newNewArrayExpr(
                         RefType.v("java.lang.Integer"), IntConstant.v(randomArray.size)
                     )
                 )
@@ -163,9 +142,9 @@ class JimpleGeneratorVisitor: ElementVisitor {
         }
 
         return if (refType!! == RefType.v("java.lang.String")) {
-            val stringLocal = Jimple.v().newLocal(localName!!, refType)
+            val stringLocal = jimple.newLocal(localName!!, refType)
             val randomStringConstant = generateRandomString()
-            val stringConstantAssignStmt = Jimple.v().newAssignStmt(stringLocal, StringConstant.v(randomStringConstant))
+            val stringConstantAssignStmt = jimple.newAssignStmt(stringLocal, StringConstant.v(randomStringConstant))
 
             sootMethod.activeBody.locals.addFirst(stringLocal)
             sootMethod.activeBody.units.addFirst(stringConstantAssignStmt)
@@ -180,8 +159,8 @@ class JimpleGeneratorVisitor: ElementVisitor {
         val localName = param.variable?.id
         val refType = param.variable?.refType
 
-        val local = Jimple.v().newLocal(localName!!, refType)
-        val newAssignStmt = Jimple.v().newAssignStmt(local, Jimple.v().newNewExpr(refType))
+        val local = jimple.newLocal(localName!!, refType)
+        val newAssignStmt = jimple.newAssignStmt(local, jimple.newNewExpr(refType))
         val constructorMethod = refType!!.sootClass.getMethod("void <init>(java.lang.String)")
 
         val constructorArgs = constructorMethod.parameterTypes.map {
@@ -192,8 +171,8 @@ class JimpleGeneratorVisitor: ElementVisitor {
             }
         }
 
-        val invokeStmt = Jimple.v().newInvokeStmt(
-            Jimple.v().newSpecialInvokeExpr(local, constructorMethod.makeRef(), constructorArgs)
+        val invokeStmt = jimple.newInvokeStmt(
+            jimple.newSpecialInvokeExpr(local, constructorMethod.makeRef(), constructorArgs)
         )
 
         sootMethod.activeBody.locals.addFirst(local)
@@ -203,40 +182,8 @@ class JimpleGeneratorVisitor: ElementVisitor {
         return local
     }
 
-    private fun createPrintlnStmt(message: String, sootMethod: SootMethod) {
-        val body = sootMethod.activeBody
-        val jimple = Jimple.v()
-
-        // Add message local
-        val messageLocal = jimple.newLocal("message", RefType.v("java.lang.String"))
-        body.locals.add(messageLocal)
-        val messageAssign = jimple.newAssignStmt(messageLocal, StringConstant.v(message))
-        body.units.add(messageAssign)
-
-        // Add local: java.io.printStream tmpRef
-        val tmpRef = jimple.newLocal("tmpRef", RefType.v("java.io.PrintStream"))
-        body.locals.add(tmpRef)
-
-        // Add `tmpRef = java.lang.System.out`,
-        // note that System.out is an instance of java.io.printStream, and it is a static field of java.lang.System
-        body.units.add(
-            jimple.newAssignStmt(
-                tmpRef,
-                jimple.newStaticFieldRef((
-                        Scene.v().getField("<java.lang.System: java.io.PrintStream out>").makeRef()
-                )
-        )))
-
-        // Add `tmpRef.println(message)`
-        val printStreamClass = Scene.v().getSootClass("java.io.PrintStream")
-        val printlnMethod = printStreamClass.getMethod("void println(java.lang.String)")
-        body.units.add(jimple.newInvokeStmt(
-            jimple.newVirtualInvokeExpr(tmpRef, printlnMethod.makeRef(), messageLocal)
-        ))
-    }
 
     private fun createInitMethod(sootClass: SootClass): SootMethod {
-        val jimple = Jimple.v()
 
         // Create a constructor method
         val constructorMethod = SootMethod("<init>", null, VoidType.v(), Modifier.PUBLIC)
@@ -270,7 +217,6 @@ class JimpleGeneratorVisitor: ElementVisitor {
             Modifier.PUBLIC or Modifier.STATIC
         )
 
-        val jimple = Jimple.v()
         val jimpleBody = jimple.newBody(mainMethod)
         mainMethod.activeBody = jimpleBody
         val locals = jimpleBody.locals
@@ -328,11 +274,4 @@ class JimpleGeneratorVisitor: ElementVisitor {
         return (0..len).map { Random.nextInt(lowerBound, upperBound) }.toTypedArray()
     }
 
-    override fun visit(element: TestCase) {
-        TODO("Not yet implemented")
-    }
-
-    override fun visit(element: Action) {
-        TODO("Not yet implemented")
-    }
 }

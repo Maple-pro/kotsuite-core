@@ -1,4 +1,4 @@
-package org.kotsuite.ga.chromosome.generator
+package org.kotsuite.ga.chromosome.generator.jimple
 
 import soot.SootClass
 import soot.SourceLocator

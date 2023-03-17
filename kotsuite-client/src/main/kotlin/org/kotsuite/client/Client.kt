@@ -3,8 +3,8 @@ package org.kotsuite.client
 import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.StrategyHelper
-import org.kotsuite.ga.chromosome.generator.JasminPrinter
-import org.kotsuite.ga.chromosome.generator.JimpleGenerator
+import org.kotsuite.ga.chromosome.generator.jimple.JasminPrinter
+import org.kotsuite.ga.chromosome.generator.jimple.JimpleGenerator
 import org.kotsuite.ga.coverage.CoverageGenerator
 import org.slf4j.LoggerFactory
 
@@ -40,9 +40,7 @@ class Client(private var exampleProjectDir: String,
 
         TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
         val testClasses = TestSuiteGenerator.generate()
-        val jimpleClasses = JimpleGenerator().generateJimple(testClasses)
-
-//        print(jimpleClasses[1].methods[30].activeBody)
+        val jimpleClasses = JimpleGenerator.generateClasses(testClasses)
 
         jimpleClasses.forEach {
             JasminPrinter(outputFileDir).printJasminFile(it)

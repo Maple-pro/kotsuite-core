@@ -5,9 +5,6 @@ import soot.SootClass
 import soot.SootMethod
 
 class Action(val actionType: ActionType): Element() {
-    override fun accept(visitor: ElementVisitor) {
-        visitor.visit(this)
-    }
 
     var variable = Variable("", null, null)
 

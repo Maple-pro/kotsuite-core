@@ -3,7 +3,7 @@ package org.kotsuite.ga.chromosome
 import org.kotsuite.ga.chromosome.type.ParameterType
 import soot.PrimType
 
-class Parameter(val parameterType: ParameterType) {
+class Parameter(val parameterType: ParameterType): Element() {
     // ParameterType.BUILTIN_TYPE
     var primType: PrimType? = null
     var valueIndex: Int = -1
