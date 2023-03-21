@@ -1,18 +1,19 @@
 package org.kotsuite.ga.mutation
 
 import org.kotsuite.ga.chromosome.*
+import org.kotsuite.ga.chromosome.action.Action
 import soot.SootClass
 
-class OperatorVisitor: ElementVisitor {
-    override fun visit(element: TestClass): SootClass {
+class OperatorVisitor{
+    fun visit(element: TestClass): SootClass {
         TODO("Not yet implemented")
     }
 
-    override fun visit(element: TestCase) {
+    fun visit(element: TestCase) {
         TODO("Not yet implemented")
     }
 
-    override fun visit(element: Action) {
+    fun visit(element: Action) {
         TODO("Not yet implemented")
     }
 }

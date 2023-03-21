@@ -23,26 +23,24 @@ object TestCaseGenerator {
 
         // Create this local
         val thisLocalsAndUnits = createThisLocal(sootClass)
+        body.locals.addAll(thisLocalsAndUnits.locals)
+        body.units.addAll(thisLocalsAndUnits.units)
 
         // Create `println` statement
         val printlnLocalsAndUnits = createPrintlnStmt(sootMethod.name)
+        body.locals.addAll(printlnLocalsAndUnits.locals)
+        body.units.addAll(printlnLocalsAndUnits.units)
 
         // Create statements
-        val actionLocalsAndUnits = testcase.actions
-            .map { ActionGenerator.generate(it) }
-            .reduce { sum, element ->
-                LocalsAndUnits(sum.locals + element.locals, sum.units + element.units)
-            }
+        testcase.actions.forEach {
+            val localsAndUnits = ActionGenerator.generate(it, testcase.values, sootMethod)
+            body.locals.addAll(localsAndUnits.locals)
+            body.units.addAll(localsAndUnits.units)
+        }
 
         // Create return statement
         val returnStmt = jimple.newReturnVoidStmt()
-
-        // Add locals and units to body
-        val locals = thisLocalsAndUnits.locals + printlnLocalsAndUnits.locals + actionLocalsAndUnits.locals
-        val units = thisLocalsAndUnits.units + printlnLocalsAndUnits.units + actionLocalsAndUnits.units + returnStmt
-
-        body.locals.addAll(locals)
-        body.units.addAll(units)
+        body.units.add(returnStmt)
 
         return sootMethod
     }
