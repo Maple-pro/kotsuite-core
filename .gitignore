@@ -20,3 +20,4 @@ gradle-app.setting
 # Other resources file
 /kotsuite-analyzer/src/test/targets-resources/generated/
 
+/example-projects/MyApplication/kotsuite/
