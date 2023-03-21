@@ -19,16 +19,16 @@
 <span class="fc" id="L19">            return &quot;Invalid triangle: type 1&quot;</span>
         }
 
-<span class="pc bpc" id="L22" title="3 of 6 branches missed.">        if ((side1 + side2 &lt;= side3) || (side1 + side3 &lt;= side2) || (side2 + side3 &lt;= side1)) {</span>
+<span class="pc bpc" id="L22" title="1 of 6 branches missed.">        if ((side1 + side2 &lt;= side3) || (side1 + side3 &lt;= side2) || (side2 + side3 &lt;= side1)) {</span>
 <span class="fc" id="L23">            return &quot;Invalid triangle: type2&quot;</span>
         }
 
-<span class="nc bnc" id="L26" title="All 8 branches missed.">        return if (side1 == side2 &amp;&amp; side2 == side3) {</span>
+<span class="pc bpc" id="L26" title="6 of 8 branches missed.">        return if (side1 == side2 &amp;&amp; side2 == side3) {</span>
 <span class="nc" id="L27">            &quot;Equilateral triangle&quot;</span>
-<span class="nc bnc" id="L28" title="All 12 branches missed.">        } else if (side1 == side2 || side1 == side3 || side2 == side3) {</span>
+<span class="pc bpc" id="L28" title="6 of 12 branches missed.">        } else if (side1 == side2 || side1 == side3 || side2 == side3) {</span>
 <span class="nc" id="L29">            &quot;Isosceles triangle&quot;</span>
         } else {
-<span class="nc" id="L31">            &quot;Scalene triangle&quot;</span>
+<span class="fc" id="L31">            &quot;Scalene triangle&quot;</span>
         }
     }
 
@@ -84,16 +84,16 @@
 
         // check seventh to ninth characters
         if (!input.substring(6, 9).matches(Regex(&quot;\\d{3}&quot;))) {
-<span class="fc bfc" id="L87" title="All 2 branches covered.">            return false</span>
-<span class="fc" id="L88">        }</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">            return false</span>
+<span class="nc" id="L88">        }</span>
 
         // check last character
         if (!input[9].isLetter()) {
-<span class="fc bfc" id="L92" title="All 2 branches covered.">            return false</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            return false</span>
 <span class="fc" id="L93">        }</span>
 
         return true
     }
-<span class="pc bpc" id="L97" title="1 of 2 branches missed."></span>
+<span class="nc bnc" id="L97" title="All 2 branches missed."></span>
 <span class="nc" id="L98">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

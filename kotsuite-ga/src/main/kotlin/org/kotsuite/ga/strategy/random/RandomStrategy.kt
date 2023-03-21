@@ -7,7 +7,7 @@ import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.Value
-import org.kotsuite.ga.utils.Utils
+import org.kotsuite.ga.utils.SootUtils
 import soot.*
 import kotlin.collections.ArrayList
 
@@ -52,7 +52,7 @@ object RandomStrategy: GAStrategy() {
     private fun generateConstructorAction(testCase: TestCase, targetClass: SootClass): ConstructorAction {
         val variableName = "${targetClass.shortName}_obj"
         val variable = Variable(variableName, targetClass.type)
-        val constructor = Utils.getConstructor(targetClass)
+        val constructor = SootUtils.getConstructor(targetClass)
 
         val constructorAction = ConstructorAction(variable, constructor, mutableListOf())
         dealActionParameters(testCase, constructorAction, constructor)

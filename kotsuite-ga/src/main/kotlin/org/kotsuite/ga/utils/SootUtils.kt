@@ -5,7 +5,7 @@ import soot.Local
 import soot.SootClass
 import soot.SootMethod
 
-object Utils {
+object SootUtils {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
 

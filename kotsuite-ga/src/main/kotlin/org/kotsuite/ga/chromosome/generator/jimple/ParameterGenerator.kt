@@ -2,7 +2,7 @@ package org.kotsuite.ga.chromosome.generator.jimple
 
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.Value
-import org.kotsuite.ga.utils.Utils
+import org.kotsuite.ga.utils.SootUtils
 import soot.SootMethod
 
 object ParameterGenerator {
@@ -18,7 +18,7 @@ object ParameterGenerator {
                 ValueGenerator.generate(values[parameter.valueIndex])
             }
             is RefTypeParameter -> {
-                Utils.getLocalByName(sootMethod, parameter.variable.localName)
+                SootUtils.getLocalByName(sootMethod, parameter.variable.localName)
             }
             else -> {
                 throw Exception("Unsupported")

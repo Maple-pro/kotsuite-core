@@ -4,7 +4,7 @@ import org.kotsuite.ga.chromosome.action.Action
 import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.value.Value
-import org.kotsuite.ga.utils.Utils
+import org.kotsuite.ga.utils.SootUtils
 import org.slf4j.LoggerFactory
 import soot.RefType
 import soot.SootMethod
@@ -49,7 +49,7 @@ object ActionGenerator {
     private fun generateMethodCallAction(
         action: MethodCallAction, args: List<soot.Value>, sootMethod: SootMethod
     ): LocalsAndUnits {
-        val obj = Utils.getLocalByName(sootMethod, action.variable.localName)
+        val obj = SootUtils.getLocalByName(sootMethod, action.variable.localName)
         val invokeStmt = jimple.newInvokeStmt(
             jimple.newVirtualInvokeExpr(obj, action.method.makeRef(), args)
         )

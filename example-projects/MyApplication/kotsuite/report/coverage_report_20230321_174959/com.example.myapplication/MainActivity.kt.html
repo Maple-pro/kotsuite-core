@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainActivity.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">com.example.myapplication</a> &gt; <span class="el_source">MainActivity.kt</span></div><h1>MainActivity.kt</h1><pre class="source lang-java linenums">package com.example.myapplication
+
+import android.os.Bundle
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import android.view.Menu
+import android.view.MenuItem
+import com.example.myapplication.databinding.ActivityMainBinding
+
+<span class="nc" id="L15">class MainActivity : AppCompatActivity() {</span>
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var binding: ActivityMainBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L21">        WindowCompat.setDecorFitsSystemWindows(window, false)</span>
+<span class="nc" id="L22">        super.onCreate(savedInstanceState)</span>
+
+<span class="nc" id="L24">        binding = ActivityMainBinding.inflate(layoutInflater)</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        setContentView(binding.root)</span>
+
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        setSupportActionBar(binding.toolbar)</span>
+
+<span class="nc" id="L29">        val navController = findNavController(R.id.nav_host_fragment_content_main)</span>
+<span class="nc" id="L30">        appBarConfiguration = AppBarConfiguration(navController.graph)</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        setupActionBarWithNavController(navController, appBarConfiguration)</span>
+
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        binding.fab.setOnClickListener { view -&gt;</span>
+<span class="nc" id="L34">            Snackbar.make(view, &quot;Replace with your own action&quot;, Snackbar.LENGTH_LONG)</span>
+<span class="nc" id="L35">                    .setAnchorView(R.id.fab)</span>
+<span class="nc" id="L36">                    .setAction(&quot;Action&quot;, null).show()</span>
+<span class="nc" id="L37">        }</span>
+<span class="nc" id="L38">    }</span>
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+<span class="nc" id="L42">        menuInflater.inflate(R.menu.menu_main, menu)</span>
+<span class="nc" id="L43">        return true</span>
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+<span class="nc" id="L50">        return when (item.itemId) {</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">            R.id.action_settings -&gt; true</span>
+<span class="nc" id="L52">            else -&gt; super.onOptionsItemSelected(item)</span>
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+<span class="nc" id="L57">        val navController = findNavController(R.id.nav_host_fragment_content_main)</span>
+<span class="nc bnc" id="L58" title="All 4 branches missed.">        return navController.navigateUp(appBarConfiguration)</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                || super.onSupportNavigateUp()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
