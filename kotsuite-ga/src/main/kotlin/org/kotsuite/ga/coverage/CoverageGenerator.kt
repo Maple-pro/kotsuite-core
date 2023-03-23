@@ -2,20 +2,16 @@ package org.kotsuite.ga.coverage
 
 import org.kotsuite.ga.utils.LoggerUtils
 import org.slf4j.LoggerFactory
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.sql.Timestamp
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class CoverageGenerator(
     private val sourceCodePath: String,
     private val classesFilePath: String,
     private val sootOutputPath: String,
-    outputPath: String,
+    private val outputPath: String,
     private val mainClass: String,
     private val includeFiles: String,
 ) {
@@ -42,6 +38,8 @@ class CoverageGenerator(
 
     private fun generateJarFile() {
         log.info("Package class files into .jar file: $jarPath")
+
+        Files.createDirectory(Paths.get("$outputPath/jar/"))
 
         // Run command `jar -cvf jarPath -C sootOutputPath .`
         val args = arrayOf("jar", "-cvf", jarPath, "-C", sootOutputPath, ".")
