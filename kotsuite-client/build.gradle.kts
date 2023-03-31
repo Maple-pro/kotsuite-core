@@ -20,6 +20,8 @@ dependencies {
 
     implementation("org.slf4j:slf4j-api:2.0.6")
     testImplementation("org.slf4j:slf4j-simple:2.0.6")
+
+    implementation("commons-cli:commons-cli:1.5.0")
 }
 
 tasks.getByName<Test>("test") {

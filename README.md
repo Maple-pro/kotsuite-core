@@ -39,3 +39,13 @@ java -jar ./lib/jacococli.jar report ./example-projects/MyApplication/sootOutput
 2. Run cmd command to package a jar file
 3. Generate .exec file
 4. Run cmd command to generate HTML report
+
+## How to use `kotsuite-1.0-SNAPSHOT.jar`
+
+```bash
+java -cp "./build/libs/kotsuite-1.0-SNAPSHOT.jar;./libs/*" org.kotsuite.client.MainKt --project ".\example-projects\MyApplication" --includes "com.example.myapplication.Example&com.example.myapplication.Callee" --strategy "random" --libs "./libs/"
+```
+
+```bash
+java -jar "./build/libs/kotsuite-1.0-SNAPSHOT.jar" --project ".\example-projects\MyApplication" --includes "com.example.myapplication.Example&com.example.myapplication.Callee" --strategy "random" --libs "./libs/"
+```
