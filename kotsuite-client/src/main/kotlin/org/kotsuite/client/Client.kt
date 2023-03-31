@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
  */
 class Client(private var exampleProjectDir: String,
              private val classesOrPackagesToAnalyze: List<String>,
+             private val libsPath: String,
              private val gaStrategy: String) {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
@@ -53,6 +54,7 @@ class Client(private var exampleProjectDir: String,
             "$exampleProjectDir/kotsuite/",
             "ExampleTest",
             "*",
+            libsPath,
         )
         coverageGenerator.generate()
     }

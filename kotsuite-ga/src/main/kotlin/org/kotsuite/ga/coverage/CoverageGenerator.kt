@@ -14,13 +14,14 @@ class CoverageGenerator(
     private val outputPath: String,
     private val mainClass: String,
     private val includeFiles: String,
+    private val libsPath: String,
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    private val jacocoAgentPath = "../lib/jacocoagent.jar"
-    private val jacocoCliPath = "../lib/jacococli.jar"
-    private val kotlinRunTimePath = "../lib/kotlin-runtime-1.2.71.jar"
-    private val kotlinStdLibPath = "../lib/kotlin-stdlib-1.8.10.jar"
+    private val jacocoAgentPath = "$libsPath/jacocoagent.jar"
+    private val jacocoCliPath = "$libsPath/jacococli.jar"
+    private val kotlinRunTimePath = "$libsPath/kotlin-runtime-1.2.71.jar"
+    private val kotlinStdLibPath = "$libsPath/kotlin-stdlib-1.8.10.jar"
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
     private val timestamp = LocalDateTime.now().format(timeFormatter)
@@ -39,7 +40,7 @@ class CoverageGenerator(
     private fun generateJarFile() {
         log.info("Package class files into .jar file: $jarPath")
 
-        Files.createDirectory(Paths.get("$outputPath/jar/"))
+        Files.createDirectories(Paths.get("$outputPath/jar/"))
 
         // Run command `jar -cvf jarPath -C sootOutputPath .`
         val args = arrayOf("jar", "-cvf", jarPath, "-C", sootOutputPath, ".")

@@ -12,8 +12,9 @@ fun main(args: Array<String>) {
     log.info("===Start main function===")
     val exampleProjectDir = args[0]
     val classesOrPackagesToAnalyze = args[1].split('&')
-    val gaStrategy = args[2]
-    val client = Client(exampleProjectDir, classesOrPackagesToAnalyze, gaStrategy)
+    val libsPath = args[2]
+    val gaStrategy = args[3]
+    val client = Client(exampleProjectDir, classesOrPackagesToAnalyze, libsPath, gaStrategy)
     client.analyze()
     client.generateTestSuite()
 }
