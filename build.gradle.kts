@@ -77,6 +77,10 @@ tasks.jar {
                 .map {
                     if (it.isDirectory) it else zipTree(it)
                 }
+            project(":$project").configurations.testCompileClasspath.get()
+                .map {
+                    if (it.isDirectory) it else zipTree(it)
+                }
         }
     )
 
