@@ -2,6 +2,7 @@ package org.kotsuite.ga.coverage
 
 import org.kotsuite.ga.utils.LoggerUtils
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -14,7 +15,7 @@ class CoverageGenerator(
     private val outputPath: String,
     private val mainClass: String,
     private val includeFiles: String,
-    private val libsPath: String,
+    libsPath: String,
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -31,10 +32,21 @@ class CoverageGenerator(
     private val coverageReportPath = "$outputPath/report/coverage_report_$timestamp/"
 
     fun generate() {
+        clearDirectory()
+        copyClassFile()
         generateJarFile()
         generateExecFile()
         getCoverageInfo()
         generateHTMLReport()
+    }
+
+    private fun clearDirectory() {
+//        File(sootOutputPath).deleteRecursively()
+        File("$outputPath/jar").deleteRecursively()
+    }
+
+    private fun copyClassFile() {
+        File(classesFilePath).copyRecursively(File(sootOutputPath), true)
     }
 
     private fun generateJarFile() {

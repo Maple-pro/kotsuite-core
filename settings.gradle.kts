@@ -1,4 +1,4 @@
-rootProject.name = "kotsuite"
+rootProject.name = "kotsuite-core"
 
 include("kotsuite-client")
 include("kotsuite-analyzer")

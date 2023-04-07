@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.maples"
+group = "org.kotsuite"
 version = "1.0-SNAPSHOT"
 
 repositories {

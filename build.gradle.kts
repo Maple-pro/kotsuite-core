@@ -14,9 +14,10 @@ val mergedJar by configurations.creating<Configuration> {
 plugins {
     kotlin("jvm") version "1.8.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    `maven-publish`
 }
 
-group = "com.maples"
+group = "org.kotsuite"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -46,13 +47,36 @@ tasks.jar {
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
+    manifest {
+        attributes["Manifest-Version"] = "1.0"
+        attributes["Main-Class"] = "org.kotsuite.client.MainKt"
+//        attributes["Class-Path"] = "libs/"
+    }
+
+    from({
+        mergedJar.filter {
+            it.name.endsWith("jar") && it.path.contains(rootDir.path)
+        }.map {
+            logger.lifecycle("depending on $it")
+            zipTree(it)
+        }
+    })
+}
+
+tasks.register("fatJar", Jar::class.java) {
+    archiveBaseName.set("kotsuite-core-fat")
+
+    dependsOn(mergedJar)
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     val kotlinRuntime = setOf("kotlin-stdlib-1.8.10.jar", "kotlin-stdlib-1.8.10.jar")
     val subprojects = setOf("kotsuite-client", "kotsuite-analyzer", "kotsuite-ga", "kotsuite-reuse")
 
     manifest {
         attributes["Manifest-Version"] = "1.0"
         attributes["Main-Class"] = "org.kotsuite.client.MainKt"
-        attributes["Class-Path"] = "libs/"
+//        attributes["Class-Path"] = "libs/"
     }
 
     from({
@@ -83,10 +107,6 @@ tasks.jar {
                 }
         }
     )
-
-//    from(
-//        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-//    )
 }
 
 tasks.shadowJar {
@@ -114,4 +134,42 @@ tasks.shadowJar {
 //    configurations.forEach { configuration ->
 //        from(configuration)
 //    }
+}
+
+publishing {
+
+    repositories {
+        maven {
+            name = "localRepo"
+            url = uri("$buildDir/repo")
+        }
+    }
+
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
+}
+
+subprojects {
+    apply(plugin = "maven-publish")
+
+    publishing {
+        repositories {
+            maven {
+                name = "localRepo"
+                url = uri("$buildDir/repo")
+            }
+        }
+
+        publications {
+            create<MavenPublication>("maven") {
+//                from(components["java"])
+                afterEvaluate {
+                    artifactId = tasks.jar.get().archiveBaseName.get()
+                }
+            }
+        }
+    }
 }

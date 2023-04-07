@@ -7,6 +7,8 @@ import org.kotsuite.ga.chromosome.printer.JasminPrinter
 import org.kotsuite.ga.chromosome.generator.jimple.JimpleGenerator
 import org.kotsuite.ga.coverage.CoverageGenerator
 import org.slf4j.LoggerFactory
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * This class represents a KotSuite client.
@@ -38,6 +40,9 @@ class Client(private var exampleProjectDir: String,
 
 //        val outputFileDir = "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/"
         val outputFileDir = exampleProjectDir
+
+        Files.createDirectories(Paths.get("$exampleProjectDir/kotsuite"))
+        Files.createDirectories(Paths.get("$exampleProjectDir/sootOutput"))
 
         TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
         val testClasses = TestSuiteGenerator.generate()
