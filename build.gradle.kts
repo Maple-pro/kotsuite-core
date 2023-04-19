@@ -64,7 +64,7 @@ tasks.jar {
 }
 
 tasks.register("fatJar", Jar::class.java) {
-    archiveBaseName.set("kotsuite-core-fat")
+    archiveBaseName.set("fat-kotsuite-core")
 
     dependsOn(mergedJar)
 

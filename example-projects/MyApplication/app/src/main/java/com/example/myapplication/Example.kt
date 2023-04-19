@@ -34,7 +34,7 @@ class Example {
 
     fun isValidISBN(input: String): Boolean {
         // Check if input is null or empty
-        if (input.isNullOrEmpty()) {
+        if (input.isEmpty()) {
             return false
         }
 
