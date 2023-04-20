@@ -2,28 +2,33 @@ package org.kotsuite.ga.strategy.standard
 
 import org.kotsuite.ga.GAStrategy
 import org.kotsuite.ga.chromosome.TestCase
+import org.kotsuite.ga.coverage.fitness.TestCaseFitness
 import org.kotsuite.ga.strategy.random.RandomStrategy
 import soot.SootMethod
 
 /**
  * testCaseGeneration(classUnderTest: Class)
- * 1 targetsToCover = targets(classUnderTest)
- * 2 curPopulation = generateRandomPopulation(popSize)
- * 3 while targetsToCover != null and executionTime() < maxExecutionTime
- * 4    t = selectTarget(targetsToCover), attempts = 0
- * 5 	while not covered(t) and attempts < maxAttempts
- * 6 		execute test cases in curPopulation
- * 7 		update targetsToCover
- * 8 		if covered(t) break
- * 9 		compute fitness_t for test cases in curPopulation
- * 10 		extract newPopulation from curPopulation according to fitness_t
- * 11 		mutate newPopulation
- * 12 		curPopulation = newPopulation
- * 13 		attempts = attempts +1
- * 14 	end while
- * 15 end while
+ * ```
+ * targetsToCover = targets(classUnderTest)
+ * curPopulation = generateRandomPopulation(popSize)
+ * while targetsToCover != null and executionTime() < maxExecutionTime
+ *     t = selectTarget(targetsToCover), attempts = 0
+ *     while not covered(t) and attempts < maxAttempts
+ *         execute test cases in curPopulation
+ *         update targetsToCover
+ *         if covered(t) break
+ *         compute fitness_t for test cases in curPopulation
+ *         extract newPopulation from curPopulation according to fitness_t
+ * 	       mutate newPopulation
+ * 	       curPopulation = newPopulation
+ * 	       attempts = attempts +1
+ *     end while
+ * end while
+ * ```
  */
-object StandardGAStrategy: GAStrategy() {
+class StandardGAStrategy(
+    private val maxAttempt: Int,
+): GAStrategy() {
 
     /**
      * Steps:
@@ -46,11 +51,39 @@ object StandardGAStrategy: GAStrategy() {
      * - Mutate newPopulation to get curPopulation
      */
     override fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase> {
+        var curPopulation = RandomStrategy.generateTestCasesForMethod(targetMethod)
+        var attempt = 0
 
-        TODO("Not yet implemented")
+        while (attempt <= maxAttempt) {
+            // 1. get coverage info
+            curPopulation.forEach { TestCaseFitness.generateTestCaseFitness(it) }
+
+            // 2. meet the coverage criteria ? output : continue
+            val isCoverTargets = isCoverTargets(curPopulation)
+            if (isCoverTargets) break
+
+            // 3. selection
+            val newPopulation = selectNewPopulation(curPopulation)
+
+            // 4. mutate
+            curPopulation = mutatePopulation(newPopulation)
+
+            attempt++
+        }
+
+        return curPopulation
     }
 
-    fun generateTestCaseForMethod(targetMethod: SootMethod, testCaseName: String): TestCase {
-        TODO("Not yet implemented")
+    private fun isCoverTargets(population: List<TestCase>): Boolean {
+        TODO()
     }
+
+    private fun selectNewPopulation(curPopulation: List<TestCase>): List<TestCase> {
+        TODO()
+    }
+
+    private fun mutatePopulation(population: List<TestCase>): List<TestCase> {
+        TODO()
+    }
+
 }

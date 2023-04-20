@@ -7,7 +7,7 @@ object StrategyHelper {
     fun getGAStrategy(strategy: String): GAStrategy {
         return when (strategy) {
             "random" -> RandomStrategy
-            "ga" -> StandardGAStrategy
+            "ga" -> StandardGAStrategy(50)
             else -> RandomStrategy
         }
     }

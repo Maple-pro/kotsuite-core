@@ -9,7 +9,8 @@ class MainTest {
         // Use '&' to joint multiple classes or packages
         val classesOrPackagesToAnalyze = "com.example.myapplication.Example&com.example.myapplication.Callee"
         val libsPath = "../libs"
-        val gaStrategy = "random"
+//        val gaStrategy = "random"
+        val gaStrategy = "ga"
 
         val args = arrayOf(
             "--project", myApplicationPath,

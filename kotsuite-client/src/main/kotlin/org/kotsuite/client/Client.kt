@@ -38,7 +38,6 @@ class Client(private var exampleProjectDir: String,
     fun generateTestSuite() {
         log.info("[Generate Phase]")
 
-//        val outputFileDir = "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/"
         val outputFileDir = exampleProjectDir
 
         Files.createDirectories(Paths.get("$exampleProjectDir/kotsuite"))
