@@ -2,9 +2,13 @@ package org.kotsuite.ga.strategy.standard
 
 import org.kotsuite.ga.GAStrategy
 import org.kotsuite.ga.chromosome.TestCase
+import org.kotsuite.ga.coverage.fitness.Fitness
 import org.kotsuite.ga.coverage.fitness.TestCaseFitness
+import org.kotsuite.ga.coverage.fitness.TestSuiteFitness
 import org.kotsuite.ga.strategy.random.RandomStrategy
 import soot.SootMethod
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * testCaseGeneration(classUnderTest: Class)
@@ -29,6 +33,12 @@ import soot.SootMethod
 class StandardGAStrategy(
     private val maxAttempt: Int,
 ): GAStrategy() {
+
+    private val populationOutputPath = "$projectDir/kotsuite/population"
+
+    init {
+        Files.createDirectories(Paths.get(populationOutputPath))
+    }
 
     /**
      * Steps:
@@ -55,17 +65,22 @@ class StandardGAStrategy(
         var attempt = 0
 
         while (attempt <= maxAttempt) {
-            // 1. get coverage info
-            curPopulation.forEach { TestCaseFitness.generateTestCaseFitness(it) }
+            // 1. get test suite coverage info
+            val fitnessValue = TestSuiteFitness.generateTestSuiteFitness(curPopulation)
 
             // 2. meet the coverage criteria ? output : continue
-            val isCoverTargets = isCoverTargets(curPopulation)
+            val isCoverTargets = isCoverTargets(fitnessValue)
             if (isCoverTargets) break
 
-            // 3. selection
+            // 3. get coverage info
+            curPopulation.forEach {
+                TestCaseFitness.generateTestCaseFitness(it, targetMethod, populationOutputPath, classesFilePath)
+            }
+
+            // 4. selection
             val newPopulation = selectNewPopulation(curPopulation)
 
-            // 4. mutate
+            // 5. mutate
             curPopulation = mutatePopulation(newPopulation)
 
             attempt++
@@ -74,7 +89,7 @@ class StandardGAStrategy(
         return curPopulation
     }
 
-    private fun isCoverTargets(population: List<TestCase>): Boolean {
+    private fun isCoverTargets(fitnessValue: Fitness): Boolean {
         TODO()
     }
 

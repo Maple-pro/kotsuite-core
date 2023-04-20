@@ -7,6 +7,9 @@ import soot.SootClass
 import soot.SootMethod
 
 abstract class GAStrategy {
+    var projectDir: String = ""
+    var classesFilePath: String = ""
+
     open fun generateTestSuite(): List<TestClass> {
         val testClasses = ArrayList<TestClass>()
         for (sootClass in Analyzer.classes) {

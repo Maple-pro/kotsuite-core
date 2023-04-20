@@ -38,12 +38,22 @@ class Client(private var exampleProjectDir: String,
     fun generateTestSuite() {
         log.info("[Generate Phase]")
 
+        val sourceCodePath = "$exampleProjectDir/app/src/main/java/"
+        val classesFilePath = "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/"
+        val sootOutputPath = "$exampleProjectDir/sootOutput/"
+        val outputPath = "$exampleProjectDir/kotsuite/"
+        val mainClass = "ExampleTest"
+        val includeFiles = "*"
+
         val outputFileDir = exampleProjectDir
 
-        Files.createDirectories(Paths.get("$exampleProjectDir/kotsuite"))
-        Files.createDirectories(Paths.get("$exampleProjectDir/sootOutput"))
+        Files.createDirectories(Paths.get(sootOutputPath))
+        Files.createDirectories(Paths.get(outputPath))
 
         TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
+        TestSuiteGenerator.gaStrategy.projectDir = exampleProjectDir
+        TestSuiteGenerator.gaStrategy.classesFilePath = classesFilePath
+
         val testClasses = TestSuiteGenerator.generate()
         val jimpleClasses = JimpleGenerator.generateClasses(testClasses)
 
@@ -52,12 +62,12 @@ class Client(private var exampleProjectDir: String,
         }
 
         val coverageGenerator = CoverageGenerator(
-            "$exampleProjectDir/app/src/main/java/",
-            "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/",
-            "$exampleProjectDir/sootOutput/",
-            "$exampleProjectDir/kotsuite/",
-            "ExampleTest",
-            "*",
+            sourceCodePath,
+            classesFilePath,
+            sootOutputPath,
+            outputPath,
+            mainClass,
+            includeFiles,
             libsPath,
         )
         coverageGenerator.generate()
