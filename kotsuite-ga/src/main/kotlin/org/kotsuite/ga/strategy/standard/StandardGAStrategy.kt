@@ -2,6 +2,7 @@ package org.kotsuite.ga.strategy.standard
 
 import org.kotsuite.ga.GAStrategy
 import org.kotsuite.ga.chromosome.TestCase
+import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.coverage.fitness.Fitness
 import org.kotsuite.ga.coverage.fitness.TestCaseFitness
 import org.kotsuite.ga.coverage.fitness.TestSuiteFitness
@@ -32,6 +33,8 @@ import java.nio.file.Paths
  */
 class StandardGAStrategy(
     private val maxAttempt: Int,
+    private val projectDir: String,
+    private val classesFilePath: String,
 ): GAStrategy() {
 
     private val populationOutputPath = "$projectDir/kotsuite/population"

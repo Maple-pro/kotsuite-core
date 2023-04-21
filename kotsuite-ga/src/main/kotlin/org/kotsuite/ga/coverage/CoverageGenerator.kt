@@ -65,9 +65,16 @@ class CoverageGenerator(
         log.info("Execution data path: $executionDataPath")
 
         val vmOption = "-javaagent:$jacocoAgentPath=includes=$includeFiles,excludes=CalleeTest,destfile=$executionDataPath,output=file"
-        val runtimeJars = "$jarPath;$kotlinRunTimePath;$kotlinStdLibPath"
+
+        val isLinux = System.getProperty("os.name") == "Linux"
+
+        val runtimeJars =
+            if (isLinux) "$jarPath:$kotlinRunTimePath:$kotlinStdLibPath"
+            else "$jarPath:$kotlinRunTimePath:$kotlinStdLibPath"
+
         val args = arrayOf("java", vmOption, "-cp", runtimeJars, mainClass)
         try {
+            log.info("Run command: ${args.joinToString(" ")}")
             val ps = Runtime.getRuntime().exec(args)
             LoggerUtils.logCommandOutput(log, ps)
             ps.waitFor()

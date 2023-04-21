@@ -50,9 +50,7 @@ class Client(private var exampleProjectDir: String,
         Files.createDirectories(Paths.get(sootOutputPath))
         Files.createDirectories(Paths.get(outputPath))
 
-        TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
-        TestSuiteGenerator.gaStrategy.projectDir = exampleProjectDir
-        TestSuiteGenerator.gaStrategy.classesFilePath = classesFilePath
+        TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy, exampleProjectDir, classesFilePath)
 
         val testClasses = TestSuiteGenerator.generate()
         val jimpleClasses = JimpleGenerator.generateClasses(testClasses)
