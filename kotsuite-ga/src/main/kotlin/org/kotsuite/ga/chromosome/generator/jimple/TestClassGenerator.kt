@@ -16,6 +16,7 @@ object TestClassGenerator {
 
     private val jimple = Jimple.v()
 
+    // TODO: to junit class
     fun generate(element: TestClass): SootClass {
         // Resolve dependencies
         Scene.v().loadClassAndSupport("java.lang.Object")
@@ -38,11 +39,11 @@ object TestClassGenerator {
         methods.forEach { sootClass.addMethod(it) }
 
         // Create main method
-        val mainMethod: SootMethod?
-        if (element.testClassName == "ExampleTest") {
-            mainMethod = createMainMethod(sootMethods)
-            sootClass.addMethod(mainMethod)
-        }
+//        val mainMethod: SootMethod?
+//        if (element.testClassName == "ExampleTest") {
+//            mainMethod = createMainMethod(sootMethods)
+//            sootClass.addMethod(mainMethod)
+//        }
 
         return sootClass
     }
@@ -73,7 +74,7 @@ object TestClassGenerator {
         return constructorMethod
     }
 
-    private fun createMainMethod(targetMethods: List<SootMethod>): SootMethod {
+    fun createMainMethod(targetMethods: List<SootMethod>): SootMethod {
         val argsParameterType = ArrayType.v(RefType.v("java.lang.String"), 1)
         val mainMethod = SootMethod("main",
             listOf(argsParameterType),

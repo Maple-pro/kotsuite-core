@@ -5,6 +5,7 @@ import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.StrategyHelper
 import org.kotsuite.ga.chromosome.printer.JasminPrinter
 import org.kotsuite.ga.chromosome.generator.jimple.JimpleGenerator
+import org.kotsuite.ga.chromosome.printer.JavaPrinter
 import org.kotsuite.ga.coverage.CoverageGenerator
 import org.slf4j.LoggerFactory
 import java.nio.file.Files
@@ -42,7 +43,7 @@ class Client(private var exampleProjectDir: String,
         val classesFilePath = "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/"
         val sootOutputPath = "$exampleProjectDir/sootOutput/"
         val outputPath = "$exampleProjectDir/kotsuite/"
-        val mainClass = "ExampleTest"
+        val mainClass = "KotMain"
         val includeFiles = "*"
 
         val outputFileDir = exampleProjectDir
@@ -58,6 +59,10 @@ class Client(private var exampleProjectDir: String,
         jimpleClasses.forEach {
             JasminPrinter(outputFileDir).printJasminFile(it)
         }
+
+//        jimpleClasses.forEach {
+//            JavaPrinter("$exampleProjectDir/kotsuite/src").printJavaFile(it)
+//        }
 
         val coverageGenerator = CoverageGenerator(
             sourceCodePath,
