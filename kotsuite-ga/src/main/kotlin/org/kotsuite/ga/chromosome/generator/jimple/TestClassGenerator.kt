@@ -22,7 +22,7 @@ object TestClassGenerator {
         Scene.v().loadClassAndSupport("java.lang.Object")
 
         // Declare 'public class $element.testClassName'
-        val sootClass = SootClass(element.testClassName, Modifier.PUBLIC)
+        val sootClass = SootClass("${element.packageName}.${element.testClassName}", Modifier.PUBLIC)
 
         // extends Object
         sootClass.superclass = Scene.v().getSootClass("java.lang.Object")
@@ -37,13 +37,6 @@ object TestClassGenerator {
         // Add methods to class
         val methods = listOf(initMethod) + sootMethods
         methods.forEach { sootClass.addMethod(it) }
-
-        // Create main method
-//        val mainMethod: SootMethod?
-//        if (element.testClassName == "ExampleTest") {
-//            mainMethod = createMainMethod(sootMethods)
-//            sootClass.addMethod(mainMethod)
-//        }
 
         return sootClass
     }
@@ -74,48 +67,5 @@ object TestClassGenerator {
         return constructorMethod
     }
 
-    fun createMainMethod(targetMethods: List<SootMethod>): SootMethod {
-        val argsParameterType = ArrayType.v(RefType.v("java.lang.String"), 1)
-        val mainMethod = SootMethod("main",
-            listOf(argsParameterType),
-            VoidType.v(),
-            Modifier.PUBLIC or Modifier.STATIC
-        )
-
-        val jimpleBody = jimple.newBody(mainMethod)
-        mainMethod.activeBody = jimpleBody
-        val locals = jimpleBody.locals
-        val units = jimpleBody.units
-
-        val argsParameter = jimple.newLocal("args", argsParameterType)
-        locals.add(argsParameter)
-        units.add(jimple.newIdentityStmt(argsParameter, jimple.newParameterRef(argsParameterType, 0)))
-
-        val targetClassType = RefType.v(targetMethods.first().declaringClass)
-        val allocatedTargetObj = jimple.newLocal("dummyObj", targetClassType)
-        locals.add(allocatedTargetObj)
-        units.add(jimple.newAssignStmt(allocatedTargetObj, jimple.newNewExpr(targetClassType)))
-
-        val constructorMethod = targetClassType.sootClass.getMethod("void <init>()")
-        val constructorArgs = Collections.nCopies(constructorMethod.parameterCount, NullConstant.v())
-        units.add(
-            jimple.newInvokeStmt(
-                jimple.newSpecialInvokeExpr(allocatedTargetObj, constructorMethod.makeRef(), constructorArgs)
-            )
-        )
-
-        targetMethods.forEach {
-            val targetMethodArgs = Collections.nCopies(it.parameterCount, NullConstant.v())
-            units.add(
-                jimple.newInvokeStmt(
-                    jimple.newVirtualInvokeExpr(allocatedTargetObj, it.makeRef(), targetMethodArgs)
-                )
-            )
-        }
-
-        units.add(jimple.newReturnVoidStmt())
-
-        return mainMethod
-    }
 
 }

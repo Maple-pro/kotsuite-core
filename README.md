@@ -26,7 +26,9 @@ jar -cvf ../kotsuite/MyApplication.jar *.class com/
 
 # 2. Run the generated .jar file to validate
 cd example-projects/MyApplication/sootOutput
-java -cp "./example-projects/MyApplication/kotsuite/MyApplication.jar;./lib/kotlin-runtime-1.2.71.jar" ExampleTest
+java -cp "./example-projects/MyApplication/kotsuite/MyApplication.jar;./libs/kotlin-runtime-1.2.71.jar" ExampleTest
+java -cp "./example-projects/MyApplication/sootOutput:./libs/kotlin-runtime-1.2.71.jar:./libs/kotlin-stdlib-1.8.10.jar" KotMain
+
 
 # 3. Generate .exec file
 java -javaagent:./lib/jacocoagent.jar=includes=*,destfile=./example-projects/MyApplication/sootOutput/report/jacoco-MyApplication.exec,output=file -cp ./example-projects/MyApplication/kotsuite/MyApplication.jar ExampleTest

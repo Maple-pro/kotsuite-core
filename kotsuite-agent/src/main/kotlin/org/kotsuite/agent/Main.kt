@@ -7,6 +7,8 @@ class Main {
         @JvmStatic
         fun premain(agentArgs: String?, inst: Instrumentation) {
             println("premain: Agent Started.")
+
+            inst.addTransformer(ClassCalleeTransformer())
         }
 
         @JvmStatic

@@ -1,6 +1,8 @@
 package org.kotsuite.client
 
 import org.kotsuite.analysis.Analyzer
+import org.kotsuite.ga.Configs
+import org.kotsuite.ga.Configs.outputPath
 import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.StrategyHelper
 import org.kotsuite.ga.chromosome.printer.JasminPrinter
@@ -8,6 +10,7 @@ import org.kotsuite.ga.chromosome.generator.jimple.JimpleGenerator
 import org.kotsuite.ga.chromosome.printer.JavaPrinter
 import org.kotsuite.ga.coverage.CoverageGenerator
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -25,55 +28,48 @@ class Client(private var exampleProjectDir: String,
      * Analysis the given bytecode using soot.
      */
     fun analyze() {
-        log.info("[Analysis Phase]")
+        log.info("==========[Analysis Phase]==========")
 
         Analyzer.exampleProjectDir = exampleProjectDir
         Analyzer.classesOrPackagesToAnalyze = classesOrPackagesToAnalyze
         Analyzer.analyze()
-
     }
 
     /**
      * Generate test suite for the give bytecode.
      */
     fun generateTestSuite() {
-        log.info("[Generate Phase]")
+        log.info("==========[Generate Phase]==========")
 
-        val sourceCodePath = "$exampleProjectDir/app/src/main/java/"
-        val classesFilePath = "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/"
-        val sootOutputPath = "$exampleProjectDir/sootOutput/"
-        val outputPath = "$exampleProjectDir/kotsuite/"
-        val mainClass = "KotMain"
-        val includeFiles = "*"
+        Configs.exampleProjectPath = exampleProjectDir
+        Configs.sourceCodePath = "$exampleProjectDir/app/src/main/java/"
+        Configs.classesFilePath = "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/"
+        Configs.sootOutputPath = "$exampleProjectDir/sootOutput/"
+        Configs.outputPath = "$exampleProjectDir/kotsuite/"
+        Configs.mainClass = "KotMain"
+        Configs.includeFiles = "*"
+        Configs.libsPath = libsPath
 
-        val outputFileDir = exampleProjectDir
+        Files.createDirectories(Paths.get(Configs.sootOutputPath))
+        Files.createDirectories(Paths.get(Configs.outputPath))
 
-        Files.createDirectories(Paths.get(sootOutputPath))
-        Files.createDirectories(Paths.get(outputPath))
+        // Copy class files into sootOutput/ directory
+        File(Configs.classesFilePath).copyRecursively(File(Configs.sootOutputPath), true)
 
-        TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy, exampleProjectDir, classesFilePath)
+        TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
 
         val testClasses = TestSuiteGenerator.generate()
         val jimpleClasses = JimpleGenerator.generateClasses(testClasses)
 
         jimpleClasses.forEach {
-            JasminPrinter(outputFileDir).printJasminFile(it)
+            JasminPrinter.printJasminFile(it)
         }
 
 //        jimpleClasses.forEach {
 //            JavaPrinter("$exampleProjectDir/kotsuite/src").printJavaFile(it)
 //        }
 
-        val coverageGenerator = CoverageGenerator(
-            sourceCodePath,
-            classesFilePath,
-            sootOutputPath,
-            outputPath,
-            mainClass,
-            includeFiles,
-            libsPath,
-        )
-        coverageGenerator.generate()
+        jimpleClasses.forEach { CoverageGenerator.generate(it.methods) }
     }
 
     /**

@@ -1,12 +1,18 @@
 package org.kotsuite.ga.chromosome.printer
 
+import org.kotsuite.ga.Configs
 import soot.SootClass
 import soot.SourceLocator
 import soot.baf.BafASMBackend
 import soot.options.Options
 import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
-class JasminPrinter(private val outputFileDir: String) {
+object JasminPrinter {
+
+    private val outputFileDir = Configs.exampleProjectPath
 
     fun printJasminFile(sootClass: SootClass) {
         val javaVersion = Options.v().java_version()
@@ -20,6 +26,10 @@ class JasminPrinter(private val outputFileDir: String) {
 //        jasminClass.print(writeOut)
 //        writeOut.flush()
 //        streamOut.close()
+
+        val lastIndex = finalDir.lastIndexOf("/")
+        val directoryPath = finalDir.substring(0, lastIndex + 1)
+        Files.createDirectories(Paths.get(directoryPath))
 
         // use asm backend
         val streamOut = FileOutputStream(finalDir)

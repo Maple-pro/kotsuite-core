@@ -9,13 +9,18 @@ import soot.VoidType
 import soot.jimple.Jimple
 import soot.jimple.StringConstant
 import soot.jimple.internal.JimpleLocal
+import soot.tagkit.AnnotationTag
 
 object TestCaseGenerator {
 
     private val jimple = Jimple.v()
 
+    // TODO: to junit methods
     fun generate(testcase: TestCase, sootClass: SootClass): SootMethod {
         val sootMethod = SootMethod(testcase.testCaseName, null, VoidType.v())
+
+        val junitTestAnnotation = AnnotationTag("org.junit.Test")
+        sootMethod.addTag(junitTestAnnotation)
 
         // Create the method body
         val body = jimple.newBody(sootMethod)
