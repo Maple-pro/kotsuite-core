@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "org.kotsuite"
-version = "1.0-SNAPSHOT"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
@@ -64,7 +64,7 @@ tasks.jar {
 }
 
 tasks.register("fatJar", Jar::class.java) {
-    archiveBaseName.set("fat-kotsuite-core")
+    archiveBaseName.set("kotsuite-core-fat")
 
     dependsOn(mergedJar)
 

@@ -21,3 +21,7 @@ gradle-app.setting
 /kotsuite-analyzer/src/test/targets-resources/generated/
 
 /example-projects/MyApplication/kotsuite/
+/example-projects/MyApplication/sootOutput/
+/example-projects/MyApplication/app/kotsuite/
+/example-projects/MyApplication/app/sootOutput/
+

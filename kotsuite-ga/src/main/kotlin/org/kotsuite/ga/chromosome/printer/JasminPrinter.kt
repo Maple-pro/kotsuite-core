@@ -7,12 +7,11 @@ import soot.baf.BafASMBackend
 import soot.options.Options
 import java.io.FileOutputStream
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 
 object JasminPrinter {
 
-    private val outputFileDir = Configs.exampleProjectPath
+    private val outputFileDir = Configs.modulePath
 
     fun printJasminFile(sootClass: SootClass) {
         val javaVersion = Options.v().java_version()

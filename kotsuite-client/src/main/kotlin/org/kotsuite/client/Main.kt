@@ -9,23 +9,29 @@ fun main(args: Array<String>) {
 
     // Deal with parameter options
     val options = Options()
-    options.addOption("l", "libs", true, "Libs path")
     options.addOption("p", "project", true, "Project path")
-    options.addOption("i", "includes", true, "Classes or packages needs to be analyzed")
+    options.addOption("m", "module", true, "Selected module path")
+    options.addOption("cp", "classpath", true, "Selected module classpath")
+    options.addOption("src", "source", true, "Selected module source root")
+    options.addOption("i", "includes", true, "Include Rules, use & to joint multiple rules")
+    options.addOption("l", "libs", true, "Libs path")
     options.addOption("s", "strategy", true, "Test suite generation strategy")
 
     val parser = DefaultParser()
     val cmd = parser.parse(options, args)
 
-    log.info("===Start main function===")
+    log.info("===[Start main function]===")
 
-    val exampleProjectDir = cmd.getOptionValue("project")
-    val classesOrPackagesToAnalyze = cmd.getOptionValue("includes").split('&')
+    val projectPath = cmd.getOptionValue("project")
+    val modulePath = cmd.getOptionValue("module")
+    val moduleClassPath = cmd.getOptionValue("classpath")
+    val moduleSourcePath = cmd.getOptionValue("source")
+    val includeRules = cmd.getOptionValue("includes").split('&')
     val libsPath = cmd.getOptionValue("libs")
     val gaStrategy = cmd.getOptionValue("strategy")
 
-    val client = Client(exampleProjectDir, classesOrPackagesToAnalyze, libsPath, gaStrategy)
-    client.analyze()
+    val client = Client(projectPath, modulePath, moduleClassPath, moduleSourcePath, includeRules, libsPath, gaStrategy)
+    client.analyze(moduleClassPath)
     client.generateTestSuite()
 }
 

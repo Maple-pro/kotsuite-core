@@ -1,5 +1,6 @@
 package org.kotsuite.ga.chromosome.generator.jimple
 
+import org.kotsuite.ga.Configs
 import org.kotsuite.ga.chromosome.TestClass
 import soot.*
 import soot.jimple.Jimple
@@ -13,14 +14,14 @@ object JimpleGenerator {
         
 //        val targetMethods = jimpleClasses.map { it.methods }.reduce { methods, sootMethods -> methods + sootMethods }
 
-        val targetMethods = jimpleClasses[1].methods.filter { !it.name.equals("<init>") }
+        val targetMethods = jimpleClasses[0].methods.filter { !it.name.equals("<init>") }
 
         // Generate main class
-//        val mainClass = Utils.generateMainClass(mainClassName, targetMethods)
+        val mainClass = Utils.generateMainClass(Configs.mainClass, targetMethods)
 
         // Transform testClasses to jimple classes
-//        return jimpleClasses + listOf(mainClass)
-        return jimpleClasses
+        return jimpleClasses + listOf(mainClass)
+//        return jimpleClasses
     }
 
 }

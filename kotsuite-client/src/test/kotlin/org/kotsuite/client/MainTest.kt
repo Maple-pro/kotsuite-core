@@ -5,18 +5,21 @@ import org.junit.jupiter.api.Test
 class MainTest {
     @Test
     fun testMain() {
-        val myApplicationPath = "../example-projects/MyApplication"
-        // Use '&' to joint multiple classes or packages
-        val classesOrPackagesToAnalyze = "com.example.myapplication.Example&com.example.myapplication.Callee"
-        val libsPath = "../libs"
-        val gaStrategy = "random"
-//        val gaStrategy = "ga"
+        val projectPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/example-projects/MyApplication"
+        val modulePath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/example-projects/MyApplication/app"
+        val includeRules = "com.example.myapplication.Example&com.example.myapplication.Callee"
+        val libsPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs"
+        val strategy = "random"  // ga or random
+        val moduleClassPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/example-projects/MyApplication/app/build/tmp/kotlin-classes/debug"
 
         val args = arrayOf(
-            "--project", myApplicationPath,
-            "--includes", classesOrPackagesToAnalyze,
+            "--project", projectPath,
+            "--module", modulePath,
+            "--includes", includeRules,
             "--libs", libsPath,
-            "--strategy", gaStrategy)
+            "--strategy", strategy,
+            "--classpath", moduleClassPath,
+        )
         main(args)
     }
 }

@@ -14,18 +14,18 @@ import java.util.Collections
 object Analyzer {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    var exampleProjectDir = ""
-    var classesOrPackagesToAnalyze = listOf<String>()
+    var projectPath = ""
+    var includeRules = listOf<String>()
 
     var classes = listOf<SootClass>()  // All classes under `classesOrPackagesToAnalyze`
 
     /**
      * Analyze classes in the data directory, and transform them into jimple.
      */
-    fun analyze(): Boolean {
-        log.info("Analysis project: project($exampleProjectDir)")
+    fun analyze(classPath: String): Boolean {
+        log.info("Analysis project: project($projectPath)")
 
-        val res = setupSoot()
+        val res = setupSoot(classPath)
         if (!res) {
             return false
         }
@@ -33,7 +33,7 @@ object Analyzer {
 
         classes = Scene.v().classes.filter{
             sootClass ->
-            classesOrPackagesToAnalyze.any { sootClass.name.startsWith(it) }
+            includeRules.any { sootClass.name.startsWith(it) }
         }
 
         return true
@@ -45,29 +45,28 @@ object Analyzer {
      * @param methodSig the method signature to be analyzed
      * @return the corresponding soot method
      */
-    fun analyzeMethod(methodSig: MethodSignature): SootMethod {
-        log.info("Analyze method: " +
-                "project($exampleProjectDir), class($classesOrPackagesToAnalyze), method name(${methodSig.methodName})")
-
-        setupSoot()
-        Scene.v().loadNecessaryClasses()
-
-        val sootMethod = createTestTarget(methodSig)
-        runSoot()
-
-        return sootMethod
-    }
+//    fun analyzeMethod(methodSig: MethodSignature): SootMethod {
+//        log.info("Analyze method: " +
+//                "project($projectPath), class($includeRules), method name(${methodSig.methodName})")
+//
+//        setupSoot()
+//        Scene.v().loadNecessaryClasses()
+//
+//        val sootMethod = createTestTarget(methodSig)
+//        runSoot()
+//
+//        return sootMethod
+//    }
 
     /**
      * Set up soot parameters
      */
-    private fun setupSoot(): Boolean {
-        log.info("Setup Soot: class($classesOrPackagesToAnalyze), project($exampleProjectDir")
+    private fun setupSoot(classPath: String): Boolean {
+        log.info("Setup Soot: class($includeRules), project($projectPath")
 
-        val classesDir = "${exampleProjectDir}/app/build/tmp/kotlin-classes/debug/"
-        val file = File(classesDir)
+        val file = File(classPath)
         if (!file.isDirectory) {
-            log.error("Classes Directory not exists: $classesDir")
+            log.error("Classes Directory not exists: $classPath")
             return false
         }
 
@@ -78,8 +77,8 @@ object Analyzer {
             set_allow_phantom_refs(true)
             set_no_bodies_for_excluded(true)
             set_exclude(getExcludes())
-            set_include(ArrayList(classesOrPackagesToAnalyze))
-            set_process_dir(listOf(classesDir))
+            set_include(ArrayList(includeRules))
+            set_process_dir(listOf(classPath))
             set_validate(true)
         }
         return true

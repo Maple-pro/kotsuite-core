@@ -2,12 +2,10 @@ package org.kotsuite.client
 
 import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.Configs
-import org.kotsuite.ga.Configs.outputPath
 import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.StrategyHelper
 import org.kotsuite.ga.chromosome.printer.JasminPrinter
 import org.kotsuite.ga.chromosome.generator.jimple.JimpleGenerator
-import org.kotsuite.ga.chromosome.printer.JavaPrinter
 import org.kotsuite.ga.coverage.CoverageGenerator
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -17,22 +15,44 @@ import java.nio.file.Paths
 /**
  * This class represents a KotSuite client.
  */
-class Client(private var exampleProjectDir: String,
-             private val classesOrPackagesToAnalyze: List<String>,
-             private val libsPath: String,
-             private val gaStrategy: String) {
+class Client(
+    private var projectPath: String,
+    private val modulePath: String,
+    private val moduleClassPath: String,
+    private val moduleSourcePath: String,
+    private val includeRules: List<String>,
+    private val libsPath: String,
+    private val gaStrategy: String,
+) {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
+
+    init {
+        setConfigs()
+    }
+
+    private fun setConfigs() {
+        Configs.projectPath = projectPath
+        Configs.modulePath = modulePath
+        Configs.sourceCodePath = moduleSourcePath
+        Configs.classesFilePath = moduleClassPath
+        Configs.sootOutputPath = "$modulePath/sootOutput/"
+        Configs.outputPath = "$modulePath/kotsuite/"
+        Configs.mainClass = "KotMain"
+        Configs.includeRules = includeRules
+        Configs.includeFiles = "*"
+        Configs.libsPath = libsPath
+    }
 
     /**
      * Analysis the given bytecode using soot.
      */
-    fun analyze() {
+    fun analyze(classPath: String) {
         log.info("==========[Analysis Phase]==========")
 
-        Analyzer.exampleProjectDir = exampleProjectDir
-        Analyzer.classesOrPackagesToAnalyze = classesOrPackagesToAnalyze
-        Analyzer.analyze()
+        Analyzer.projectPath = projectPath
+        Analyzer.includeRules = includeRules
+        Analyzer.analyze(classPath)
     }
 
     /**
@@ -40,15 +60,6 @@ class Client(private var exampleProjectDir: String,
      */
     fun generateTestSuite() {
         log.info("==========[Generate Phase]==========")
-
-        Configs.exampleProjectPath = exampleProjectDir
-        Configs.sourceCodePath = "$exampleProjectDir/app/src/main/java/"
-        Configs.classesFilePath = "$exampleProjectDir/app/build/tmp/kotlin-classes/debug/"
-        Configs.sootOutputPath = "$exampleProjectDir/sootOutput/"
-        Configs.outputPath = "$exampleProjectDir/kotsuite/"
-        Configs.mainClass = "KotMain"
-        Configs.includeFiles = "*"
-        Configs.libsPath = libsPath
 
         Files.createDirectories(Paths.get(Configs.sootOutputPath))
         Files.createDirectories(Paths.get(Configs.outputPath))
@@ -69,7 +80,10 @@ class Client(private var exampleProjectDir: String,
 //            JavaPrinter("$exampleProjectDir/kotsuite/src").printJavaFile(it)
 //        }
 
-        jimpleClasses.forEach { CoverageGenerator.generate(it.methods) }
+//        jimpleClasses.forEach { CoverageGenerator.generate(it.methods) }
+        CoverageGenerator.generate()
+
+        log.info("Success!")
     }
 
     /**

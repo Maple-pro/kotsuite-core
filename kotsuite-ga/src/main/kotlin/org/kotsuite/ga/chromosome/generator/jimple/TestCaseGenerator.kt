@@ -1,6 +1,7 @@
 package org.kotsuite.ga.chromosome.generator.jimple
 
 import org.kotsuite.ga.chromosome.TestCase
+import soot.Modifier
 import soot.RefType
 import soot.Scene
 import soot.SootClass
@@ -17,7 +18,7 @@ object TestCaseGenerator {
 
     // TODO: to junit methods
     fun generate(testcase: TestCase, sootClass: SootClass): SootMethod {
-        val sootMethod = SootMethod(testcase.testCaseName, null, VoidType.v())
+        val sootMethod = SootMethod(testcase.testCaseName, null, VoidType.v(), Modifier.PUBLIC)
 
         val junitTestAnnotation = AnnotationTag("org.junit.Test")
         sootMethod.addTag(junitTestAnnotation)
