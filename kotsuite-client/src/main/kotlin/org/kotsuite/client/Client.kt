@@ -1,5 +1,7 @@
 package org.kotsuite.client
 
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
 import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.Configs
 import org.kotsuite.ga.TestSuiteGenerator
@@ -25,7 +27,10 @@ class Client(
     private val gaStrategy: String,
 ) {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+//    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val sectionLevel = Level.forName("SECTION", 350)
+    private val successLevel = Level.forName("SUCCESS", 360)
+    private val logger = LogManager.getLogger()
 
     init {
         setConfigs()
@@ -36,8 +41,8 @@ class Client(
         Configs.modulePath = modulePath
         Configs.sourceCodePath = moduleSourcePath
         Configs.classesFilePath = moduleClassPath
-        Configs.sootOutputPath = "$modulePath/sootOutput/"
-        Configs.outputPath = "$modulePath/kotsuite/"
+        Configs.sootOutputPath = "${modulePath}/sootOutput/"
+        Configs.outputPath = "${modulePath}/kotsuite/"
         Configs.mainClass = "KotMain"
         Configs.includeRules = includeRules
         Configs.includeFiles = "*"
@@ -48,7 +53,7 @@ class Client(
      * Analysis the given bytecode using soot.
      */
     fun analyze(classPath: String) {
-        log.info("==========[Analysis Phase]==========")
+        logger.log(sectionLevel, "[Analysis Phase]")
 
         Analyzer.projectPath = projectPath
         Analyzer.includeRules = includeRules
@@ -59,7 +64,7 @@ class Client(
      * Generate test suite for the give bytecode.
      */
     fun generateTestSuite() {
-        log.info("==========[Generate Phase]==========")
+        logger.log(sectionLevel, "[Generate Phase]")
 
         Files.createDirectories(Paths.get(Configs.sootOutputPath))
         Files.createDirectories(Paths.get(Configs.outputPath))
@@ -83,7 +88,7 @@ class Client(
 //        jimpleClasses.forEach { CoverageGenerator.generate(it.methods) }
         CoverageGenerator.generate()
 
-        log.info("Success!")
+        logger.log(successLevel, "Success!")
     }
 
     /**

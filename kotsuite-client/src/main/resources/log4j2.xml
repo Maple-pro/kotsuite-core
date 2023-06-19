@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <CustomLevels>
+        <CustomLevel name="SECTION" intLevel="350" />
+    </CustomLevels>
+    <CustomLevels>
+        <CustomLevel name="SUCCESS" intLevel="360" />
+    </CustomLevels>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+<!--            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
+            <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n}{INFO=white, SECTION=blue, ERROR=red, WARN=yellow, FATAL=bg_red, SUCCESS=green}"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
