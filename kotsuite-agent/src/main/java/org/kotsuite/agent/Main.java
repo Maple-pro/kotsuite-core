@@ -3,7 +3,6 @@ package org.kotsuite.agent;
 import org.objectweb.asm.*;
 
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
@@ -41,7 +40,7 @@ public class Main {
                 Class<?> classBeingRedefined,
                 ProtectionDomain protectionDomain,
                 byte[] classfileBuffer
-        ) throws IllegalClassFormatException {
+        ) {
 
             if (className.equals("KotMain")) {
 
