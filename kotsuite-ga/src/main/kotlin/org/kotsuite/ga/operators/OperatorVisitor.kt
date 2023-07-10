@@ -1,4 +1,4 @@
-package org.kotsuite.ga.mutation
+package org.kotsuite.ga.operators
 
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.action.Action

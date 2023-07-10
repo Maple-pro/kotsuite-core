@@ -24,15 +24,12 @@ enum Compiler {
      * @return <code>true</code> if this file was compiled by javac
      */
     boolean isJDK() {
-        switch (DETECT) {
-            default:
-                try {
-                    Compiler.class.getDeclaredField("$SWITCH_TABLE$"
-                            + Compiler.class.getName().replace('.', '$'));
-                    return false;
-                } catch (NoSuchFieldException e) {
-                    return true;
-                }
+        try {
+            Compiler.class.getDeclaredField("$SWITCH_TABLE$"
+                    + Compiler.class.getName().replace('.', '$'));
+            return false;
+        } catch (NoSuchFieldException e) {
+            return true;
         }
     }
 

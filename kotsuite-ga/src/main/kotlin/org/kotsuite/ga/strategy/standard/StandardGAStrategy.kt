@@ -1,11 +1,12 @@
 package org.kotsuite.ga.strategy.standard
 
 import org.kotsuite.ga.Configs
-import org.kotsuite.ga.GAStrategy
+import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.chromosome.TestCase
+import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.coverage.fitness.Fitness
-import org.kotsuite.ga.coverage.fitness.TestCaseFitness
 import org.kotsuite.ga.coverage.fitness.TestSuiteFitness
+import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.ga.strategy.random.RandomStrategy
 import soot.SootMethod
 import java.nio.file.Files
@@ -31,15 +32,20 @@ import java.nio.file.Paths
  * end while
  * ```
  */
-class StandardGAStrategy: GAStrategy() {
+class StandardGAStrategy: Strategy {
 
     private val maxAttempt = Configs.maxAttempt
     private val projectDir = Configs.projectPath
+    private val moduleDir = Configs.modulePath
     private val classesFilePath = Configs.classesFilePath
-    private val populationOutputPath = "$projectDir/kotsuite/population"
+    private val populationOutputPath = "$moduleDir/kotsuite/population"
 
     init {
         Files.createDirectories(Paths.get(populationOutputPath))
+    }
+
+    override fun generateWholeSolution(): WholeSolution {
+        TODO("Not yet implemented")
     }
 
     /**
@@ -62,22 +68,22 @@ class StandardGAStrategy: GAStrategy() {
      * - Selection to generate newPopulation
      * - Mutate newPopulation to get curPopulation
      */
-    override fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase> {
+    private fun generateTestCasesForMethod(targetMethod: SootMethod, testClass: TestClass): List<TestCase> {
         var curPopulation = RandomStrategy.generateTestCasesForMethod(targetMethod)
         var attempt = 0
 
         while (attempt <= maxAttempt) {
             // 1. get test suite coverage info
-            val fitnessValue = TestSuiteFitness.generateTestSuiteFitness(curPopulation)
+            val fitnessValue = TestSuiteFitness.generateTestSuiteFitness(curPopulation, testClass)
 
             // 2. meet the coverage criteria ? output : continue
             val isCoverTargets = isCoverTargets(fitnessValue)
             if (isCoverTargets) break
 
             // 3. get coverage info
-            curPopulation.forEach {
-                TestCaseFitness.generateTestCaseFitness(it, targetMethod, populationOutputPath, classesFilePath)
-            }
+//            curPopulation.forEach {
+//                TestCaseFitness.generateTestCaseFitness(it, targetMethod, populationOutputPath, classesFilePath)
+//            }
 
             // 4. selection
             val newPopulation = selectNewPopulation(curPopulation)

@@ -1,12 +1,8 @@
 package org.kotsuite.ga.coverage
 
 import org.kotsuite.ga.Configs
-import org.kotsuite.ga.chromosome.generator.jimple.Utils
-import org.kotsuite.ga.chromosome.printer.JasminPrinter
 import org.kotsuite.ga.utils.LoggerUtils
 import org.slf4j.LoggerFactory
-import soot.SootMethod
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -41,6 +37,7 @@ object CoverageGenerator {
         generateExecFile()
         getCoverageInfo()
         generateHTMLReport()
+        generateXMLReport()
     }
 
     private fun generateJarFile() {
@@ -131,14 +128,31 @@ object CoverageGenerator {
     private fun generateHTMLReport() {
         log.info("Generating HTML report: $coverageReportPath")
 
-        Files.createDirectory(Paths.get(coverageReportPath))
+        Files.createDirectories(Paths.get(coverageReportPath))
 
         val args = arrayOf("java", "-jar",
             jacocoCliPath,
             "report", executionDataPath,
             "--classfile=$sootOutputPath",
             "--sourcefile=$sourceCodePath",
-            "--html", coverageReportPath
+            "--html", coverageReportPath,
+        )
+
+        val ps = Runtime.getRuntime().exec(args)
+        LoggerUtils.logCommandOutput(log, ps)
+        ps.waitFor()
+    }
+
+    private fun generateXMLReport() {
+        val coverageXmlFilePath = "$outputPath/report/coverage_xml_$timestamp.xml"
+        log.info("Generating XML report: $coverageXmlFilePath")
+
+        val args = arrayOf("java", "-jar",
+            jacocoCliPath,
+            "report", executionDataPath,
+            "--classfile=$sootOutputPath",
+            "--sourcefile=$sourceCodePath",
+            "--xml", coverageXmlFilePath,
         )
 
         val ps = Runtime.getRuntime().exec(args)

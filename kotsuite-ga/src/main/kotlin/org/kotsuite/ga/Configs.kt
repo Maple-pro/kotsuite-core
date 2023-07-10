@@ -2,17 +2,17 @@ package org.kotsuite.ga
 
 object Configs {
 
-    var projectPath = ""
-    var modulePath = ""
-    var sourceCodePath = ""
-    var classesFilePath = ""
-    var sootOutputPath = ""
-    var outputPath = ""
-    var mainClass = ""
-    var includeRules = listOf<String>()
-    var includeFiles = ""
-    var outputFileDir = ""
-    var libsPath = ""
+    lateinit var projectPath: String
+    lateinit var modulePath: String
+    lateinit var sourceCodePath: String
+    lateinit var classesFilePath: String
+    lateinit var sootOutputPath: String
+    lateinit var outputPath: String
+    lateinit var mainClass: String
+    lateinit var includeRules: List<String>
+    lateinit var includeFiles: String
+    lateinit var outputFileDir: String
+    lateinit var libsPath: String
 
     var maxAttempt = 50
 

@@ -1,4 +1,4 @@
-package org.kotsuite.ga.chromosome.generator.jimple
+package org.kotsuite.ga.chromosome.generator
 
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.Value

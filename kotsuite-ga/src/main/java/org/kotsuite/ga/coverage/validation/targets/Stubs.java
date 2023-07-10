@@ -42,7 +42,7 @@ public class Stubs {
     /**
      * Enum stub.
      */
-    public static enum Enum {
+    public enum Enum {
         A, B, C
     }
 
@@ -148,7 +148,7 @@ public class Stubs {
      * List of logged events. Using a static member here works as this class is
      * loaded in a new class loader for every test case.
      */
-    private static List<String> events = new ArrayList<String>();
+    private static final List<String> events = new ArrayList<String>();
 
     /**
      * Records a event with the given id for later verification.

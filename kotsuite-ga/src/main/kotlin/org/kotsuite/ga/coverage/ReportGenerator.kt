@@ -19,7 +19,7 @@ class ReportGenerator(
     private val classesFile = File(classesFilePath)
     private val execFileLoader = ExecFileLoader()
     private val coverageBuilder = CoverageBuilder()
-    private var bundleCoverage: IBundleCoverage? = null
+    private lateinit var bundleCoverage: IBundleCoverage
 
     init {
         loadExecutionData()

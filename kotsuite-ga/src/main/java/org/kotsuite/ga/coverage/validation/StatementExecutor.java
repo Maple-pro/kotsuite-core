@@ -53,7 +53,7 @@ class StatementExecutor implements StatementParser.IStatementVisitor {
     private static Class<?>[] getTypes(Object[] instances) {
         final Class<?>[] classes = new Class[instances.length];
         for (int i = 0; i < instances.length; i++) {
-            Class<? extends Object> c = instances[i].getClass();
+            Class<?> c = instances[i].getClass();
             if (c == Integer.class) {
                 // We always use primitive int parameters:
                 c = Integer.TYPE;

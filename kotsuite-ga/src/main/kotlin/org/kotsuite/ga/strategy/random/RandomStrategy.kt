@@ -1,17 +1,48 @@
 package org.kotsuite.ga.strategy.random
 
-import org.kotsuite.ga.GAStrategy
+import org.kotsuite.analysis.Analyzer
+import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.action.Action
 import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.Value
+import org.kotsuite.ga.solution.ClassSolution
+import org.kotsuite.ga.solution.MethodSolution
+import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.ga.utils.SootUtils
 import soot.*
 import kotlin.collections.ArrayList
 
-object RandomStrategy: GAStrategy() {
+object RandomStrategy: Strategy {
+    override fun generateWholeSolution(): WholeSolution {
+        val classSolutions = Analyzer.classes.map {
+            generateClassSolution(it)
+        }
+
+        return WholeSolution(classSolutions)
+    }
+
+    private fun generateClassSolution(targetClass: SootClass): ClassSolution {
+        // Generate TestClass for target class
+        val testClassName = "${targetClass.shortName}Test"
+        val testClass = TestClass(testClassName, targetClass.packageName)
+
+        val methodSolutions = targetClass.methods
+            .filter { filterMethod(it) }
+            .map { generateMethodSolution(it) }
+
+        return ClassSolution(targetClass, testClass, methodSolutions)
+    }
+
+    private fun generateMethodSolution(targetMethod: SootMethod): MethodSolution {
+        return MethodSolution(targetMethod, generateTestCasesForMethod(targetMethod))
+    }
+
+    private fun filterMethod(sootMethod: SootMethod): Boolean {
+        return !(sootMethod.subSignature.equals("void <init>()") || sootMethod.name.equals("<init>"))
+    }
 
     /**
      * Generate test cases for the target method.
@@ -22,7 +53,7 @@ object RandomStrategy: GAStrategy() {
      *
      * @param targetMethod the target method needs to be generated
      */
-    override fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase>{
+    fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase>{
         val testCases = ArrayList<TestCase>()
 
         val testCaseNum = 10
@@ -37,7 +68,7 @@ object RandomStrategy: GAStrategy() {
     }
 
     private fun generateTestCaseForMethod(targetMethod: SootMethod, testCaseName: String): TestCase {
-        val testCase = TestCase(testCaseName)
+        val testCase = TestCase(testCaseName, 0)
         val targetClass = targetMethod.declaringClass
 
         val constructorAction = generateConstructorAction(testCase, targetClass)
@@ -81,8 +112,8 @@ object RandomStrategy: GAStrategy() {
         var valueIndex = testCase.values.size
 
         method.parameterTypes.forEach {
-            var value: Value? = null
-            var parameter: Parameter? = null
+            val value: Value?
+            val parameter: Parameter?
 
             when (it) {
                 is PrimType -> {
@@ -94,6 +125,8 @@ object RandomStrategy: GAStrategy() {
                         value = ValueGenerator.generateStringValue()
                         parameter = StringParameter(valueIndex)
                     } else {
+                        value = null
+
                         val constructorAction = generateConstructorAction(testCase, it.sootClass)
                         testCase.actions.add(constructorAction)
 
@@ -103,6 +136,10 @@ object RandomStrategy: GAStrategy() {
                 is ArrayType -> {
                     value = ValueGenerator.generateArrayValue(it)
                     parameter = ArrayParameter(it, valueIndex)
+                }
+                else -> {
+                    value = null
+                    parameter = null
                 }
             }
 

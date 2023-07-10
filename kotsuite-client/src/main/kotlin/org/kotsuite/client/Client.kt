@@ -5,11 +5,8 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.Configs
 import org.kotsuite.ga.TestSuiteGenerator
-import org.kotsuite.ga.StrategyHelper
-import org.kotsuite.ga.chromosome.printer.JasminPrinter
-import org.kotsuite.ga.chromosome.generator.jimple.JimpleGenerator
+import org.kotsuite.ga.strategy.StrategyHelper
 import org.kotsuite.ga.coverage.CoverageGenerator
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -32,8 +29,11 @@ class Client(
     private val successLevel = Level.forName("SUCCESS", 360)
     private val logger = LogManager.getLogger()
 
+    private val testSuiteGenerator: TestSuiteGenerator
+
     init {
         setConfigs()
+        testSuiteGenerator = TestSuiteGenerator(StrategyHelper.getGAStrategy(gaStrategy))
     }
 
     private fun setConfigs() {
@@ -72,14 +72,8 @@ class Client(
         // Copy class files into sootOutput/ directory
         File(Configs.classesFilePath).copyRecursively(File(Configs.sootOutputPath), true)
 
-        TestSuiteGenerator.gaStrategy = StrategyHelper.getGAStrategy(gaStrategy)
-
-        val testClasses = TestSuiteGenerator.generate()
-        val jimpleClasses = JimpleGenerator.generateClasses(testClasses)
-
-        jimpleClasses.forEach {
-            JasminPrinter.printJasminFile(it)
-        }
+        testSuiteGenerator.generate()
+        testSuiteGenerator.printJasminFiles()
 
 //        jimpleClasses.forEach {
 //            JavaPrinter("$exampleProjectDir/kotsuite/src").printJavaFile(it)
