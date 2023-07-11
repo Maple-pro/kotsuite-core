@@ -1,13 +1,13 @@
 package org.kotsuite.ga.strategy.standard
 
 import org.kotsuite.ga.Configs
+import org.kotsuite.ga.chromosome.Population
 import org.kotsuite.ga.strategy.Strategy
-import org.kotsuite.ga.chromosome.TestCase
-import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.coverage.fitness.Fitness
-import org.kotsuite.ga.coverage.fitness.TestSuiteFitness
-import org.kotsuite.ga.solution.WholeSolution
+import org.kotsuite.ga.coverage.fitness.PopulationFitness
+import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.ga.strategy.random.RandomStrategy
+import soot.SootClass
 import soot.SootMethod
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -32,20 +32,15 @@ import java.nio.file.Paths
  * end while
  * ```
  */
-class StandardGAStrategy: Strategy {
+object StandardGAStrategy: Strategy() {
 
     private val maxAttempt = Configs.maxAttempt
-    private val projectDir = Configs.projectPath
     private val moduleDir = Configs.modulePath
     private val classesFilePath = Configs.classesFilePath
     private val populationOutputPath = "$moduleDir/kotsuite/population"
 
     init {
         Files.createDirectories(Paths.get(populationOutputPath))
-    }
-
-    override fun generateWholeSolution(): WholeSolution {
-        TODO("Not yet implemented")
     }
 
     /**
@@ -66,47 +61,39 @@ class StandardGAStrategy: Strategy {
      * - Execute fitness value of each test case
      * - Meet the coverage criteria?
      * - Selection to generate newPopulation
-     * - Mutate newPopulation to get curPopulation
+     * - Mutate newPopulation
+     * - Crossover newPopulation
      */
-    private fun generateTestCasesForMethod(targetMethod: SootMethod, testClass: TestClass): List<TestCase> {
-        var curPopulation = RandomStrategy.generateTestCasesForMethod(targetMethod)
-        var attempt = 0
+    override fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution {
+        val initialTestCases = RandomStrategy.generateTestCasesForMethod(targetMethod)
+        var curPopulation = Population(targetMethod, 0, initialTestCases)
+        var round = 0
 
-        while (attempt <= maxAttempt) {
+        while(round <= maxAttempt) {
             // 1. get test suite coverage info
-            val fitnessValue = TestSuiteFitness.generateTestSuiteFitness(curPopulation, testClass)
+            val fitness = PopulationFitness.generatePopulationFitness(curPopulation)
 
             // 2. meet the coverage criteria ? output : continue
-            val isCoverTargets = isCoverTargets(fitnessValue)
+            val isCoverTargets = isCoverTargets(fitness)
             if (isCoverTargets) break
 
-            // 3. get coverage info
-//            curPopulation.forEach {
-//                TestCaseFitness.generateTestCaseFitness(it, targetMethod, populationOutputPath, classesFilePath)
-//            }
+            // 3. selection
+            curPopulation = curPopulation.select()
 
-            // 4. selection
-            val newPopulation = selectNewPopulation(curPopulation)
+            // 4. mutate
+            curPopulation = curPopulation.mutate()
 
-            // 5. mutate
-            curPopulation = mutatePopulation(newPopulation)
+            // 5. crossover
+            curPopulation = curPopulation.crossover()
 
-            attempt++
+            round++
         }
 
-        return curPopulation
+        return MethodSolution(targetMethod, curPopulation.testCases)
     }
 
-    private fun isCoverTargets(fitnessValue: Fitness): Boolean {
-        TODO()
+    private fun isCoverTargets(fitness: Fitness): Boolean {
+        return fitness.lineCoverage >= Configs.targetLineCoverage
+                && fitness.ccCoverage >= Configs.targetCCCoverage
     }
-
-    private fun selectNewPopulation(curPopulation: List<TestCase>): List<TestCase> {
-        TODO()
-    }
-
-    private fun mutatePopulation(population: List<TestCase>): List<TestCase> {
-        TODO()
-    }
-
 }

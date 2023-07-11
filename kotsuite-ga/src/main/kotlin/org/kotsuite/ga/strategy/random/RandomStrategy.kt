@@ -1,6 +1,5 @@
 package org.kotsuite.ga.strategy.random
 
-import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.action.Action
@@ -8,40 +7,15 @@ import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.Value
-import org.kotsuite.ga.solution.ClassSolution
 import org.kotsuite.ga.solution.MethodSolution
-import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.ga.utils.SootUtils
 import soot.*
 import kotlin.collections.ArrayList
 
-object RandomStrategy: Strategy {
-    override fun generateWholeSolution(): WholeSolution {
-        val classSolutions = Analyzer.classes.map {
-            generateClassSolution(it)
-        }
+object RandomStrategy: Strategy() {
 
-        return WholeSolution(classSolutions)
-    }
-
-    private fun generateClassSolution(targetClass: SootClass): ClassSolution {
-        // Generate TestClass for target class
-        val testClassName = "${targetClass.shortName}Test"
-        val testClass = TestClass(testClassName, targetClass.packageName)
-
-        val methodSolutions = targetClass.methods
-            .filter { filterMethod(it) }
-            .map { generateMethodSolution(it) }
-
-        return ClassSolution(targetClass, testClass, methodSolutions)
-    }
-
-    private fun generateMethodSolution(targetMethod: SootMethod): MethodSolution {
+    override fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution {
         return MethodSolution(targetMethod, generateTestCasesForMethod(targetMethod))
-    }
-
-    private fun filterMethod(sootMethod: SootMethod): Boolean {
-        return !(sootMethod.subSignature.equals("void <init>()") || sootMethod.name.equals("<init>"))
     }
 
     /**

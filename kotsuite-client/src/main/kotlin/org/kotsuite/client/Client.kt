@@ -73,14 +73,6 @@ class Client(
         File(Configs.classesFilePath).copyRecursively(File(Configs.sootOutputPath), true)
 
         testSuiteGenerator.generate()
-        testSuiteGenerator.printJasminFiles()
-
-//        jimpleClasses.forEach {
-//            JavaPrinter("$exampleProjectDir/kotsuite/src").printJavaFile(it)
-//        }
-
-//        jimpleClasses.forEach { CoverageGenerator.generate(it.methods) }
-        CoverageGenerator.generate()
 
         logger.log(successLevel, "Success!")
     }

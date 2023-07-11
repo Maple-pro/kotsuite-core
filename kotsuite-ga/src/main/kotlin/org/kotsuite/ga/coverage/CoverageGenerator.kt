@@ -51,53 +51,6 @@ object CoverageGenerator {
         ps.waitFor()
     }
 
-    /**
-     * Generate coverage info for the given test cases
-     */
-//    fun generate(sootMethods: List<SootMethod>) {
-//        log.info("==========[Calculating fitness values]==========")
-//
-//        // 1. Generate main class, and print it
-//        val mainClass = Utils.generateMainClass("KotMain", sootMethods)
-//        JasminPrinter.printJasminFile(mainClass)
-//
-//        val sootMethod = sootMethods.firstOrNull()
-//        val sootClass = sootMethod?.declaringClass
-//        val className = sootClass?.name
-//        val relativePath = className?.replace(".", "/")
-//
-//        val executionDataPath = "$outputPath/report/$relativePath/jacoco-${sootMethod?.name}.exec"
-//
-//        // 2. Generate exec file
-//        generateExecFile(executionDataPath)
-//
-//        // 3. Get coverage info
-//    }
-
-    // TODO: fix to new
-//    private fun generateExecFile(executionDataPath: String) {
-//        log.info("Main class: $mainClass")
-//        log.info("Execution data path: $executionDataPath")
-//
-//        val vmOption = "-javaagent:$jacocoAgentPath=includes=$includeFiles,excludes=CalleeTest,destfile=$executionDataPath,output=file"
-//
-//        val isLinux = System.getProperty("os.name") == "Linux"
-//
-//        val runtimeJars =
-//            if (isLinux) "$jarPath:$kotlinRunTimePath:$kotlinStdLibPath"
-//            else "$jarPath:$kotlinRunTimePath:$kotlinStdLibPath"
-//
-//        val args = arrayOf("java", vmOption, "-cp", runtimeJars, mainClass)
-//        try {
-//            log.info("Run command: ${args.joinToString(" ")}")
-//            val ps = Runtime.getRuntime().exec(args)
-//            LoggerUtils.logCommandOutput(log, ps)
-//            ps.waitFor()
-//        } catch (e: Exception) {
-//            log.error(e.stackTraceToString())
-//        }
-//    }
-
     private fun generateExecFile() {
         log.info("Main class: $mainClass")
         log.info("Execution data path: $executionDataPath")

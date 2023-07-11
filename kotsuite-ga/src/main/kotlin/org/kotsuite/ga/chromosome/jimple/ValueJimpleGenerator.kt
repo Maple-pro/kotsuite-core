@@ -1,4 +1,4 @@
-package org.kotsuite.ga.chromosome.generator
+package org.kotsuite.ga.chromosome.jimple
 
 import org.kotsuite.ga.chromosome.value.*
 import soot.BooleanType
@@ -7,7 +7,7 @@ import soot.jimple.DoubleConstant
 import soot.jimple.IntConstant
 import soot.jimple.StringConstant
 
-object ValueGenerator {
+object ValueJimpleGenerator {
 
     fun generate(value: Value): soot.Value {
         return when (value) {

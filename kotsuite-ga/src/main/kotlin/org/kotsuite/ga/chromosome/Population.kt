@@ -4,16 +4,26 @@ import soot.SootMethod
 
 class Population(
     val targetMethod: SootMethod,
-    val testClass: TestClass,
     val round: Int,
     val testCases: List<TestCase>,
 ) {
 
-    fun mutate() {
+    /**
+     * Select test cases from old population to form a new population
+     *
+     * @return
+     */
+    fun select(): Population {
+        TODO()
 
     }
 
-    fun crossover() {
+    fun mutate(): Population {
+        TODO()
+    }
+
+    fun crossover(): Population {
+        TODO()
 
     }
 

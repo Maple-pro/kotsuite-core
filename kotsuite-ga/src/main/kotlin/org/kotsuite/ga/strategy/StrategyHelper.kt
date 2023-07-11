@@ -8,7 +8,7 @@ object StrategyHelper {
 
         return when (strategy) {
             "random" -> RandomStrategy
-            "ga" -> StandardGAStrategy()
+            "ga" -> StandardGAStrategy
             else -> RandomStrategy
         }
 

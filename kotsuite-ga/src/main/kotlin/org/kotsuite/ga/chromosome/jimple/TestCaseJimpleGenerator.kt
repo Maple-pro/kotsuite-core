@@ -1,4 +1,4 @@
-package org.kotsuite.ga.chromosome.generator
+package org.kotsuite.ga.chromosome.jimple
 
 import org.kotsuite.ga.chromosome.TestCase
 import soot.Modifier
@@ -12,11 +12,11 @@ import soot.jimple.StringConstant
 import soot.jimple.internal.JimpleLocal
 import soot.tagkit.AnnotationTag
 
-object TestCaseGenerator {
+object TestCaseJimpleGenerator {
 
     private val jimple = Jimple.v()
 
-    // TODO: to junit methods
+    /* TODO: to junit methods */
     fun generate(testcase: TestCase, sootClass: SootClass): SootMethod {
         val sootMethod = SootMethod(testcase.testCaseName, null, VoidType.v(), Modifier.PUBLIC)
 
@@ -39,7 +39,7 @@ object TestCaseGenerator {
 
         // Create statements
         testcase.actions.forEach {
-            val localsAndUnits = ActionGenerator.generate(it, testcase.values, sootMethod)
+            val localsAndUnits = ActionJimpleGenerator.generate(it, testcase.values, sootMethod)
             body.locals.addAll(localsAndUnits.locals)
             body.units.addAll(localsAndUnits.units)
         }

@@ -15,5 +15,7 @@ object Configs {
     lateinit var libsPath: String
 
     var maxAttempt = 50
+    val targetLineCoverage = 0.6  // Line coverage
+    val targetCCCoverage = 0.9  // Cyclomatic complexity coverage
 
 }

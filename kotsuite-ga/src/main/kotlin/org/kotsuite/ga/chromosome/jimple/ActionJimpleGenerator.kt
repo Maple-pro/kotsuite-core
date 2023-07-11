@@ -1,4 +1,4 @@
-package org.kotsuite.ga.chromosome.generator
+package org.kotsuite.ga.chromosome.jimple
 
 import org.kotsuite.ga.chromosome.action.Action
 import org.kotsuite.ga.chromosome.action.ConstructorAction
@@ -10,14 +10,14 @@ import soot.RefType
 import soot.SootMethod
 import soot.jimple.Jimple
 
-object ActionGenerator {
+object ActionJimpleGenerator {
 
     private val jimple = Jimple.v()
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     fun generate(action: Action, values: List<Value>, sootMethod: SootMethod): LocalsAndUnits {
         val args = action.parameters.map {
-            ParameterGenerator.generate(it, values, sootMethod)
+            ParameterJimpleGenerator.generate(it, values, sootMethod)
         }
 
         val actionLocalsAndUnits = when (action) {
