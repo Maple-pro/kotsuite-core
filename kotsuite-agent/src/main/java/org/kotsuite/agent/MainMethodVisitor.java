@@ -19,6 +19,8 @@ public class MainMethodVisitor extends MethodVisitor {
     public void visitCode() {
         super.visitCode();
 
+//        System.out.println("Start deal with main method");
+
         methodVisitor.visitTypeInsn(Opcodes.NEW, className);
         methodVisitor.visitInsn(Opcodes.DUP);
         methodVisitor.visitMethodInsn(
@@ -28,5 +30,7 @@ public class MainMethodVisitor extends MethodVisitor {
         methodVisitor.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL, className, methodName, "()V", false
         );
+
+//        System.out.println("Add Complete!");
     }
 }
