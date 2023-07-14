@@ -11,7 +11,7 @@ class MainTest {
         val sourcePath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/example-projects/MyApplication/app/src/main/java"
         val includeRules = "com.example.myapplication.Example&com.example.myapplication.Callee"
         val libsPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs"
-        val strategy = "random"  // ga or random
+        val strategy = "ga"  // ga or random
 
         val args = arrayOf(
             "--project", projectPath,

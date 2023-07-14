@@ -47,6 +47,8 @@ class Client(
         Configs.includeRules = includeRules
         Configs.includeFiles = "*"
         Configs.libsPath = libsPath
+
+        logger.log(Level.INFO, "Set configs: ${Configs.print()}")
     }
 
     /**

@@ -2,6 +2,7 @@ package org.kotsuite.ga.coverage
 
 import org.kotsuite.ga.Configs
 import org.kotsuite.ga.utils.LoggerUtils
+import org.kotsuite.ga.utils.Utils.isLinux
 import org.slf4j.LoggerFactory
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -13,31 +14,36 @@ object CoverageGenerator {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     private val sourceCodePath = Configs.sourceCodePath
-    private val classesFilePath = Configs.classesFilePath
     private val sootOutputPath = Configs.sootOutputPath
     private val outputPath = Configs.outputPath
     private val mainClass = Configs.mainClass
     private val includeFiles = Configs.includeFiles
-    private val libsPath = Configs.libsPath
 
-    private val jacocoAgentPath = "$libsPath/jacocoagent.jar"
-    private val jacocoCliPath = "$libsPath/jacococli.jar"
-    private val kotlinRunTimePath = "$libsPath/kotlin-runtime-1.2.71.jar"
-    private val kotlinStdLibPath = "$libsPath/kotlin-stdlib-1.8.10.jar"
+    private val jacocoAgentPath = Configs.jacocoAgentPath
+    private val kotlinRunTimePath = Configs.kotlinRuntimePath
+    private val kotlinStdLibPath = Configs.kotlinStdLibPath
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
     private val timestamp = LocalDateTime.now().format(timeFormatter)
 
     private val jarPath = "$outputPath/jar/MyApplication.jar"
     private val executionDataPath = "$outputPath/report/jacoco-MyApplication.exec"
-    private val coverageReportPath = "$outputPath/report/coverage_report_$timestamp/"
+    private val coverageHTMLReportPath = "$outputPath/report/coverage_report_$timestamp/"
+    private val coverageXMLFilePath = "$outputPath/report/coverage_xml_$timestamp.xml"
 
     fun generate() {
         generateJarFile()
         generateExecFile()
         getCoverageInfo()
-        generateHTMLReport()
-        generateXMLReport()
+
+        val execUtil = ExecUtil(
+            "MyApplication",
+            executionDataPath,
+            sootOutputPath,
+            sourceCodePath,
+        )
+        execUtil.generateHTMLReport(coverageHTMLReportPath)
+        execUtil.generateXMLReport(coverageXMLFilePath)
     }
 
     private fun generateJarFile() {
@@ -57,10 +63,8 @@ object CoverageGenerator {
 
         val vmOption = "-javaagent:$jacocoAgentPath=includes=$includeFiles,excludes=CalleeTest,destfile=$executionDataPath,output=file"
 
-        val isLinux = System.getProperty("os.name") == "Linux"
-
         val runtimeJars =
-            if (isLinux) "$jarPath:$kotlinRunTimePath:$kotlinStdLibPath"
+            if (isLinux()) "$jarPath:$kotlinRunTimePath:$kotlinStdLibPath"
             else "$jarPath:$kotlinRunTimePath:$kotlinStdLibPath"
 
         val args = arrayOf("java", vmOption, "-cp", runtimeJars, mainClass)
@@ -75,42 +79,7 @@ object CoverageGenerator {
     }
 
     private fun getCoverageInfo() {
-        ReportGenerator("MyApplication", executionDataPath, classesFilePath).getSimpleInfo()
-    }
-
-    private fun generateHTMLReport() {
-        log.info("Generating HTML report: $coverageReportPath")
-
-        Files.createDirectories(Paths.get(coverageReportPath))
-
-        val args = arrayOf("java", "-jar",
-            jacocoCliPath,
-            "report", executionDataPath,
-            "--classfile=$sootOutputPath",
-            "--sourcefile=$sourceCodePath",
-            "--html", coverageReportPath,
-        )
-
-        val ps = Runtime.getRuntime().exec(args)
-        LoggerUtils.logCommandOutput(log, ps)
-        ps.waitFor()
-    }
-
-    private fun generateXMLReport() {
-        val coverageXmlFilePath = "$outputPath/report/coverage_xml_$timestamp.xml"
-        log.info("Generating XML report: $coverageXmlFilePath")
-
-        val args = arrayOf("java", "-jar",
-            jacocoCliPath,
-            "report", executionDataPath,
-            "--classfile=$sootOutputPath",
-            "--sourcefile=$sourceCodePath",
-            "--xml", coverageXmlFilePath,
-        )
-
-        val ps = Runtime.getRuntime().exec(args)
-        LoggerUtils.logCommandOutput(log, ps)
-        ps.waitFor()
+        ExecUtil("MyApplication", executionDataPath, sootOutputPath, sourceCodePath).getSimpleInfo()
     }
 
 }

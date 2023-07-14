@@ -10,7 +10,7 @@ object PopulationFitness {
 
     fun generatePopulationFitness(population: Population): Fitness {
 
-        // Generate jimple test classes
+        // Generate jimple test class
         val jimpleTestClass = JimpleGenerator.generateTestClassFromPopulation(population)
 
         // Create a main class `SootMain` with an empty main method
@@ -20,16 +20,13 @@ object PopulationFitness {
         JasminPrinter.printJasminFile(jimpleTestClass)
         JasminPrinter.printJasminFile(jimpleMainClass)
 
-        population.testCases.forEach {
-            TODO()
+        population.testCases.forEach { testCase ->
             // Run application with jacoco agent and kotsuite agent, which will generate the .exec file
-
             // Analyze the .exec file to generate the coverage information
-
+            TestCaseFitness(jimpleTestClass, testCase, population.targetMethod, jimpleMainClass).generateTestCaseFitness()
         }
 
+        // TODO: generate the whole population fitness
         return Fitness(0.0, 0.0)
-
     }
-
 }
