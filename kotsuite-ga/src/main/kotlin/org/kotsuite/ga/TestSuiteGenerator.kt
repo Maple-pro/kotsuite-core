@@ -3,7 +3,6 @@ package org.kotsuite.ga
 import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.chromosome.jimple.JimpleGenerator
 import org.kotsuite.ga.chromosome.printer.JasminPrinter
-import org.kotsuite.ga.coverage.CoverageGenerator
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
 import org.kotsuite.ga.solution.WholeSolution
@@ -20,7 +19,6 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     private lateinit var wholeSolution: WholeSolution
     private lateinit var testClasses: List<TestClass>
     private lateinit var jimpleClasses: List<SootClass>
-    private lateinit var junitJimpleClasses: List<SootClass>
     private lateinit var dummyMainClass: SootClass
 
     /**
@@ -46,13 +44,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         // 1. generate whole solution coverage report
         generateFinalCoverageReport()
 
-        // 2. transform whole solution to jimple class with junit format
-        generateJUnitClasses()
-
-        // 3. print junit class file
-        printJUnitClasses(Configs.finalJUnitClassesOutputPath)
-
-        // 4. decompile class file to java file
+        // 2. decompile class file to java file
         decompileJUnitClasses()
     }
 
@@ -87,20 +79,9 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
 //        CoverageGenerator.generate()
     }
 
-    private fun generateJUnitClasses() {
-//        junitJimpleClasses =
-        TODO()
-    }
-
-    private fun printJUnitClasses(outputPath: String) {
-        junitJimpleClasses.forEach {
-            JasminPrinter.printJasminFile(it, outputPath)
-        }
-    }
-
     private fun decompileJUnitClasses() {
 //        Configs.finalDecompiledOutputPath
-        TODO()
+//        TODO()
     }
 
     private fun generateDummyMainClass(): SootClass {

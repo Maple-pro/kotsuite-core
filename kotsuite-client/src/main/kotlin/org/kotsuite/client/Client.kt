@@ -58,7 +58,6 @@ class Client(
 
         Files.createDirectories(Paths.get(Configs.finalOutputPath))
         Files.createDirectories(Paths.get(Configs.finalClassesOutputPath))
-        Files.createDirectories(Paths.get(Configs.finalJUnitClassesOutputPath))
         Files.createDirectories(Paths.get(Configs.finalDecompiledOutputPath))
         Files.createDirectories(Paths.get(Configs.finalExecOutputPath))
         Files.createDirectories(Paths.get(Configs.finalReportOutputPath))
@@ -81,8 +80,9 @@ class Client(
     fun generateTestSuite() {
         logger.log(sectionLevel, "[Generate Phase]")
 
-        // Copy class files into sootOutput/ directory
+        // Copy class files into `sootOutput/` and `final/classes/` directory
         File(Configs.classesFilePath).copyRecursively(File(Configs.sootOutputPath), true)
+        File(Configs.classesFilePath).copyRecursively(File(Configs.finalClassesOutputPath), true)
 
         testSuiteGenerator.generate()
 

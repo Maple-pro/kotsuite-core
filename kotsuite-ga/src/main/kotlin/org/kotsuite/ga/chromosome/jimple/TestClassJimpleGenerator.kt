@@ -8,7 +8,7 @@ import soot.SootClass
 
 object TestClassJimpleGenerator {
 
-    /* TODO: to junit class */
+    /* TODO: to junit class, `RunWith(AndroidJUnit4:class)` */
     fun generate(element: TestClass): SootClass {
         // Resolve dependencies
         Scene.v().loadClassAndSupport("java.lang.Object")

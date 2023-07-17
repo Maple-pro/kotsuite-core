@@ -10,18 +10,21 @@ import soot.VoidType
 import soot.jimple.Jimple
 import soot.jimple.StringConstant
 import soot.jimple.internal.JimpleLocal
+import soot.tagkit.AnnotationConstants
 import soot.tagkit.AnnotationTag
+import soot.tagkit.VisibilityAnnotationTag
 
 object TestCaseJimpleGenerator {
 
     private val jimple = Jimple.v()
 
-    /* TODO: to junit methods */
     fun generate(testcase: TestCase, sootClass: SootClass): SootMethod {
         val sootMethod = SootMethod(testcase.testCaseName, null, VoidType.v(), Modifier.PUBLIC)
 
-        val junitTestAnnotation = AnnotationTag("org.junit.Test")
-        sootMethod.addTag(junitTestAnnotation)
+        val defaultAnnotationTag = VisibilityAnnotationTag(AnnotationConstants.RUNTIME_INVISIBLE)
+        val junitTestAnnotation = AnnotationTag("Lorg/junit/Test;")
+        defaultAnnotationTag.addAnnotation(junitTestAnnotation)
+        sootMethod.addTag(defaultAnnotationTag)
 
         // Create the method body
         val body = jimple.newBody(sootMethod)
