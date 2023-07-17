@@ -57,6 +57,12 @@ java \
 3. Generate .exec file
 4. Run cmd command to generate HTML report
 
+## About java decompiler ([fernflower](https://github.com/fesh0r/fernflower))
+
+```bash
+java -jar java-decompiler.jar CalleeTest.class .
+```
+
 ## How to use `kotsuite-1.0-SNAPSHOT.jar`
 
 ```bash

@@ -37,9 +37,9 @@ import java.nio.file.Paths
 object StandardGAStrategy: Strategy() {
 
     private val logger = LogManager.getLogger()
-    private val sectionLevel = Level.forName("SECTION", 350)
 
-    private const val maxAttempt = Configs.maxAttempt
+//    private const val maxAttempt = Configs.maxAttempt
+    private const val maxAttempt = 1  // for test only
 
     /**
      * Steps:
@@ -63,12 +63,15 @@ object StandardGAStrategy: Strategy() {
      * - Crossover newPopulation
      */
     override fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution {
+        logger.log(Configs.sectionLevel, "[Class: $targetClass, Method: $targetMethod]")
+
+        logger.log(Level.INFO, "Generate initial population")
         val initialTestCases = RandomStrategy.generateTestCasesForMethod(targetMethod)
         var curPopulation = Population(targetMethod, 0, initialTestCases)
         var round = 0
 
         while(true) {
-            logger.log(sectionLevel, "[Round $round]")
+            logger.log(Configs.sectionLevel, "[Round $round]")
 
             // 1. get test suite coverage info
             val fitness = PopulationFitness.generatePopulationFitness(curPopulation) ?: break
@@ -82,6 +85,7 @@ object StandardGAStrategy: Strategy() {
             if (round > maxAttempt) break
 
             // 3. select, mutate and crossover
+            logger.log(Level.INFO, "Select, mutate and crossover")
             curPopulation = curPopulation.select().mutate().crossover()
 
             curPopulation.round = round
@@ -94,4 +98,7 @@ object StandardGAStrategy: Strategy() {
         return fitness.lineCoverage >= Configs.targetLineCoverage
                 && fitness.ccCoverage >= Configs.targetCCCoverage
     }
+
+    @Override
+    override fun toString() = "Standard GA Strategy"
 }

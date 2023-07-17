@@ -25,8 +25,6 @@ class Client(
 ) {
 
     private val logger = LogManager.getLogger()
-    private val sectionLevel = Level.forName("SECTION", 350)
-    private val successLevel = Level.forName("SUCCESS", 360)
 
     private val testSuiteGenerator: TestSuiteGenerator
 
@@ -67,7 +65,7 @@ class Client(
      * Analysis the given bytecode using soot.
      */
     fun analyze(classPath: String) {
-        logger.log(sectionLevel, "[Analysis Phase]")
+        logger.log(Configs.sectionLevel, "[Analysis Phase]")
 
         Analyzer.projectPath = projectPath
         Analyzer.includeRules = includeRules
@@ -78,7 +76,7 @@ class Client(
      * Generate test suite for the give bytecode.
      */
     fun generateTestSuite() {
-        logger.log(sectionLevel, "[Generate Phase]")
+        logger.log(Configs.sectionLevel, "[Generate Phase]")
 
         // Copy class files into `sootOutput/` and `final/classes/` directory
         File(Configs.classesFilePath).copyRecursively(File(Configs.sootOutputPath), true)
@@ -86,7 +84,7 @@ class Client(
 
         testSuiteGenerator.generate()
 
-        logger.log(successLevel, "Success!")
+        logger.log(Configs.successLevel, "Success!")
     }
 
 }

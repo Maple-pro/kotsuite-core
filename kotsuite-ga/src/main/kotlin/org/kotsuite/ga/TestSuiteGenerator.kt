@@ -1,20 +1,22 @@
 package org.kotsuite.ga
 
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.chromosome.jimple.JimpleGenerator
 import org.kotsuite.ga.chromosome.printer.JasminPrinter
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
+import org.kotsuite.ga.decompile.Decompiler
 import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.utils.SootUtils
-import org.slf4j.LoggerFactory
 import soot.SootClass
 import java.time.LocalDateTime
 
 class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val logger = LogManager.getLogger()
 
     private lateinit var wholeSolution: WholeSolution
     private lateinit var testClasses: List<TestClass>
@@ -25,30 +27,25 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
      * Generate test cases using given strategy
      */
     fun generate(): WholeSolution {
-        log.info("Generator Strategy: $gaStrategy")
+        logger.log(Configs.sectionLevel, "[Test suite generator: $gaStrategy]")
 
+        // generate whole solution using the given strategy
         wholeSolution = gaStrategy.generateWholeSolution()
 
         jimpleClasses = JimpleGenerator.generateTestClassesFromWholeSolution(wholeSolution)
 
-        printAndReport()
+        // generate whole solution coverage report
+        generateFinalCoverageReport()
+
+        // decompile class file to java file
+        decompileJUnitClasses()
 
         return wholeSolution
     }
 
-    /**
-     * Print and report for standard ga. Successive operation for standard ga strategy
-     *
-     */
-    private fun printAndReport() {
-        // 1. generate whole solution coverage report
-        generateFinalCoverageReport()
-
-        // 2. decompile class file to java file
-        decompileJUnitClasses()
-    }
-
     private fun generateFinalCoverageReport() {
+        logger.log(Configs.sectionLevel, "Generate final whole solution coverage report")
+
         testClasses = wholeSolution.classSolutions.map { it.testClass }
 
         dummyMainClass = generateDummyMainClass()
@@ -80,8 +77,9 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     }
 
     private fun decompileJUnitClasses() {
-//        Configs.finalDecompiledOutputPath
-//        TODO()
+        logger.log(Configs.sectionLevel, "Decompile class files to java files")
+
+        Decompiler.decompileJasminToJava(Configs.finalClassesOutputPath, Configs.finalDecompiledOutputPath)
     }
 
     private fun generateDummyMainClass(): SootClass {

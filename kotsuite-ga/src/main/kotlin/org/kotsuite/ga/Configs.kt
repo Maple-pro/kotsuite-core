@@ -1,5 +1,6 @@
 package org.kotsuite.ga
 
+import org.apache.logging.log4j.Level
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -7,6 +8,10 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object Configs {
+
+    // log related configs
+    val sectionLevel: Level = Level.forName("SECTION", 350)
+    val successLevel: Level = Level.forName("SUCCESS", 360)
 
     // project related configs
     lateinit var projectPath: String
@@ -38,6 +43,7 @@ object Configs {
     val jacocoCliPath: String get() = "$libsPath/org.jacoco.cli-0.8.10-nodeps.jar"
     val kotlinRuntimePath: String get() = "$libsPath/kotlin-runtime-1.2.71.jar"
     val kotlinStdLibPath: String get() = "$libsPath/kotlin-stdlib-1.8.10.jar"
+    val decompilerPath: String get() = "$libsPath/java-decompiler.jar"
 
     // for test only
     // val kotsuiteAgentPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-agent-1.1.jar"

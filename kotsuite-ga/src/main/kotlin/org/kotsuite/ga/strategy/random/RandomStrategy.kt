@@ -126,4 +126,7 @@ object RandomStrategy: Strategy() {
             }
         }
     }
+
+    @Override
+    override fun toString() = "Random Strategy"
 }
