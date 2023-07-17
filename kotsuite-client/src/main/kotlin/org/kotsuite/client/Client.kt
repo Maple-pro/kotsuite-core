@@ -7,7 +7,6 @@ import org.kotsuite.ga.Configs
 import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.strategy.StrategyHelper
 import java.io.File
-import java.io.ObjectInputFilter.Config
 import java.nio.file.Files
 import java.nio.file.Paths
 

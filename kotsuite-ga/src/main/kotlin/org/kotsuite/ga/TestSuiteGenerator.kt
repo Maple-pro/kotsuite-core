@@ -1,6 +1,5 @@
 package org.kotsuite.ga
 
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.chromosome.jimple.JimpleGenerator

@@ -11,8 +11,6 @@ import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.ga.strategy.random.RandomStrategy
 import soot.SootClass
 import soot.SootMethod
-import java.nio.file.Files
-import java.nio.file.Paths
 
 /**
  * testCaseGeneration(classUnderTest: Class)

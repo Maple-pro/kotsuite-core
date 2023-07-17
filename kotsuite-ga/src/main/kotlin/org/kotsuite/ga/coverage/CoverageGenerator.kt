@@ -4,8 +4,6 @@ import org.kotsuite.ga.Configs
 import org.kotsuite.ga.utils.LoggerUtils
 import org.kotsuite.ga.utils.Utils.isLinux
 import org.slf4j.LoggerFactory
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

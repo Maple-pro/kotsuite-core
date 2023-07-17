@@ -7,8 +7,6 @@ import org.kotsuite.ga.coverage.JacocoUtils
 import org.slf4j.LoggerFactory
 import soot.SootClass
 import soot.SootMethod
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class TestCaseFitness(
     private val jimpleTestClass: SootClass,

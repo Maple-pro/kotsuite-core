@@ -2,10 +2,8 @@ package org.kotsuite.client
 
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.Configs
-import org.slf4j.LoggerFactory
 
 fun main(args: Array<String>) {
 
