@@ -14,11 +14,11 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class ExecUtil(
+class ExecResolver(
     private val title: String,
     private val executionDataFilePath: String,
     private val classesFilePath: String,
-    private val sourcesFilePath: String,
+    private val sourcesFilePath: String?,
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -43,7 +43,7 @@ class ExecUtil(
         }
     }
 
-    fun getTestCaseFitness(targetMethod: SootMethod): Fitness {
+    fun getTargetMethodFitness(targetMethod: SootMethod): Fitness {
         val targetClass = targetMethod.declaringClass
 
         val targetMethodCoverage = coverageBuilder.classes.firstOrNull {
@@ -71,13 +71,23 @@ class ExecUtil(
 
         Files.createDirectories(Paths.get(coverageHTMLReportPath))
 
-        val args = arrayOf("java", "-jar",
-            Configs.jacocoCliPath,
-            "report", executionDataFilePath,
-            "--classfile=$classesFilePath",
-            "--sourcefile=$sourcesFilePath",
-            "--html", coverageHTMLReportPath,
-        )
+        val args =
+            if (sourcesFilePath != null) {
+                arrayOf("java", "-jar",
+                    Configs.jacocoCliPath,
+                    "report", executionDataFilePath,
+                    "--classfile=$classesFilePath",
+                    "--sourcefile=$sourcesFilePath",
+                    "--html", coverageHTMLReportPath,
+                )
+            } else {
+                arrayOf("java", "-jar",
+                    Configs.jacocoCliPath,
+                    "report", executionDataFilePath,
+                    "--classfile=$classesFilePath",
+                    "--html", coverageHTMLReportPath,
+                )
+            }
 
         val ps = Runtime.getRuntime().exec(args)
         LoggerUtils.logCommandOutput(log, ps)
@@ -87,13 +97,23 @@ class ExecUtil(
     fun generateXMLReport(coverageXMLReportPath: String) {
         log.info("Generating XML report: $coverageXMLReportPath")
 
-        val args = arrayOf("java", "-jar",
-            Configs.jacocoCliPath,
-            "report", executionDataFilePath,
-            "--classfile=$classesFilePath",
-            "--sourcefile=$sourcesFilePath",
-            "--xml", coverageXMLReportPath,
-        )
+        val args =
+            if (sourcesFilePath != null) {
+                arrayOf("java", "-jar",
+                    Configs.jacocoCliPath,
+                    "report", executionDataFilePath,
+                    "--classfile=$classesFilePath",
+                    "--sourcefile=$sourcesFilePath",
+                    "--html", coverageXMLReportPath,
+                )
+            } else {
+                arrayOf("java", "-jar",
+                    Configs.jacocoCliPath,
+                    "report", executionDataFilePath,
+                    "--classfile=$classesFilePath",
+                    "--html", coverageXMLReportPath,
+                )
+            }
 
         val ps = Runtime.getRuntime().exec(args)
         LoggerUtils.logCommandOutput(log, ps)

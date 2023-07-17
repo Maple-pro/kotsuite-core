@@ -5,16 +5,18 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 object LoggerUtils {
-    fun logCommandOutput(log: Logger, ps: Process) {
+    fun logCommandOutput(log: Logger, ps: Process, logInputStream: Boolean = false) {
         val stdInput = BufferedReader(InputStreamReader(ps.inputStream))
         val stdError = BufferedReader(InputStreamReader(ps.errorStream))
 
-        log.info("Generating execution data file...")
+        var s: String?
 
-        var s: String? = stdInput.readLine()
-        while (s != null) {
-            log.info(s)
+        if (logInputStream) {
             s = stdInput.readLine()
+            while (s != null) {
+                log.info(s)
+                s = stdInput.readLine()
+            }
         }
 
         s = stdError.readLine()

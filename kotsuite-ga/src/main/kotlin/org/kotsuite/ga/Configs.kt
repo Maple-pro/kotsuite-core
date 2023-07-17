@@ -1,35 +1,89 @@
 package org.kotsuite.ga
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 object Configs {
 
+    // project related configs
     lateinit var projectPath: String
     lateinit var modulePath: String
     lateinit var sourceCodePath: String
     lateinit var classesFilePath: String
-    lateinit var sootOutputPath: String
-    lateinit var outputPath: String
     lateinit var mainClass: String
     lateinit var includeRules: List<String>
     lateinit var includeFiles: String
-    lateinit var outputFileDir: String
     lateinit var libsPath: String
 
-    val kotsuiteAgentPath: String
-        get() = "$libsPath/kotsuite-agent-1.0-SNAPSHOT.jar"
-    val jacocoAgentPath: String
-        get() = "$libsPath/org.jacoco.agent-0.8.10-runtime.jar"
-    val jacocoCliPath: String
-        get() = "$libsPath/org.jacoco.cli-0.8.10-nodeps.jar"
-    val kotlinRuntimePath: String
-        get() = "$libsPath/kotlin-runtime-1.2.71.jar"
-    val kotlinStdLibPath: String
-        get() = "$libsPath/kotlin-stdlib-1.8.10.jar"
+    // genetic algorithm output paths
+    val sootOutputPath: String get() = "$modulePath/sootOutput"
+    val kotSuiteOutputPath: String get() = "$modulePath/kotsuite"
+    val execOutputPath: String get() = "$kotSuiteOutputPath/exec"
+    val jarOutputPath: String get() = "$kotSuiteOutputPath/jar"
+    val reportOutputPath: String get() = "$kotSuiteOutputPath/report"
 
+    // final output paths
+    val finalOutputPath: String get() = "$modulePath/final"
+    val finalClassesOutputPath: String get() = "$finalOutputPath/classes"
+    val finalJUnitClassesOutputPath: String get() = "$finalOutputPath/junit"
+    val finalDecompiledOutputPath: String get() = "$finalOutputPath/decompiled"
+    val finalExecOutputPath: String get() = "$finalOutputPath/exec"
+    val finalReportOutputPath: String get() = "$finalOutputPath/report"
+
+    // dependency jar paths
+    val kotsuiteAgentPath: String get() = "$libsPath/kotsuite-agent-1.2.jar"
+    val jacocoAgentPath: String get() = "$libsPath/org.jacoco.agent-0.8.10-runtime.jar"
+    val jacocoCliPath: String get() = "$libsPath/org.jacoco.cli-0.8.10-nodeps.jar"
+    val kotlinRuntimePath: String get() = "$libsPath/kotlin-runtime-1.2.71.jar"
+    val kotlinStdLibPath: String get() = "$libsPath/kotlin-stdlib-1.8.10.jar"
+
+    // for test only
+    // val kotsuiteAgentPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-agent-1.1.jar"
+
+    // genetic algorithm related configs
     const val maxAttempt = 50
     const val targetLineCoverage = 0.6  // Line coverage
     const val targetCCCoverage = 0.9  // Cyclomatic complexity coverage
 
-    fun print(): String {
+    /**
+     * Get exec file path
+     *
+     * @param testClassName test class full name, e.g., org.example.myapplication.TempCalleePrintHelloRound0
+     * @param testCaseName test case name, e.g, test_printHello_1
+     * @return the exec file path, e.g., `$execOutputPath`/jacoco_org.example.myapplication.TempCalleePrintHelloRound0.test_printHello_1
+     */
+    fun getExecFilePath(testClassName: String, testCaseName: String): String {
+        val fileName =
+            if (testCaseName == "*") "jacoco_${testClassName}_all.exec"
+            else "jacoco_${testClassName}_${testCaseName}.exec"
+        return "$execOutputPath/$fileName"
+    }
+
+    private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+
+    fun getFinalExecFilePath(dateTime: LocalDateTime): String {
+        val timestamp = dateTime.format(timeFormatter)
+        return "$finalExecOutputPath/jacoco_$timestamp.exec"
+    }
+
+    fun getFinalHTMLReportPath(dateTime: LocalDateTime): String {
+        val timestamp = dateTime.format(timeFormatter)
+        val htmlReportPath = "$finalReportOutputPath/coverage_report_$timestamp/"
+        Files.createDirectories(Paths.get(htmlReportPath))
+
+        return htmlReportPath
+    }
+
+    fun getFinalXMLReportPath(dateTime: LocalDateTime): String {
+        val timestamp = dateTime.format(timeFormatter)
+        return "$finalReportOutputPath/coverage_xml_$timestamp.xml"
+    }
+
+    @Override
+    override fun toString(): String {
         return "{ project_path: $projectPath, module_path: $modulePath }"
     }
 

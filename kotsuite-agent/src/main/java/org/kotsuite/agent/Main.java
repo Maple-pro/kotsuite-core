@@ -14,21 +14,23 @@ public class Main {
     static String className;
     static String methodName;
 
+    /**
+     *
+     * @param agentArgs the target class and method, e.g., "ExampleTest.foo" or "ExampleTest.*"
+     */
     public static void premain(String agentArgs, Instrumentation inst) {
-//        System.out.println("start kotsuite agent");
-
         int splitIndex = agentArgs.lastIndexOf('.');
-        className = agentArgs.substring(0, splitIndex).replace('.', '/');
-        methodName = agentArgs.substring(splitIndex + 1);
 
-//        System.out.println("Add method: " + className + "." + methodName);
+        if (splitIndex != -1) { // if the args is not null, then add the transformer
+            className = agentArgs.substring(0, splitIndex).replace('.', '/');
+            methodName = agentArgs.substring(splitIndex + 1);
 
-        try {
-            inst.addTransformer(new ClassCalleeTransformer());
-        } catch (Exception exception) {
-            System.out.println("error: " + exception.getLocalizedMessage());
+            try {
+                inst.addTransformer(new ClassCalleeTransformer());
+            } catch (Exception exception) {
+                System.out.println("error: " + exception.getLocalizedMessage());
+            }
         }
-
     }
 
     public static void agentmain(String agentArgs, Instrumentation inst) {
@@ -47,8 +49,6 @@ public class Main {
 
             if (className.equals("KotMain")) {
 
-//                System.out.println("Start deal with KotMain class");
-
                 // First visitor: add method call statements
                 ClassReader reader = new ClassReader(classfileBuffer);
                 ClassWriter writer = new ClassWriter(
@@ -64,8 +64,6 @@ public class Main {
 //                        ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
 //                );
 //                reader.accept(new PrinterClassVisitor(writer2), ClassReader.EXPAND_FRAMES);
-
-//                System.out.println("success!");
 
 //                return writer2.toByteArray();
                 return writer.toByteArray();

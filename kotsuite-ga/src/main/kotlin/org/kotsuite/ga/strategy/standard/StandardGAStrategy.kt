@@ -1,5 +1,7 @@
 package org.kotsuite.ga.strategy.standard
 
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.Configs
 import org.kotsuite.ga.chromosome.Population
 import org.kotsuite.ga.strategy.Strategy
@@ -34,14 +36,10 @@ import java.nio.file.Paths
  */
 object StandardGAStrategy: Strategy() {
 
-    private val maxAttempt = Configs.maxAttempt
-    private val moduleDir = Configs.modulePath
-    private val classesFilePath = Configs.classesFilePath
-    private val populationOutputPath = "$moduleDir/kotsuite/population"
+    private val logger = LogManager.getLogger()
+    private val sectionLevel = Level.forName("SECTION", 350)
 
-    init {
-        Files.createDirectories(Paths.get(populationOutputPath))
-    }
+    private const val maxAttempt = Configs.maxAttempt
 
     /**
      * Steps:
@@ -69,24 +67,24 @@ object StandardGAStrategy: Strategy() {
         var curPopulation = Population(targetMethod, 0, initialTestCases)
         var round = 0
 
-        while(round <= maxAttempt) {
+        while(true) {
+            logger.log(sectionLevel, "[Round $round]")
+
             // 1. get test suite coverage info
-            val fitness = PopulationFitness.generatePopulationFitness(curPopulation)
+            val fitness = PopulationFitness.generatePopulationFitness(curPopulation) ?: break
 
             // 2. meet the coverage criteria ? output : continue
+            logger.log(Level.INFO, "Fitness: $fitness")
             val isCoverTargets = isCoverTargets(fitness)
             if (isCoverTargets) break
 
-            // 3. selection
-            curPopulation = curPopulation.select()
-
-            // 4. mutate
-            curPopulation = curPopulation.mutate()
-
-            // 5. crossover
-            curPopulation = curPopulation.crossover()
-
             round++
+            if (round > maxAttempt) break
+
+            // 3. select, mutate and crossover
+            curPopulation = curPopulation.select().mutate().crossover()
+
+            curPopulation.round = round
         }
 
         return MethodSolution(targetMethod, curPopulation.testCases)

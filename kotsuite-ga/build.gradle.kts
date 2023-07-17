@@ -23,6 +23,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
     testImplementation("io.mockk:mockk:1.13.5")
 
+    implementation("org.apache.logging.log4j:log4j-api:2.20.0")
 }
 
 tasks.getByName<Test>("test") {

@@ -6,8 +6,8 @@ import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.Configs
 import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.strategy.StrategyHelper
-import org.kotsuite.ga.coverage.CoverageGenerator
 import java.io.File
+import java.io.ObjectInputFilter.Config
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -24,15 +24,15 @@ class Client(
     private val gaStrategy: String,
 ) {
 
-//    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val logger = LogManager.getLogger()
     private val sectionLevel = Level.forName("SECTION", 350)
     private val successLevel = Level.forName("SUCCESS", 360)
-    private val logger = LogManager.getLogger()
 
     private val testSuiteGenerator: TestSuiteGenerator
 
     init {
         setConfigs()
+        createDirectories()
         testSuiteGenerator = TestSuiteGenerator(StrategyHelper.getGAStrategy(gaStrategy))
     }
 
@@ -41,14 +41,27 @@ class Client(
         Configs.modulePath = modulePath
         Configs.sourceCodePath = moduleSourcePath
         Configs.classesFilePath = moduleClassPath
-        Configs.sootOutputPath = "${modulePath}/sootOutput/"
-        Configs.outputPath = "${modulePath}/kotsuite/"
         Configs.mainClass = "KotMain"
         Configs.includeRules = includeRules
         Configs.includeFiles = "*"
         Configs.libsPath = libsPath
 
-        logger.log(Level.INFO, "Set configs: ${Configs.print()}")
+        logger.log(Level.INFO, "Set configs: $Configs")
+    }
+
+    private fun createDirectories() {
+        Files.createDirectories(Paths.get(Configs.kotSuiteOutputPath))
+        Files.createDirectories(Paths.get(Configs.sootOutputPath))
+        Files.createDirectories(Paths.get(Configs.execOutputPath))
+        Files.createDirectories(Paths.get(Configs.jarOutputPath))
+        Files.createDirectories(Paths.get(Configs.reportOutputPath))
+
+        Files.createDirectories(Paths.get(Configs.finalOutputPath))
+        Files.createDirectories(Paths.get(Configs.finalClassesOutputPath))
+        Files.createDirectories(Paths.get(Configs.finalJUnitClassesOutputPath))
+        Files.createDirectories(Paths.get(Configs.finalDecompiledOutputPath))
+        Files.createDirectories(Paths.get(Configs.finalExecOutputPath))
+        Files.createDirectories(Paths.get(Configs.finalReportOutputPath))
     }
 
     /**
@@ -68,36 +81,12 @@ class Client(
     fun generateTestSuite() {
         logger.log(sectionLevel, "[Generate Phase]")
 
-        Files.createDirectories(Paths.get(Configs.sootOutputPath))
-        Files.createDirectories(Paths.get(Configs.outputPath))
-
         // Copy class files into sootOutput/ directory
         File(Configs.classesFilePath).copyRecursively(File(Configs.sootOutputPath), true)
 
         testSuiteGenerator.generate()
 
         logger.log(successLevel, "Success!")
-    }
-
-    /**
-     * Attach the client to the JVM. Load KotSuite agent on the JVM that runs the code to be tested.
-     */
-    fun attach() {
-
-    }
-
-    /**
-     * Submit generated test case to the JVM attached.
-     */
-    fun submit() {
-
-    }
-
-    /**
-     * Close all connection state to the JVM attached.
-     */
-    fun close() {
-
     }
 
 }

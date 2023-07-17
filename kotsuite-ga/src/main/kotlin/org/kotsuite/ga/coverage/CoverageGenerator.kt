@@ -15,7 +15,6 @@ object CoverageGenerator {
 
     private val sourceCodePath = Configs.sourceCodePath
     private val sootOutputPath = Configs.sootOutputPath
-    private val outputPath = Configs.outputPath
     private val mainClass = Configs.mainClass
     private val includeFiles = Configs.includeFiles
 
@@ -26,30 +25,29 @@ object CoverageGenerator {
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
     private val timestamp = LocalDateTime.now().format(timeFormatter)
 
-    private val jarPath = "$outputPath/jar/MyApplication.jar"
-    private val executionDataPath = "$outputPath/report/jacoco-MyApplication.exec"
-    private val coverageHTMLReportPath = "$outputPath/report/coverage_report_$timestamp/"
-    private val coverageXMLFilePath = "$outputPath/report/coverage_xml_$timestamp.xml"
+    private val jarPath = "${Configs.jarOutputPath}/MyApplication.jar"
+    private val executionDataPath = "${Configs.execOutputPath}/jacoco-MyApplication.exec"
+    private val coverageHTMLReportPath = "${Configs.reportOutputPath}/coverage_report_$timestamp/"
+    private val coverageXMLFilePath = "${Configs.reportOutputPath}/coverage_xml_$timestamp.xml"
 
+    @Deprecated("Should not use")
     fun generate() {
         generateJarFile()
         generateExecFile()
         getCoverageInfo()
 
-        val execUtil = ExecUtil(
+        val execResolver = ExecResolver(
             "MyApplication",
             executionDataPath,
             sootOutputPath,
             sourceCodePath,
         )
-        execUtil.generateHTMLReport(coverageHTMLReportPath)
-        execUtil.generateXMLReport(coverageXMLFilePath)
+        execResolver.generateHTMLReport(coverageHTMLReportPath)
+        execResolver.generateXMLReport(coverageXMLFilePath)
     }
 
     private fun generateJarFile() {
         log.info("Package class files into .jar file: $jarPath")
-
-        Files.createDirectories(Paths.get("$outputPath/jar/"))
 
         // Run command `jar -cvf jarPath -C sootOutputPath .`
         val args = arrayOf("jar", "-cvf", jarPath, "-C", sootOutputPath, ".")
@@ -79,7 +77,7 @@ object CoverageGenerator {
     }
 
     private fun getCoverageInfo() {
-        ExecUtil("MyApplication", executionDataPath, sootOutputPath, sourceCodePath).getSimpleInfo()
+        ExecResolver("MyApplication", executionDataPath, sootOutputPath, sourceCodePath).getSimpleInfo()
     }
 
 }

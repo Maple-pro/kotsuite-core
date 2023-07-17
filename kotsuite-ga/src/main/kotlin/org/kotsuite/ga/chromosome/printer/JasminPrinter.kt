@@ -15,17 +15,25 @@ import java.nio.file.Paths
 
 object JasminPrinter {
 
-    private val outputFileDir = Configs.modulePath
+    private val outputFileDir = Configs.sootOutputPath
 
     /**
      * Print jasmin file
      *
      * @param sootClass     the soot class needs to be printed
-     * @param outputFileDir the output direction path
+     * @param outputFileDir the output direction path, it will print to `$outputFileDir/sootOutput`
+     * @param asmBackend    whether to use asm backend or outdated backend
      */
-    fun printJasminFile(sootClass: SootClass, outputFileDir: String = this.outputFileDir, asmBackend: Boolean = true) {
+    fun printJasminFile(
+        sootClass: SootClass,
+        outputFileDir: String = this.outputFileDir,
+        asmBackend: Boolean = true,
+    ) {
         val javaVersion = Options.v().java_version()
-        val fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class)
+
+        // `getFileNameFor()` will return "sootOutput/com/example/myapplication/.../.class", so we need to remove the "sootOutput"
+        val fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class).substringAfter('/')
+
         val finalDir = "$outputFileDir/$fileName"
 
         val lastIndex = finalDir.lastIndexOf("/")

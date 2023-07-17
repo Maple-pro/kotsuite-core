@@ -11,6 +11,5 @@ class TestCase(
 
     val actions = mutableListOf<Action>()
     val values = mutableListOf<Value>()
-//    var fitness = Fitness()
     var fitness: Fitness? = null
 }
