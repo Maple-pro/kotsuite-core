@@ -55,6 +55,7 @@ class Client(
 
         Files.createDirectories(Paths.get(Configs.finalOutputPath))
         Files.createDirectories(Paths.get(Configs.finalClassesOutputPath))
+        Files.createDirectories(Paths.get(Configs.finalTestOutputPath))
         Files.createDirectories(Paths.get(Configs.finalDecompiledOutputPath))
         Files.createDirectories(Paths.get(Configs.finalExecOutputPath))
         Files.createDirectories(Paths.get(Configs.finalReportOutputPath))

@@ -31,7 +31,8 @@ object Configs {
 
     // final output paths
     val finalOutputPath: String get() = "$modulePath/final"
-    val finalClassesOutputPath: String get() = "$finalOutputPath/classes"
+    val finalClassesOutputPath: String get() = "$finalOutputPath/classes" // have source and test
+    val finalTestOutputPath: String get() = "$finalOutputPath/test" // only have test classes
     val finalDecompiledOutputPath: String get() = "$finalOutputPath/decompiled"
     val finalExecOutputPath: String get() = "$finalOutputPath/exec"
     val finalReportOutputPath: String get() = "$finalOutputPath/report"

@@ -60,7 +60,7 @@ java \
 ## About java decompiler ([fernflower](https://github.com/fesh0r/fernflower))
 
 ```bash
-java -jar java-decompiler.jar CalleeTest.class .
+java -jar final/classes final/decompiled
 ```
 
 ## How to use `kotsuite-1.0-SNAPSHOT.jar`

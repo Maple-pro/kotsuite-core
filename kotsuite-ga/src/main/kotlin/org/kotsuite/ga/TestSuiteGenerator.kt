@@ -37,6 +37,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         generateFinalCoverageReport()
 
         // decompile class file to java file
+        printTestClassJasminFiles(Configs.finalTestOutputPath)
         decompileJUnitClasses()
 
         return wholeSolution
@@ -78,7 +79,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     private fun decompileJUnitClasses() {
         logger.log(Configs.sectionLevel, "Decompile class files to java files")
 
-        Decompiler.decompileJasminToJava(Configs.finalClassesOutputPath, Configs.finalDecompiledOutputPath)
+        Decompiler.decompileJasminToJava(Configs.finalTestOutputPath, Configs.finalDecompiledOutputPath)
     }
 
     private fun generateDummyMainClass(): SootClass {
@@ -92,13 +93,19 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     }
 
     /**
-     * Print generated test cases to bytecode
+     * Print generated test classes and dummy main class to bytecode
      */
     private fun printJasminFiles(outputPath: String) {
         jimpleClasses.forEach {
             JasminPrinter.printJasminFile(it, outputPath)
         }
         JasminPrinter.printJasminFile(dummyMainClass, outputPath)
+    }
+
+    private fun printTestClassJasminFiles(outputPath: String) {
+        jimpleClasses.forEach {
+            JasminPrinter.printJasminFile(it, outputPath)
+        }
     }
 
 }
