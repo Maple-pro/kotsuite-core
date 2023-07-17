@@ -104,14 +104,14 @@ class ExecResolver(
                     "report", executionDataFilePath,
                     "--classfile=$classesFilePath",
                     "--sourcefile=$sourcesFilePath",
-                    "--html", coverageXMLReportPath,
+                    "--xml", coverageXMLReportPath,
                 )
             } else {
                 arrayOf("java", "-jar",
                     Configs.jacocoCliPath,
                     "report", executionDataFilePath,
                     "--classfile=$classesFilePath",
-                    "--html", coverageXMLReportPath,
+                    "--xml", coverageXMLReportPath,
                 )
             }
 
