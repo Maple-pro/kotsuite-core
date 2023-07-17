@@ -27,3 +27,7 @@ gradle-app.setting
 
 docs/
 output/
+
+final/
+kotsuite/
+sootOutput/
