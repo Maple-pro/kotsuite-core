@@ -28,7 +28,7 @@ object JimpleGenerator {
         val dummyTestClass = TestClass(dummyTestClassName, targetClass.packageName, population.round)
         dummyTestClass.testCases = population.testCases.toMutableList()
 
-        return TestClassJimpleGenerator.generate(dummyTestClass)
+        return TestClassJimpleGenerator.generate(dummyTestClass, collectReturnValue = true, printTestCaseName = true)
     }
 
 }

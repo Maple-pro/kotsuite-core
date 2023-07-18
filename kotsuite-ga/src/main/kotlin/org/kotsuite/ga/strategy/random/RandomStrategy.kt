@@ -42,7 +42,7 @@ object RandomStrategy: Strategy() {
     }
 
     private fun generateTestCaseForMethod(targetMethod: SootMethod, testCaseName: String): TestCase {
-        val testCase = TestCase(testCaseName, 0)
+        val testCase = TestCase(testCaseName, targetMethod, 0)
         val targetClass = targetMethod.declaringClass
 
         val constructorAction = generateConstructorAction(testCase, targetClass)

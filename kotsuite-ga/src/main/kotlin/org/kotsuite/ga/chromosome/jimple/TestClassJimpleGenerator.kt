@@ -9,7 +9,7 @@ import soot.SootClass
 object TestClassJimpleGenerator {
 
     /* TODO: to junit class, `RunWith(AndroidJUnit4:class)` */
-    fun generate(element: TestClass): SootClass {
+    fun generate(element: TestClass, collectReturnValue: Boolean = false, printTestCaseName: Boolean = false): SootClass {
         // Resolve dependencies
         Scene.v().loadClassAndSupport("java.lang.Object")
 
@@ -24,7 +24,9 @@ object TestClassJimpleGenerator {
         val initMethod = SootUtils.createInitMethod(sootClass)
 
         // Create methods
-        val sootMethods = element.testCases.map { TestCaseJimpleGenerator.generate(it, sootClass) }
+        val sootMethods = element.testCases.map {
+            TestCaseJimpleGenerator.generate(it, sootClass, collectReturnValue, printTestCaseName)
+        }
 
         // Add methods to class
         val methods = listOf(initMethod) + sootMethods
