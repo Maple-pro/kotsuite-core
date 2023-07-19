@@ -27,7 +27,7 @@ public class MainMethodVisitor extends MethodVisitor {
                 Method[] methods = targetClass.getDeclaredMethods();
                 for (Method method : methods) {
                     if (method.getName().equals("$jacocoInit")) continue;
-                    System.out.println("Inserting method: " + method.getName());
+//                    System.out.println("Inserting method: " + method.getName());
                     addMethodCall(method.getName());
                 }
 

@@ -28,6 +28,8 @@ class TestCaseFitness(
             jimpleTestClass.name,
             testCase.testCaseName,
             jimpleMainClass.name,
+            generateAssert = true,
+            testCase,
         )
         generateFitness()
     }

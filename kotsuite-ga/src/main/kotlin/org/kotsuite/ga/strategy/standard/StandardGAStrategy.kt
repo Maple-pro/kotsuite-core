@@ -37,7 +37,7 @@ object StandardGAStrategy: Strategy() {
     private val logger = LogManager.getLogger()
 
 //    private const val maxAttempt = Configs.maxAttempt
-    private const val maxAttempt = 1  // for test only
+    private const val maxAttempt = 1  // [test] for test only
 
     /**
      * Steps:

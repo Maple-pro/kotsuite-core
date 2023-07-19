@@ -19,6 +19,8 @@ import soot.tagkit.AnnotationTag
 import soot.tagkit.VisibilityAnnotationTag
 import java.util.UUID
 
+// TODO: already create the println statement to print the return value of the method call,
+//  and the next step is to read the outputStream of the command, then assign the assert value to each testcase
 object TestCaseJimpleGenerator {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
@@ -81,14 +83,32 @@ object TestCaseJimpleGenerator {
                 // add print statement
                 val returnValue = localsAndUnits.locals.first()
 
+                // print "<assert>" prefix
                 val printPrefixLocalsAndUnits = createPrintStringStmt("<assert>", printStreamRefLocal)
                 body.locals.addAll(printPrefixLocalsAndUnits.locals)
                 body.units.addAll(printPrefixLocalsAndUnits.units)
 
+                // print return type, e.g., <type>int<type>
+                val printReturnTypeLocalsAndUnits = createPrintStringStmt("<type>${action.method.returnType}</type>", printStreamRefLocal)
+                body.locals.addAll(printReturnTypeLocalsAndUnits.locals)
+                body.units.addAll(printReturnTypeLocalsAndUnits.units)
+
+                // print "<value>" prefix
+                val printValuePrefixLocalsAndUnits = createPrintStringStmt("<value>", printStreamRefLocal)
+                body.locals.addAll(printValuePrefixLocalsAndUnits.locals)
+                body.units.addAll(printValuePrefixLocalsAndUnits.units)
+
+                // print return value
                 val printReturnLocalsAndUnits = createPrintValueStmt(returnValue, printStreamRefLocal)
                 body.locals.addAll(printReturnLocalsAndUnits.locals)
                 body.units.addAll(printReturnLocalsAndUnits.units)
 
+                // print "</value>" suffix
+                val printValueSuffixLocalsAndUnits = createPrintStringStmt("</value>", printStreamRefLocal)
+                body.locals.addAll(printValueSuffixLocalsAndUnits.locals)
+                body.units.addAll(printValueSuffixLocalsAndUnits.units)
+
+                // print "</assert>" suffix
                 val printSuffixLocalsAndUnits = createPrintStringStmt("</assert>", printStreamRefLocal)
                 body.locals.addAll(printSuffixLocalsAndUnits.locals)
                 body.units.addAll(printSuffixLocalsAndUnits.units)
@@ -98,6 +118,8 @@ object TestCaseJimpleGenerator {
                 body.units.addAll(localsAndUnits.units)
             }
         }
+
+        // TODO: add assert statement
 
         // Create return statement
         val returnStmt = jimple.newReturnVoidStmt()

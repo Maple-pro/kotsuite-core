@@ -47,18 +47,20 @@ class Client(
     }
 
     private fun createDirectories() {
-        Files.createDirectories(Paths.get(Configs.kotSuiteOutputPath))
-        Files.createDirectories(Paths.get(Configs.sootOutputPath))
-        Files.createDirectories(Paths.get(Configs.execOutputPath))
-        Files.createDirectories(Paths.get(Configs.jarOutputPath))
-        Files.createDirectories(Paths.get(Configs.reportOutputPath))
+        with(Configs) {
+            Files.createDirectories(Paths.get(kotSuiteOutputPath))
+            Files.createDirectories(Paths.get(sootOutputPath))
+            Files.createDirectories(Paths.get(execOutputPath))
+            Files.createDirectories(Paths.get(jarOutputPath))
+            Files.createDirectories(Paths.get(reportOutputPath))
 
-        Files.createDirectories(Paths.get(Configs.finalOutputPath))
-        Files.createDirectories(Paths.get(Configs.finalClassesOutputPath))
-        Files.createDirectories(Paths.get(Configs.finalTestOutputPath))
-        Files.createDirectories(Paths.get(Configs.finalDecompiledOutputPath))
-        Files.createDirectories(Paths.get(Configs.finalExecOutputPath))
-        Files.createDirectories(Paths.get(Configs.finalReportOutputPath))
+            Files.createDirectories(Paths.get(finalOutputPath))
+            Files.createDirectories(Paths.get(finalClassesOutputPath))
+            Files.createDirectories(Paths.get(finalTestOutputPath))
+            Files.createDirectories(Paths.get(finalDecompiledOutputPath))
+            Files.createDirectories(Paths.get(finalExecOutputPath))
+            Files.createDirectories(Paths.get(finalReportOutputPath))
+        }
     }
 
     /**

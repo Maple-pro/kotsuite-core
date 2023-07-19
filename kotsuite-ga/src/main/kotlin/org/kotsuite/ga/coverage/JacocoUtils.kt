@@ -1,6 +1,7 @@
 package org.kotsuite.ga.coverage
 
 import org.kotsuite.ga.Configs
+import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.utils.LoggerUtils
 import org.kotsuite.ga.utils.Utils
 import org.slf4j.LoggerFactory
@@ -24,6 +25,8 @@ object JacocoUtils {
         testClassName: String,
         testCaseName: String,
         mainClassName: String,
+        generateAssert: Boolean = false,
+        testCase: TestCase? = null,
     ) {
 //        log.info("Generating exec file: $testClassName.$testCaseName")
 
@@ -47,11 +50,15 @@ object JacocoUtils {
         )
 
         val command = arrayOf("java") + vmOptions + arrayOf(mainClassName)
+//        log.info("Run command: ${command.joinToString(" ")}")
         try {
-//            log.info("Run command: ${command.joinToString(" ")}")
-
             val ps = Runtime.getRuntime().exec(command)
+
+            if (generateAssert && testCase != null) {
+                testCase.generateAssertByProcess(ps)
+            }
             LoggerUtils.logCommandOutput(log, ps)
+
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

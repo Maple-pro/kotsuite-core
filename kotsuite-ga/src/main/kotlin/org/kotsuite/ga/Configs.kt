@@ -38,15 +38,15 @@ object Configs {
     val finalReportOutputPath: String get() = "$finalOutputPath/report"
 
     // dependency jar paths
-    val kotsuiteAgentPath: String get() = "$libsPath/kotsuite-agent-1.2.jar"
+//    val kotsuiteAgentPath: String get() = "$libsPath/kotsuite-agent-1.2.jar"
     val jacocoAgentPath: String get() = "$libsPath/org.jacoco.agent-0.8.10-runtime.jar"
     val jacocoCliPath: String get() = "$libsPath/org.jacoco.cli-0.8.10-nodeps.jar"
     val kotlinRuntimePath: String get() = "$libsPath/kotlin-runtime-1.2.71.jar"
     val kotlinStdLibPath: String get() = "$libsPath/kotlin-stdlib-1.8.10.jar"
     val decompilerPath: String get() = "$libsPath/java-decompiler.jar"
 
-    // for test only
-    // val kotsuiteAgentPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-agent-1.1.jar"
+    // [test] for test only
+    val kotsuiteAgentPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-agent-1.2.jar"
 
     // genetic algorithm related configs
     const val maxAttempt = 50
