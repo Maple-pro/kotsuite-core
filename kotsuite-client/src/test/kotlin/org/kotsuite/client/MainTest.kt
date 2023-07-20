@@ -1,5 +1,6 @@
 package org.kotsuite.client
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class MainTest {
@@ -12,6 +13,7 @@ class MainTest {
         val includeRules = "com.example.myapplication.Example&com.example.myapplication.Callee"
         val libsPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs"
         val strategy = "ga"  // ga or random
+        val dependency = Data.dependencies.joinToString(":")
 
         val args = arrayOf(
             "--project", projectPath,
@@ -21,13 +23,14 @@ class MainTest {
             "--includes", includeRules,
             "--libs", libsPath,
             "--strategy", strategy,
+            "--dependency", dependency,
         )
         main(args)
     }
 
     @Test
     fun testAlarmClock() {
-
+        assertEquals(1 + 1, 2)
     }
 
     @Test

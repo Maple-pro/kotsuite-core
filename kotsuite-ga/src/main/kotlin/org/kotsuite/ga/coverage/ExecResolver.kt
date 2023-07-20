@@ -90,7 +90,7 @@ class ExecResolver(
             }
 
         val ps = Runtime.getRuntime().exec(args)
-        LoggerUtils.logCommandOutput(log, ps)
+        LoggerUtils.logCommandOutput(log, ps, Configs.showDebugLog)
         ps.waitFor()
     }
 
@@ -116,7 +116,7 @@ class ExecResolver(
             }
 
         val ps = Runtime.getRuntime().exec(args)
-        LoggerUtils.logCommandOutput(log, ps)
+        LoggerUtils.logCommandOutput(log, ps, Configs.showDebugLog)
         ps.waitFor()
     }
 

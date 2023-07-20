@@ -15,13 +15,18 @@ object Decompiler {
         val command = arrayOf(
             "java",
             "-jar", Configs.decompilerPath,
+            "-das=1", // decompiler assertions
+            "-rbr=0", // hide bridge methods
+            "-rsy=0", // hide synthetic class members
+            "-ren=0", // rename
+//            "-log=TRACE",
             classesPath,
             javaOutputPath,
         )
 
         try {
             val ps = Runtime.getRuntime().exec(command)
-            LoggerUtils.logCommandOutput(log, ps)
+            LoggerUtils.logCommandOutput(log, ps, Configs.showDebugLog)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

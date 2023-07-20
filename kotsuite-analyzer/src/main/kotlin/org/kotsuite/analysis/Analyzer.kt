@@ -22,14 +22,18 @@ object Analyzer {
     /**
      * Analyze classes in the data directory, and transform them into jimple.
      */
-    fun analyze(classPath: String): Boolean {
+    fun analyze(classPath: String, dependencyCLassPaths: List<String>): Boolean {
         log.info("Analysis project: project($projectPath)")
 
-        val res = setupSoot(classPath)
+        log.info("Start analyze project")
+
+        val res = setupSoot(classPath, dependencyCLassPaths)
         if (!res) {
             return false
         }
         Scene.v().loadNecessaryClasses()
+
+        log.info("Finish analyze project")
 
         classes = Scene.v().classes.filter{
             sootClass ->
@@ -61,7 +65,7 @@ object Analyzer {
     /**
      * Set up soot parameters
      */
-    private fun setupSoot(classPath: String): Boolean {
+    private fun setupSoot(classPath: String, dependencyClassPaths: List<String>): Boolean {
         log.info("Setup Soot: class($includeRules), project($projectPath")
 
         val file = File(classPath)
@@ -72,13 +76,16 @@ object Analyzer {
 
         G.reset()
         with(Options.v()) {
+            set_prepend_classpath(true)
             set_whole_program(true)
             set_output_format(Options.output_format_jimple)
             set_allow_phantom_refs(true)
             set_no_bodies_for_excluded(true)
             set_exclude(getExcludes())
             set_include(ArrayList(includeRules))
-            set_process_dir(listOf(classPath))
+            set_process_dir(listOf(classPath) + dependencyClassPaths)
+//            set_process_dir(listOf(classPath))
+//            set_soot_classpath(dependencyClassPathsList.joinToString(":"))
             set_validate(true)
         }
         return true

@@ -38,7 +38,8 @@ object JacocoUtils {
         val classPaths = listOf(
             classesPath,
             "${Configs.libsPath}/*",
-        )
+        ) + Configs.dependencyClassPaths
+
         val cpArg =
             if(Utils.isLinux()) classPaths.joinToString(":")
             else classPaths.joinToString(";")
@@ -57,7 +58,7 @@ object JacocoUtils {
             if (generateAssert && testCase != null) {
                 testCase.generateAssertByProcess(ps)
             }
-            LoggerUtils.logCommandOutput(log, ps)
+            LoggerUtils.logCommandOutput(log, ps, Configs.showDebugLog)
 
             ps.waitFor()
         } catch (e: Exception) {

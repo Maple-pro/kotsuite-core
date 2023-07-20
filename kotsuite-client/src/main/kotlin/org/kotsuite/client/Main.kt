@@ -18,8 +18,11 @@ fun main(args: Array<String>) {
         addOption("cp", "classpath", true, "Selected module classpath")
         addOption("src", "source", true, "Selected module source root")
         addOption("i", "includes", true, "Include Rules, use & to joint multiple rules")
-        addOption("l", "libs", true, "Libs path")
+        addOption("l", "libs", true, "KotSuite libs path")
         addOption("s", "strategy", true, "Test suite generation strategy")
+        addOption("d", "dependency", true, "Module dependencies class path roots")
+//        addOption("ut", "unittest", true, "Unit test source path")
+//        addOption("at", "androidtest", true, "Android test source path")
     }
 
     val parser = DefaultParser()
@@ -34,9 +37,19 @@ fun main(args: Array<String>) {
     val includeRules = cmd.getOptionValue("includes").split('&')
     val libsPath = cmd.getOptionValue("libs")
     val gaStrategy = cmd.getOptionValue("strategy")
+    val dependencyClassPaths = cmd.getOptionValue("dependency")
 
-    val client = Client(projectPath, modulePath, moduleClassPath, moduleSourcePath, includeRules, libsPath, gaStrategy)
-    client.analyze(moduleClassPath)
+    val client = Client(
+        projectPath,
+        modulePath,
+        moduleClassPath,
+        moduleSourcePath,
+        includeRules,
+        libsPath,
+        gaStrategy,
+        dependencyClassPaths,
+    )
+    client.analyze()
     client.generateTestSuite()
 }
 

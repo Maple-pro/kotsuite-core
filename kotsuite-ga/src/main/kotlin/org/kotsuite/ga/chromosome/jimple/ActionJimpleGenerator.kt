@@ -20,7 +20,10 @@ object ActionJimpleGenerator {
     private val jimple = Jimple.v()
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
-    fun generate(action: Action, values: List<Value>, sootMethod: SootMethod, collectReturnValue: Boolean = false): LocalsAndUnits {
+    fun generate(
+        action: Action, values: List<Value>, sootMethod: SootMethod,
+        collectReturnValue: Boolean = false
+    ): LocalsAndUnits {
         val args = action.parameters.map {
             ParameterJimpleGenerator.generate(it, values, sootMethod)
         }
@@ -52,7 +55,8 @@ object ActionJimpleGenerator {
     }
 
     private fun generateMethodCallAction(
-        action: MethodCallAction, args: List<soot.Value>, sootMethod: SootMethod, collectReturnValue: Boolean = false
+        action: MethodCallAction, args: List<soot.Value>, sootMethod: SootMethod,
+        collectReturnValue: Boolean = false
     ): LocalsAndUnits {
         val locals = mutableListOf<Local>()
         val units = mutableListOf<Unit>()

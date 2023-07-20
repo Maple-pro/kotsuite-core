@@ -7,9 +7,11 @@ import soot.*
 
 object JimpleGenerator {
 
-    fun generateTestClassesFromWholeSolution(wholeSolution: WholeSolution): List<SootClass> {
+    fun generateTestClassesFromWholeSolution(wholeSolution: WholeSolution, generateAssert: Boolean): List<SootClass> {
         val testClasses = wholeSolution.classSolutions.map { it.testClass }
-        return testClasses.map { TestClassJimpleGenerator.generate(it) }
+        return testClasses.map {
+            TestClassJimpleGenerator.generate(it, generateAssert = generateAssert)
+        }
     }
 
     /**

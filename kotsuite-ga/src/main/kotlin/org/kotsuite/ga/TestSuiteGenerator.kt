@@ -20,6 +20,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     private lateinit var wholeSolution: WholeSolution
     private lateinit var testClasses: List<TestClass>
     private lateinit var jimpleClasses: List<SootClass>
+    private lateinit var jimpleClassesWithAssertion: List<SootClass>
     private lateinit var dummyMainClass: SootClass
 
     /**
@@ -31,7 +32,8 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         // generate whole solution using the given strategy
         wholeSolution = gaStrategy.generateWholeSolution()
 
-        jimpleClasses = JimpleGenerator.generateTestClassesFromWholeSolution(wholeSolution)
+        jimpleClasses = JimpleGenerator.generateTestClassesFromWholeSolution(wholeSolution, false)
+        jimpleClassesWithAssertion = JimpleGenerator.generateTestClassesFromWholeSolution(wholeSolution, true)
 
         // generate whole solution coverage report
         generateFinalCoverageReport()
@@ -94,6 +96,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
     /**
      * Print generated test classes and dummy main class to bytecode
+     * For coverage generation, don't have assertions
      */
     private fun printJasminFiles(outputPath: String) {
         jimpleClasses.forEach {
@@ -102,8 +105,14 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         JasminPrinter.printJasminFile(dummyMainClass, outputPath)
     }
 
+    /**
+     * Print test class jasmin files
+     * For final decompile, have assertions
+     *
+     * @param outputPath
+     */
     private fun printTestClassJasminFiles(outputPath: String) {
-        jimpleClasses.forEach {
+        jimpleClassesWithAssertion.forEach {
             JasminPrinter.printJasminFile(it, outputPath)
         }
     }

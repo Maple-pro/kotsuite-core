@@ -21,6 +21,7 @@ class Client(
     private val includeRules: List<String>,
     private val libsPath: String,
     private val gaStrategy: String,
+    private val dependencyClassPaths: String,
 ) {
 
     private val logger = LogManager.getLogger()
@@ -42,6 +43,13 @@ class Client(
         Configs.includeRules = includeRules
         Configs.includeFiles = "*"
         Configs.libsPath = libsPath
+        Configs.dependencyClassPaths = dependencyClassPaths.split(':').map {
+            if (it.endsWith("!/")) {
+                it.removeSuffix("!/")
+            } else {
+                it
+            }
+        }.filter { it.endsWith(".jar") }
 
         logger.log(Level.INFO, "Set configs: $Configs")
     }
@@ -66,12 +74,12 @@ class Client(
     /**
      * Analysis the given bytecode using soot.
      */
-    fun analyze(classPath: String) {
+    fun analyze() {
         logger.log(Configs.sectionLevel, "[Analysis Phase]")
 
         Analyzer.projectPath = projectPath
         Analyzer.includeRules = includeRules
-        Analyzer.analyze(classPath)
+        Analyzer.analyze(moduleClassPath, Configs.dependencyClassPaths)
     }
 
     /**

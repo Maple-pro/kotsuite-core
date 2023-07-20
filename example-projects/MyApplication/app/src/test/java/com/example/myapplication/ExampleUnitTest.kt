@@ -13,5 +13,8 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+        assertEquals(0.0, 0.0, 0.1)
+        assertEquals(true, true)
+        assertEquals("abd", "abd")
     }
 }
