@@ -19,7 +19,9 @@ object Decompiler {
             "-rbr=0", // hide bridge methods
             "-rsy=0", // hide synthetic class members
             "-ren=0", // rename
-//            "-log=TRACE",
+            "-bto=0", // interpret int 1 as boolean true
+            "-fdi=1", // de-inline finally structures
+//            "-log=TRACE", // logging level
             classesPath,
             javaOutputPath,
         )
