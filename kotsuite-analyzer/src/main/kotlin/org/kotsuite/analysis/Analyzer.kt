@@ -22,12 +22,12 @@ object Analyzer {
     /**
      * Analyze classes in the data directory, and transform them into jimple.
      */
-    fun analyze(classPath: String, dependencyCLassPaths: List<String>): Boolean {
+    fun analyze(classPath: String, dependencyClassPaths: List<String>): Boolean {
         log.info("Analysis project: project($projectPath)")
 
         log.info("Start analyze project")
 
-        val res = setupSoot(classPath, dependencyCLassPaths)
+        val res = setupSoot(classPath, dependencyClassPaths)
         if (!res) {
             return false
         }
@@ -83,9 +83,9 @@ object Analyzer {
             set_no_bodies_for_excluded(true)
             set_exclude(getExcludes())
             set_include(ArrayList(includeRules))
-            set_process_dir(listOf(classPath) + dependencyClassPaths)
-//            set_process_dir(listOf(classPath))
-//            set_soot_classpath(dependencyClassPathsList.joinToString(":"))
+//            set_process_dir(listOf(classPath) + dependencyClassPaths) // [test] load all dependency classes to soot
+            set_process_dir(listOf(classPath) + getJunitClassPath(dependencyClassPaths))
+            set_soot_classpath(dependencyClassPaths.joinToString(":"))
             set_validate(true)
         }
         return true
@@ -97,6 +97,10 @@ object Analyzer {
     private fun runSoot() {
         log.info("Run Soot")
         PackManager.v().runPacks()
+    }
+
+    private fun getJunitClassPath(dependencyClassPaths: List<String>): List<String> {
+        return dependencyClassPaths.filter { it.contains("junit") }
     }
 
     /**

@@ -8,6 +8,7 @@ import soot.Unit
 import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.DoubleConstant
 import soot.jimple.FloatConstant
+import soot.jimple.IntConstant
 import soot.jimple.Jimple
 import soot.jimple.LongConstant
 import soot.jimple.StringConstant
@@ -65,7 +66,8 @@ object TestCaseJimpleGenerator {
             body.units.add(printStreamRefAssignStmt)
         }
 
-        if (printTestCaseName) {  // Create `println` statement
+        // Create `println` statement
+        if (printTestCaseName) {
             val printlnLocalsAndUnits = createPrintStringStmt(sootMethod.name, printStreamRefLocal)
             body.locals.addAll(printlnLocalsAndUnits.locals)
             body.units.addAll(printlnLocalsAndUnits.units)
@@ -93,8 +95,8 @@ object TestCaseJimpleGenerator {
             }
         }
 
+        // print return value and return type
         if (collectReturnValue && returnValue != null) {
-            // print return value and return type
             // print "<assert>" prefix
             val printPrefixLocalsAndUnits = createPrintStringStmt("<assert>", printStreamRefLocal)
             body.locals.addAll(printPrefixLocalsAndUnits.locals)
@@ -126,8 +128,8 @@ object TestCaseJimpleGenerator {
             body.units.addAll(printSuffixLocalsAndUnits.units)
         }
 
+        // generate assert statement
         if (generateAssert && testcase.assertType != null && testcase.assertValue != null && returnValue != null) {
-            // generate assert statement
             val assertLocalsAndUnits = createAssertStatement(
                 testcase.assertType!!, testcase.assertValue!!, returnValue!!
             )
@@ -215,7 +217,6 @@ object TestCaseJimpleGenerator {
             else jimple.newStaticInvokeExpr(assertEqualsRef, expectedValue, actualValue, deltaDoubleConstant)
         )
 
-//        locals.add(expectedValue)
         units.add(invokeStmt)
 
         return LocalsAndUnits(locals, units)
@@ -232,6 +233,7 @@ object TestCaseJimpleGenerator {
             "double" -> DoubleConstant.v(value.toDouble())
             "float" -> FloatConstant.v(value.toFloat())
             "int" -> LongConstant.v(value.toLong())
+//            "int" -> IntConstant.v(value.toInt())
             "long" -> LongConstant.v(value.toLong())
             "java.lang.String" -> StringConstant.v(value)
             else -> return null
