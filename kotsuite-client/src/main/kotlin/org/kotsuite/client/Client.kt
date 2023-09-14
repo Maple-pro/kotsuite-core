@@ -6,6 +6,7 @@ import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.Configs
 import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.strategy.StrategyHelper
+import org.kotsuite.ga.utils.Utils
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -30,6 +31,7 @@ class Client(
 
     init {
         setConfigs()
+        clearDirectories()
         createDirectories()
         testSuiteGenerator = TestSuiteGenerator(StrategyHelper.getGAStrategy(gaStrategy))
     }
@@ -71,6 +73,14 @@ class Client(
         }
     }
 
+    private fun clearDirectories() {
+        with(Configs) {
+            Utils.deleteDirectory(File(kotSuiteOutputPath))
+            Utils.deleteDirectory(File(sootOutputPath))
+            Utils.deleteDirectory(File(finalOutputPath))
+        }
+    }
+
     /**
      * Analysis the given bytecode using soot.
      */
@@ -87,6 +97,9 @@ class Client(
      */
     fun generateTestSuite() {
         logger.log(Configs.sectionLevel, "[Generate Phase]")
+
+        // Clear class files in `sootOutput/` and `final/classes/` directory
+        File(Configs.sootOutputPath)
 
         // Copy class files into `sootOutput/` and `final/classes/` directory
         File(Configs.classesFilePath).copyRecursively(File(Configs.sootOutputPath), true)

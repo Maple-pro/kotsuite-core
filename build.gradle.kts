@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "org.kotsuite"
-version = "1.0.2"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -81,6 +81,7 @@ tasks.register("fatJar", Jar::class.java) {
     manifest {
         attributes["Manifest-Version"] = "1.0"
         attributes["Main-Class"] = "org.kotsuite.client.MainKt"
+        attributes["Multi-Release"] = "true"
 //        attributes["Class-Path"] = "libs/"
     }
 

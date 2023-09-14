@@ -28,7 +28,7 @@ object Decompiler {
 
         try {
             val ps = Runtime.getRuntime().exec(command)
-            LoggerUtils.logCommandOutput(log, ps, Configs.showDebugLog)
+            LoggerUtils.logCommandOutput(log, ps, Configs.SHOW_DEBUG_LEVEL)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

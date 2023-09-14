@@ -9,6 +9,7 @@ import org.kotsuite.ga.coverage.JacocoUtils
 import org.kotsuite.ga.decompile.Decompiler
 import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.ga.strategy.Strategy
+import org.kotsuite.ga.utils.Filter
 import org.kotsuite.ga.utils.SootUtils
 import soot.SootClass
 import java.time.LocalDateTime
@@ -89,7 +90,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         val targetMethods = jimpleClasses
             .map { it.methods }
             .reduce { methods, method -> methods + method }
-            .filter { SootUtils.filterConstructorMethod(it) }
+            .filter { !Filter.constructorMethodFilter(it) }
 
         return SootUtils.generateMainClass(Configs.mainClass, targetMethods)
     }

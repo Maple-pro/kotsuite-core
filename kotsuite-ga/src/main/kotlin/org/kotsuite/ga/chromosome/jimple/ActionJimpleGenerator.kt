@@ -29,7 +29,9 @@ object ActionJimpleGenerator {
         }
 
         val actionLocalsAndUnits = when (action) {
-            is ConstructorAction -> generateConstructorAction(action, args)
+            is ConstructorAction -> {
+                generateConstructorAction(action, args)
+            }
             is MethodCallAction -> generateMethodCallAction(action, args, sootMethod, collectReturnValue)
             else -> {
                 logger.error("Unimplemented action type: $action")

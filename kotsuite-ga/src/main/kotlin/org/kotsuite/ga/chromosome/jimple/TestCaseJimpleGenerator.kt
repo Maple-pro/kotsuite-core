@@ -174,6 +174,9 @@ object TestCaseJimpleGenerator {
         val locals = mutableListOf<Local>()
         val units = mutableListOf<Unit>()
 
+        if (messageLocal.type !is PrimType && messageLocal.type.toString() != "java.lang.String") {
+            return LocalsAndUnits(locals, units)
+        }
 
         // invoke `toString()` method
 //        val objectClass = Scene.v().getSootClass("java.lang.Object")

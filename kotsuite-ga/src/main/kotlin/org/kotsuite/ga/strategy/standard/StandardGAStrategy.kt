@@ -37,7 +37,7 @@ object StandardGAStrategy: Strategy() {
     private val logger = LogManager.getLogger()
 
 //    private const val maxAttempt = Configs.maxAttempt
-    private const val maxAttempt = 1  // [test] for test only
+    private const val MAX_ATTEMPT = 1  // [test] for test only
 
     /**
      * Steps:
@@ -64,6 +64,7 @@ object StandardGAStrategy: Strategy() {
         logger.log(Configs.sectionLevel, "[Class: $targetClass, Method: $targetMethod]")
 
         logger.log(Level.INFO, "Generate initial population")
+
         val initialTestCases = RandomStrategy.generateTestCasesForMethod(targetMethod)
         var curPopulation = Population(targetMethod, 0, initialTestCases)
         var round = 0
@@ -80,7 +81,7 @@ object StandardGAStrategy: Strategy() {
             if (isCoverTargets) break
 
             round++
-            if (round > maxAttempt) break
+            if (round > MAX_ATTEMPT) break
 
             // 3. select, mutate and crossover
             logger.log(Level.INFO, "Select, mutate and crossover")
@@ -93,8 +94,8 @@ object StandardGAStrategy: Strategy() {
     }
 
     private fun isCoverTargets(fitness: Fitness): Boolean {
-        return fitness.lineCoverage >= Configs.targetLineCoverage
-                && fitness.ccCoverage >= Configs.targetCCCoverage
+        return fitness.lineCoverage >= Configs.TARGET_LINE_COVERAGE
+                && fitness.ccCoverage >= Configs.TARGET_CC_COVERAGE
     }
 
     @Override

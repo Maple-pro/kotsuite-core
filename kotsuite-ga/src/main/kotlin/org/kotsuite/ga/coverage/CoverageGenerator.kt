@@ -67,7 +67,7 @@ object CoverageGenerator {
         try {
             log.info("Run command: ${args.joinToString(" ")}")
             val ps = Runtime.getRuntime().exec(args)
-            LoggerUtils.logCommandOutput(log, ps, Configs.showDebugLog)
+            LoggerUtils.logCommandOutput(log, ps, Configs.SHOW_DEBUG_LEVEL)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

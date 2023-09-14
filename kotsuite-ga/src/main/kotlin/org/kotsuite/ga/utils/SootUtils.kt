@@ -223,14 +223,4 @@ object SootUtils {
             listOf(invokeStmt)
         )
     }
-
-    /**
-     * Filter constructor methods. If the method is constructor, it returns false.
-     *
-     * @param sootMethod
-     * @return
-     */
-    fun filterConstructorMethod(sootMethod: SootMethod): Boolean {
-        return !(sootMethod.subSignature.equals("void <init>()") || sootMethod.name.equals("<init>"))
-    }
 }

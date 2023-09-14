@@ -11,7 +11,7 @@ object Configs {
     // log related configs
     val sectionLevel: Level = Level.forName("SECTION", 350)
     val successLevel: Level = Level.forName("SUCCESS", 360)
-    const val showDebugLog = false
+    const val SHOW_DEBUG_LEVEL = false
 
     // project related configs
     lateinit var projectPath: String
@@ -49,12 +49,12 @@ object Configs {
     val decompilerPath: String get() = "$libsPath/fernflower.jar"
 
     // [test] for test only
-    const val kotsuiteAgentPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-agent-1.2.jar"
+    const val KOTSUITE_AGENT_PATH = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-agent-1.2.jar"
 
     // genetic algorithm related configs
-    const val maxAttempt = 50
-    const val targetLineCoverage = 0.6  // Line coverage
-    const val targetCCCoverage = 0.9  // Cyclomatic complexity coverage
+    const val MAX_ATTEMPT = 50
+    const val TARGET_LINE_COVERAGE = 0.6  // Line coverage
+    const val TARGET_CC_COVERAGE = 0.9  // Cyclomatic complexity coverage
 
     /**
      * Get exec file path

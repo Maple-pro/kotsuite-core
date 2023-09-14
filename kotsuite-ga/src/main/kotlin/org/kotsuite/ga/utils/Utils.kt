@@ -1,7 +1,17 @@
 package org.kotsuite.ga.utils
 
-import java.util.UUID
+import java.io.File
 
 object Utils {
     fun isLinux() = System.getProperty("os.name") == "Linux"
+
+    fun deleteDirectory(file: File) {
+        if (!file.exists()) return
+
+        if (file.isDirectory) {
+            file.listFiles()?.forEach { deleteDirectory(it) }
+        }
+
+        file.delete()
+    }
 }

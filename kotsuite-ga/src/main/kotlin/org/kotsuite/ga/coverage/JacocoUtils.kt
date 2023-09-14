@@ -45,7 +45,7 @@ object JacocoUtils {
             else classPaths.joinToString(";")
 
         val vmOptions = listOf(
-            "-javaagent:${Configs.kotsuiteAgentPath}=$kotsuiteAgentArgs",
+            "-javaagent:${Configs.KOTSUITE_AGENT_PATH}=$kotsuiteAgentArgs",
             "-javaagent:${Configs.jacocoAgentPath}=$jacocoAgentArgs",
             "-cp", cpArg,
         )
@@ -58,7 +58,7 @@ object JacocoUtils {
             if (generateAssert && testCase != null) {
                 testCase.generateAssertByProcess(ps)
             }
-            LoggerUtils.logCommandOutput(log, ps, Configs.showDebugLog)
+            LoggerUtils.logCommandOutput(log, ps, Configs.SHOW_DEBUG_LEVEL)
 
             ps.waitFor()
         } catch (e: Exception) {
