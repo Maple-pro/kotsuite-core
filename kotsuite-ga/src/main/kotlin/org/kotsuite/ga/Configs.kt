@@ -16,8 +16,8 @@ object Configs {
     // project related configs
     lateinit var projectPath: String
     lateinit var modulePath: String
-    lateinit var sourceCodePath: String
-    lateinit var classesFilePath: String
+    lateinit var sourceCodePath: List<String>
+    lateinit var classesFilePath: List<String>
     lateinit var mainClass: String
     lateinit var includeRules: List<String>
     lateinit var includeFiles: String

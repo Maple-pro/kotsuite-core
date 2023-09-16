@@ -22,7 +22,7 @@ object Analyzer {
     /**
      * Analyze classes in the data directory, and transform them into jimple.
      */
-    fun analyze(classPath: String, dependencyClassPaths: List<String>): Boolean {
+    fun analyze(classPath: List<String>, dependencyClassPaths: List<String>): Boolean {
         log.info("Analysis project: project($projectPath)")
 
         log.info("Start analyze project")
@@ -65,13 +65,15 @@ object Analyzer {
     /**
      * Set up soot parameters
      */
-    private fun setupSoot(classPath: String, dependencyClassPaths: List<String>): Boolean {
+    private fun setupSoot(classPath: List<String>, dependencyClassPaths: List<String>): Boolean {
         log.info("Setup Soot: class($includeRules), project($projectPath")
 
-        val file = File(classPath)
-        if (!file.isDirectory) {
-            log.error("Classes Directory not exists: $classPath")
-            return false
+        val inputClassPaths = mutableListOf<String>()
+        for (path in classPath) {
+            val file = File(path)
+            if (file.exists() && file.isDirectory) {
+                inputClassPaths.add(path)
+            }
         }
 
         G.reset()
@@ -84,8 +86,8 @@ object Analyzer {
             set_exclude(getExcludes())
             set_include(ArrayList(includeRules))
 //            set_process_dir(listOf(classPath) + dependencyClassPaths) // [test] load all dependency classes to soot
-            set_process_dir(listOf(classPath) + getJunitClassPath(dependencyClassPaths))
-            set_soot_classpath(dependencyClassPaths.joinToString(":"))
+            set_process_dir(inputClassPaths + getJunitClassPath(dependencyClassPaths))
+            set_soot_classpath(dependencyClassPaths.joinToString(File.pathSeparator))
             set_validate(true)
         }
         return true

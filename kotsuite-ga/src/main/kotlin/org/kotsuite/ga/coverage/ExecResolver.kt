@@ -18,7 +18,7 @@ class ExecResolver(
     private val title: String,
     private val executionDataFilePath: String,
     private val classesFilePath: String,
-    private val sourcesFilePath: String?,
+    private val sourcesFilePath: List<String>?,
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -77,7 +77,7 @@ class ExecResolver(
                     Configs.jacocoCliPath,
                     "report", executionDataFilePath,
                     "--classfile=$classesFilePath",
-                    "--sourcefile=$sourcesFilePath",
+                    "--sourcefile=${sourcesFilePath.joinToString(File.pathSeparator)}",
                     "--html", coverageHTMLReportPath,
                 )
             } else {
@@ -103,7 +103,7 @@ class ExecResolver(
                     Configs.jacocoCliPath,
                     "report", executionDataFilePath,
                     "--classfile=$classesFilePath",
-                    "--sourcefile=$sourcesFilePath",
+                    "--sourcefile=${sourcesFilePath.joinToString(File.pathSeparator)}",
                     "--xml", coverageXMLReportPath,
                 )
             } else {

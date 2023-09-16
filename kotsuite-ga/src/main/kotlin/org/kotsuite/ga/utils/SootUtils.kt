@@ -42,11 +42,15 @@ object SootUtils {
      * @param sootClass
      * @return
      */
-    fun getConstructor(sootClass: SootClass): SootMethod {
+    fun getConstructor(sootClass: SootClass): SootMethod? {
         return try {
-            sootClass.getMethod("void <init>()")
-        } catch (ex: RuntimeException) {
+//            sootClass.getMethod("void <init>()")
             sootClass.getMethodByName("<init>")
+        } catch (ex: RuntimeException) {
+            if (sootClass.methods.none { it.name == "<init>" }) {
+                return null
+            }
+            sootClass.methods.first { it.name == "<init>" }
         }
     }
 
@@ -196,7 +200,8 @@ object SootUtils {
         val allocatedTargetObj = jimple.newLocal(instanceName, targetClass.type)
         val assignStmt = jimple.newAssignStmt(allocatedTargetObj, jimple.newNewExpr(targetClass.type))
 
-        val constructorMethod = getConstructor(targetClass)
+        val constructorMethod = getConstructor(targetClass) ?: return LocalsAndUnits(listOf(), listOf())
+
         val constructorArgs = Collections.nCopies(constructorMethod.parameterCount, NullConstant.v())
         val constructorInvokeStmt = jimple.newInvokeStmt(
                 jimple.newSpecialInvokeExpr(

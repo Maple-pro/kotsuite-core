@@ -39,13 +39,13 @@ class Client(
     private fun setConfigs() {
         Configs.projectPath = projectPath
         Configs.modulePath = modulePath
-        Configs.sourceCodePath = moduleSourcePath
-        Configs.classesFilePath = moduleClassPath
+        Configs.sourceCodePath = moduleSourcePath.split(File.pathSeparator)
+        Configs.classesFilePath = moduleClassPath.split(File.pathSeparator)
         Configs.mainClass = "KotMain"
         Configs.includeRules = includeRules
         Configs.includeFiles = "*"
         Configs.libsPath = libsPath
-        Configs.dependencyClassPaths = dependencyClassPaths.split(':').map {
+        Configs.dependencyClassPaths = dependencyClassPaths.split(File.pathSeparator).map {
             if (it.endsWith("!/")) {
                 it.removeSuffix("!/")
             } else {
@@ -89,7 +89,7 @@ class Client(
 
         Analyzer.projectPath = projectPath
         Analyzer.includeRules = includeRules
-        Analyzer.analyze(moduleClassPath, Configs.dependencyClassPaths)
+        Analyzer.analyze(Configs.classesFilePath, Configs.dependencyClassPaths)
     }
 
     /**
@@ -102,8 +102,13 @@ class Client(
         File(Configs.sootOutputPath)
 
         // Copy class files into `sootOutput/` and `final/classes/` directory
-        File(Configs.classesFilePath).copyRecursively(File(Configs.sootOutputPath), true)
-        File(Configs.classesFilePath).copyRecursively(File(Configs.finalClassesOutputPath), true)
+        for (path in Configs.classesFilePath) {
+            val file = File(path)
+            if (file.exists() && file.isDirectory) {
+                File(path).copyRecursively(File(Configs.sootOutputPath), true)
+                File(path).copyRecursively(File(Configs.finalClassesOutputPath), true)
+            }
+        }
 
         testSuiteGenerator.generate()
 

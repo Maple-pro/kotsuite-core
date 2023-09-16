@@ -59,7 +59,7 @@ object RandomStrategy: Strategy() {
         val variable = Variable(variableName, targetClass.type)
         val constructor = SootUtils.getConstructor(targetClass)
 
-        val constructorAction = ConstructorAction(variable, constructor, mutableListOf())
+        val constructorAction = ConstructorAction(variable, constructor!!, mutableListOf())
         dealActionParameters(testCase, constructorAction, constructor)
 
         return constructorAction

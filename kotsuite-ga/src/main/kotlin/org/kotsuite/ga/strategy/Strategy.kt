@@ -1,5 +1,6 @@
 package org.kotsuite.ga.strategy
 
+import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.Configs
@@ -18,27 +19,23 @@ abstract class Strategy {
     open fun generateWholeSolution(): WholeSolution {
         logger.log(Configs.sectionLevel, "[Whole Solution]")
 
-        // [test only]
+        // Output the classes that we can analyze
         val classes = Analyzer.classes
             .filter { Filter.testSuiteGeneratorClassFilter(it) }
-            .filter {
-                it.shortName != "Config" && it.shortName != "AlbumCover" && it.shortName != "DateTaken"
-                        && it.shortName != "Directory" && it.shortName != "Favorite" && it.shortName != "FilterItem"
-                        && it.shortName != "Medium" && it.shortName != "PaintOptions" && it.shortName != "ThumbnailSection"
-                        && it.shortName != "Widget"
-            }
 
         val methodMap = mutableMapOf<SootClass, List<SootMethod>>()
         classes.forEach { clazz ->
             methodMap[clazz] = clazz.methods
                 .filter { Filter.testSuiteGeneratorMethodFilter(it) }
         }
+        val nonEmptyClasses = classes.filter { methodMap.contains(it) && methodMap[it]!!.isNotEmpty() }
         val newMethodMaps =  methodMap.filter { it.value.isNotEmpty() }.entries.sortedBy { it.value.size }
-        // [test only]
+        logger.log(Level.INFO, "${nonEmptyClasses.size} classes can be analyzed: $nonEmptyClasses")
 
-        val classSolutions = Analyzer.classes
-            .filter { Filter.testSuiteGeneratorClassFilter(it) }
-            .map { generateClassSolution(it) }
+//        val classSolutions = Analyzer.classes
+//            .filter { Filter.testSuiteGeneratorClassFilter(it) }
+//            .map { generateClassSolution(it) }
+        val classSolutions = nonEmptyClasses.map { generateClassSolution(it) }
 
         return WholeSolution(classSolutions)
     }

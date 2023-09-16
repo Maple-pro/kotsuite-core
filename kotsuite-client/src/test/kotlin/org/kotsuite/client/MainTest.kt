@@ -1,6 +1,7 @@
 package org.kotsuite.client
 
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class MainTest {
     @Test
@@ -12,7 +13,7 @@ class MainTest {
         val includeRules = "com.example.myapplication.Example&com.example.myapplication.Callee"
         val libsPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs"
         val strategy = "ga"  // ga or random
-        val dependency = Data.myApplicationDependencies.joinToString(":")
+        val dependency = Data.myApplicationDependencies.joinToString(File.pathSeparator)
 
         val args = arrayOf(
             "--project", projectPath,
@@ -55,7 +56,7 @@ class MainTest {
 //        val includeRules = "com.simplemobiletools.gallery.pro.helpers.ConstantsKt"
         val libsPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs"
         val strategy = "ga"
-        val dependency = Data.simpleGalleryDependencies.joinToString(":")
+        val dependency = Data.simpleGalleryDependencies.joinToString(File.pathSeparator)
 
         val args = arrayOf(
             "--project", projectPath,
@@ -72,15 +73,31 @@ class MainTest {
 
     @Test
     fun testSimpleCommons() {
+        val moduleClassPaths = listOf(
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/intermediates/javac/debug/classes",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/tmp/kotlin-classes/debug",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/intermediates/compile_r_class_jar/debug/R.jar!/",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/generated/res/resValues/debug",
+        )
+        val moduleSourcePaths = listOf(
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/generated/ap_generated_sources/debug/out",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/generated/ksp/debug/java",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/generated/ksp/debug/kotlin",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/generated/res/resValues/debug",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/src/main/kotlin",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/src/main/res",
+        )
+
         val projectPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons"
         val modulePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons"
-        val moduleClassPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/tmp/kotlin-classes/debug"
-        val sourcePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/src/main/kotlin"
+        val moduleClassPath = moduleClassPaths.joinToString(File.pathSeparator)
+        val sourcePath = moduleSourcePaths.joinToString(File.pathSeparator)
 //        val includeRules = "com.simplemobiletools.commons.helpers.Converters"
-        val includeRules = "com.simplemobiletools.commons.helpers.AlphanumericComparator"
+//        val includeRules = "com.simplemobiletools.commons.helpers.AlphanumericComparator"
+        val includeRules = "com.simplemobiletools.commons"
         val libsPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs"
         val strategy = "ga"
-        val dependency = Data.simpleCommonsDependencies.joinToString(":")
+        val dependency = Data.simpleCommonsDependencies.joinToString(File.pathSeparator)
 
         val args = arrayOf(
             "--project", projectPath,

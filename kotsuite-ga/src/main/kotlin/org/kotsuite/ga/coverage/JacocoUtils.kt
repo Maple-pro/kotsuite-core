@@ -5,6 +5,7 @@ import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.utils.LoggerUtils
 import org.kotsuite.ga.utils.Utils
 import org.slf4j.LoggerFactory
+import java.io.File
 
 object JacocoUtils {
 
@@ -40,9 +41,7 @@ object JacocoUtils {
             "${Configs.libsPath}/*",
         ) + Configs.dependencyClassPaths
 
-        val cpArg =
-            if(Utils.isLinux()) classPaths.joinToString(":")
-            else classPaths.joinToString(";")
+        val cpArg = classPaths.joinToString(File.pathSeparator)
 
         val vmOptions = listOf(
             "-javaagent:${Configs.KOTSUITE_AGENT_PATH}=$kotsuiteAgentArgs",
