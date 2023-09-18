@@ -47,7 +47,7 @@ class ExecResolver(
         val targetClass = targetMethod.declaringClass
 
         val targetMethodCoverage = coverageBuilder.classes.firstOrNull {
-            it.name == targetClass.name.replace('.', '/')
+            it.name == targetClass.name.replace('.', File.separatorChar)
         }?.methods?.firstOrNull {
             it.name == targetMethod.name
         }

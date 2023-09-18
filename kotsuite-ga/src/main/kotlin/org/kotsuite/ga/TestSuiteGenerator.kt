@@ -1,5 +1,6 @@
 package org.kotsuite.ga
 
+import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.chromosome.jimple.JimpleGenerator
@@ -48,6 +49,11 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
     private fun generateFinalCoverageReport() {
         logger.log(Configs.sectionLevel, "Generate final whole solution coverage report")
+
+        if (wholeSolution.classSolutions.isEmpty()) {
+            logger.log(Level.WARN, "No generated class solution")
+            return
+        }
 
         testClasses = wholeSolution.classSolutions.map { it.testClass }
 

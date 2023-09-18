@@ -44,7 +44,7 @@ object JacocoUtils {
         val cpArg = classPaths.joinToString(File.pathSeparator)
 
         val vmOptions = listOf(
-            "-javaagent:${Configs.KOTSUITE_AGENT_PATH}=$kotsuiteAgentArgs",
+//            "-javaagent:${Configs.KOTSUITE_AGENT_PATH}=$kotsuiteAgentArgs",
             "-javaagent:${Configs.jacocoAgentPath}=$jacocoAgentArgs",
             "-cp", cpArg,
         )

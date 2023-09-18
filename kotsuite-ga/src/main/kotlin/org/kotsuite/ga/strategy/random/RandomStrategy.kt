@@ -41,6 +41,16 @@ object RandomStrategy: Strategy() {
         return testCases
     }
 
+    /**
+     * Generate test case for method
+     * TODO:
+     * 1. Generate mock action: add mock action type
+     * 2. Code reuse
+     *
+     * @param targetMethod
+     * @param testCaseName
+     * @return
+     */
     private fun generateTestCaseForMethod(targetMethod: SootMethod, testCaseName: String): TestCase {
         val testCase = TestCase(testCaseName, targetMethod, 0)
         val targetClass = targetMethod.declaringClass

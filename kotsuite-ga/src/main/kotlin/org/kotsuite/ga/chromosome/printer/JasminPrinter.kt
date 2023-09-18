@@ -7,6 +7,7 @@ import soot.baf.BafASMBackend
 import soot.jimple.JasminClass
 import soot.options.Options
 import soot.util.JasminOutputStream
+import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
@@ -32,11 +33,11 @@ object JasminPrinter {
         val javaVersion = Options.v().java_version()
 
         // `getFileNameFor()` will return "sootOutput/com/example/myapplication/.../.class", so we need to remove the "sootOutput"
-        val fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class).substringAfter('/')
+        val fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class).substringAfter(File.separatorChar)
 
         val finalDir = "$outputFileDir/$fileName"
 
-        val lastIndex = finalDir.lastIndexOf("/")
+        val lastIndex = finalDir.lastIndexOf(File.separatorChar)
         val directoryPath = finalDir.substring(0, lastIndex + 1)
         Files.createDirectories(Paths.get(directoryPath))
 

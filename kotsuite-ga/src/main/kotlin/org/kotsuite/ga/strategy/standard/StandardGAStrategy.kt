@@ -90,6 +90,8 @@ object StandardGAStrategy: Strategy() {
             curPopulation.round = round
         }
 
+        // TODO: remove duplicate test cases
+
         return MethodSolution(targetMethod, curPopulation.testCases)
     }
 
