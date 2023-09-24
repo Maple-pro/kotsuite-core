@@ -6,7 +6,8 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-object Configs {
+@Deprecated("The config has been moved to `org.kotsuite.Configs`")
+private object Configs {
 
     // log related configs
     val sectionLevel: Level = Level.forName("SECTION", 350)

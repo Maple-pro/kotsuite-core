@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":kotsuite-common"))
     implementation(project(":kotsuite-reuse"))
     implementation(project(":kotsuite-analyzer"))
 

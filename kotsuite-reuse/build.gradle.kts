@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":kotsuite-common"))
     implementation(project(":kotsuite-analyzer"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")

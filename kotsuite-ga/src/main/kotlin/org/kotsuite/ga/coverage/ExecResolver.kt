@@ -1,14 +1,14 @@
 package org.kotsuite.ga.coverage
 
+import org.apache.logging.log4j.LogManager
 import org.jacoco.core.analysis.Analyzer
 import org.jacoco.core.analysis.CoverageBuilder
 import org.jacoco.core.analysis.IBundleCoverage
 import org.jacoco.core.analysis.ICounter
 import org.jacoco.core.tools.ExecFileLoader
-import org.kotsuite.ga.Configs
+import org.kotsuite.Configs
 import org.kotsuite.ga.coverage.fitness.Fitness
-import org.kotsuite.ga.utils.LoggerUtils
-import org.slf4j.LoggerFactory
+import org.kotsuite.utils.LoggerUtils
 import soot.SootMethod
 import java.io.File
 import java.nio.file.Files
@@ -20,7 +20,7 @@ class ExecResolver(
     private val classesFilePath: String,
     private val sourcesFilePath: List<String>?,
 ) {
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val log = LogManager.getLogger()
 
     private val executionDataFile = File(executionDataFilePath)
     private val classesFile = File(classesFilePath)
@@ -90,7 +90,7 @@ class ExecResolver(
             }
 
         val ps = Runtime.getRuntime().exec(args)
-        LoggerUtils.logCommandOutput(log, ps, Configs.SHOW_DEBUG_LEVEL)
+        LoggerUtils.logCommandOutput(log, ps)
         ps.waitFor()
     }
 
@@ -116,7 +116,7 @@ class ExecResolver(
             }
 
         val ps = Runtime.getRuntime().exec(args)
-        LoggerUtils.logCommandOutput(log, ps, Configs.SHOW_DEBUG_LEVEL)
+        LoggerUtils.logCommandOutput(log, ps)
         ps.waitFor()
     }
 

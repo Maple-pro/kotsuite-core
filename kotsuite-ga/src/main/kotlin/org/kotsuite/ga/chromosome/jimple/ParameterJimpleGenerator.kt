@@ -2,7 +2,7 @@ package org.kotsuite.ga.chromosome.jimple
 
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.Value
-import org.kotsuite.ga.utils.SootUtils
+import org.kotsuite.utils.SootUtils
 import soot.SootMethod
 
 object ParameterJimpleGenerator {

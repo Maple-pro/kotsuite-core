@@ -1,6 +1,6 @@
 package org.kotsuite.ga.chromosome.printer
 
-import org.kotsuite.ga.Configs
+import org.kotsuite.Configs
 import soot.SootClass
 import soot.SourceLocator
 import soot.baf.BafASMBackend
@@ -32,8 +32,12 @@ object JasminPrinter {
     ) {
         val javaVersion = Options.v().java_version()
 
-        // `getFileNameFor()` will return "sootOutput/com/example/myapplication/.../.class", so we need to remove the "sootOutput"
-        val fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class).substringAfter(File.separatorChar)
+        // `getFileNameFor()` will return "sootOutput/com/example/myapplication/.../.class",
+        // so we need to remove the "sootOutput"
+        var fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class)
+        if (fileName.startsWith("sootOutput/")) {
+            fileName = fileName.removePrefix("sootOutput/")
+        }
 
         val finalDir = "$outputFileDir/$fileName"
 

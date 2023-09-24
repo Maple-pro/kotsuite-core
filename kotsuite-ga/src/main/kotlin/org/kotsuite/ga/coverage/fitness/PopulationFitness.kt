@@ -1,12 +1,12 @@
 package org.kotsuite.ga.coverage.fitness
 
-import org.kotsuite.ga.Configs
+import org.kotsuite.Configs
 import org.kotsuite.ga.chromosome.Population
 import org.kotsuite.ga.chromosome.jimple.JimpleGenerator
 import org.kotsuite.ga.chromosome.printer.JasminPrinter
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
-import org.kotsuite.ga.utils.SootUtils
+import org.kotsuite.utils.SootUtils
 import soot.SootClass
 import soot.SootMethod
 

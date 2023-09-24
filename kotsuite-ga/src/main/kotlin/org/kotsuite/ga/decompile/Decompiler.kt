@@ -1,15 +1,15 @@
 package org.kotsuite.ga.decompile
 
-import org.kotsuite.ga.Configs
-import org.kotsuite.ga.utils.LoggerUtils
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.LogManager
+import org.kotsuite.Configs
+import org.kotsuite.utils.LoggerUtils
 
 /**
  * Decompile .class file to java file and kotlin file
  */
 object Decompiler {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val log = LogManager.getLogger()
 
     fun decompileJasminToJava(classesPath: String, javaOutputPath: String) {
         val command = arrayOf(
@@ -28,7 +28,7 @@ object Decompiler {
 
         try {
             val ps = Runtime.getRuntime().exec(command)
-            LoggerUtils.logCommandOutput(log, ps, Configs.SHOW_DEBUG_LEVEL)
+            LoggerUtils.logCommandOutput(log, ps)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

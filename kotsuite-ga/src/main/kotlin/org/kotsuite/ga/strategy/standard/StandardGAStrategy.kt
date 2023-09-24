@@ -2,7 +2,7 @@ package org.kotsuite.ga.strategy.standard
 
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
-import org.kotsuite.ga.Configs
+import org.kotsuite.Configs
 import org.kotsuite.ga.chromosome.Population
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.coverage.fitness.Fitness
@@ -34,7 +34,7 @@ import soot.SootMethod
  */
 object StandardGAStrategy: Strategy() {
 
-    private val logger = LogManager.getLogger()
+    private val log = LogManager.getLogger()
 
 //    private const val maxAttempt = Configs.maxAttempt
     private const val MAX_ATTEMPT = 1  // [test] for test only
@@ -61,22 +61,22 @@ object StandardGAStrategy: Strategy() {
      * - Crossover newPopulation
      */
     override fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution {
-        logger.log(Configs.sectionLevel, "[Class: $targetClass, Method: $targetMethod]")
+        log.log(Configs.sectionLevel, "[Class: $targetClass, Method: $targetMethod]")
 
-        logger.log(Level.INFO, "Generate initial population")
+        log.log(Level.INFO, "Generate initial population")
 
         val initialTestCases = RandomStrategy.generateTestCasesForMethod(targetMethod)
         var curPopulation = Population(targetMethod, 0, initialTestCases)
         var round = 0
 
         while(true) {
-            logger.log(Configs.sectionLevel, "[Round $round]")
+            log.log(Configs.sectionLevel, "[Round $round]")
 
             // 1. get test suite coverage info
             val fitness = PopulationFitness.generatePopulationFitness(curPopulation) ?: break
 
             // 2. meet the coverage criteria ? output : continue
-            logger.log(Level.INFO, "Fitness: $fitness")
+            log.log(Level.INFO, "Fitness: $fitness")
             val isCoverTargets = isCoverTargets(fitness)
             if (isCoverTargets) break
 
@@ -84,7 +84,7 @@ object StandardGAStrategy: Strategy() {
             if (round > MAX_ATTEMPT) break
 
             // 3. select, mutate and crossover
-            logger.log(Level.INFO, "Select, mutate and crossover")
+            log.log(Level.INFO, "Select, mutate and crossover")
             curPopulation = curPopulation.select().mutate().crossover()
 
             curPopulation.round = round

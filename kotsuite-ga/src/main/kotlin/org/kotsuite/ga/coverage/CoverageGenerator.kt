@@ -1,15 +1,15 @@
 package org.kotsuite.ga.coverage
 
-import org.kotsuite.ga.Configs
-import org.kotsuite.ga.utils.LoggerUtils
-import org.kotsuite.ga.utils.Utils.isLinux
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.LogManager
+import org.kotsuite.Configs
+import org.kotsuite.utils.LoggerUtils
+import org.kotsuite.utils.FileUtils.isLinux
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object CoverageGenerator {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val log = LogManager.getLogger()
 
     private val sourceCodePath = Configs.sourceCodePath
     private val sootOutputPath = Configs.sootOutputPath
@@ -67,7 +67,7 @@ object CoverageGenerator {
         try {
             log.info("Run command: ${args.joinToString(" ")}")
             val ps = Runtime.getRuntime().exec(args)
-            LoggerUtils.logCommandOutput(log, ps, Configs.SHOW_DEBUG_LEVEL)
+            LoggerUtils.logCommandOutput(log, ps)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

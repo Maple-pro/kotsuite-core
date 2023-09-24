@@ -3,10 +3,10 @@ package org.kotsuite.client
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.analysis.Analyzer
-import org.kotsuite.ga.Configs
+import org.kotsuite.Configs
 import org.kotsuite.ga.TestSuiteGenerator
 import org.kotsuite.ga.strategy.StrategyHelper
-import org.kotsuite.ga.utils.Utils
+import org.kotsuite.utils.FileUtils
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -25,7 +25,7 @@ class Client(
     private val dependencyClassPaths: String,
 ) {
 
-    private val logger = LogManager.getLogger()
+    private val log = LogManager.getLogger()
 
     private val testSuiteGenerator: TestSuiteGenerator
 
@@ -53,7 +53,7 @@ class Client(
             }
         }.filter { it.endsWith(".jar") }
 
-        logger.log(Level.INFO, "Set configs: $Configs")
+        log.log(Level.INFO, "Set configs: $Configs")
     }
 
     private fun createDirectories() {
@@ -75,9 +75,9 @@ class Client(
 
     private fun clearDirectories() {
         with(Configs) {
-            Utils.deleteDirectory(File(kotSuiteOutputPath))
-            Utils.deleteDirectory(File(sootOutputPath))
-            Utils.deleteDirectory(File(finalOutputPath))
+            FileUtils.deleteDirectory(File(kotSuiteOutputPath))
+            FileUtils.deleteDirectory(File(sootOutputPath))
+            FileUtils.deleteDirectory(File(finalOutputPath))
         }
     }
 
@@ -85,18 +85,18 @@ class Client(
      * Analysis the given bytecode using soot.
      */
     fun analyze() {
-        logger.log(Configs.sectionLevel, "[Analysis Phase]")
+        log.log(Configs.sectionLevel, "[Analysis Phase]")
 
         Analyzer.projectPath = projectPath
         Analyzer.includeRules = includeRules
-        Analyzer.analyze(Configs.classesFilePath, Configs.dependencyClassPaths)
+        Analyzer.analyze()
     }
 
     /**
      * Generate test suite for the give bytecode.
      */
     fun generateTestSuite() {
-        logger.log(Configs.sectionLevel, "[Generate Phase]")
+        log.log(Configs.sectionLevel, "[Generate Phase]")
 
         // Clear class files in `sootOutput/` and `final/classes/` directory
         File(Configs.sootOutputPath)
@@ -112,7 +112,7 @@ class Client(
 
         testSuiteGenerator.generate()
 
-        logger.log(Configs.successLevel, "Success!")
+        log.log(Configs.successLevel, "Success!")
     }
 
 }

@@ -8,7 +8,7 @@ import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.Value
 import org.kotsuite.ga.solution.MethodSolution
-import org.kotsuite.ga.utils.SootUtils
+import org.kotsuite.utils.SootUtils
 import soot.*
 import kotlin.collections.ArrayList
 

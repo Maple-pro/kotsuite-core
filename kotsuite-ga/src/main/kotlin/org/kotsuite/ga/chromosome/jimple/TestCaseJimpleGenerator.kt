@@ -1,14 +1,14 @@
 package org.kotsuite.ga.chromosome.jimple
 
+import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.chromosome.action.MethodCallAction
-import org.slf4j.LoggerFactory
+import org.kotsuite.utils.LocalsAndUnits
 import soot.*
 import soot.Unit
 import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.DoubleConstant
 import soot.jimple.FloatConstant
-import soot.jimple.IntConstant
 import soot.jimple.Jimple
 import soot.jimple.LongConstant
 import soot.jimple.StringConstant
@@ -20,7 +20,7 @@ import java.util.UUID
 
 object TestCaseJimpleGenerator {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val log = LogManager.getLogger()
 
     private val jimple = Jimple.v()
 

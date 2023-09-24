@@ -3,12 +3,11 @@ package org.kotsuite.client
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.logging.log4j.LogManager
-import org.kotsuite.ga.Configs
+import org.kotsuite.Configs
 
 fun main(args: Array<String>) {
 
-//    val log = LoggerFactory.getLogger("org.kotsuite.client.Main")
-    val logger = LogManager.getLogger()
+    val log = LogManager.getLogger()
 
     // Deal with parameter options
     val options = Options()
@@ -28,7 +27,7 @@ fun main(args: Array<String>) {
     val parser = DefaultParser()
     val cmd = parser.parse(options, args)
 
-    logger.log(Configs.sectionLevel, "[Start main function]")
+    log.log(Configs.sectionLevel, "[Start main function]")
 
     val projectPath = cmd.getOptionValue("project")
     val modulePath = cmd.getOptionValue("module")

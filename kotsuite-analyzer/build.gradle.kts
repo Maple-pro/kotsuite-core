@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":kotsuite-common"))
     implementation("org.soot-oss:soot:4.4.1")
 
 //    implementation("org.soot-oss:sootup.core:1.0.0")
@@ -22,6 +23,7 @@ dependencies {
 //    implementation("org.soot-oss:sootup.callgraph:1.0.0")
 //    implementation("org.soot-oss:sootup.analysis:1.0.0")
 
+    implementation("org.apache.logging.log4j:log4j-api:2.20.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }

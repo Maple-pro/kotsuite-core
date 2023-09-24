@@ -11,13 +11,14 @@ import org.kotsuite.ga.decompile.Decompiler
 import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.utils.Filter
-import org.kotsuite.ga.utils.SootUtils
+import org.kotsuite.utils.SootUtils
 import soot.SootClass
 import java.time.LocalDateTime
+import org.kotsuite.Configs
 
 class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
-    private val logger = LogManager.getLogger()
+    private val log = LogManager.getLogger()
 
     private lateinit var wholeSolution: WholeSolution
     private lateinit var testClasses: List<TestClass>
@@ -29,7 +30,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
      * Generate test cases using given strategy
      */
     fun generate(): WholeSolution {
-        logger.log(Configs.sectionLevel, "[Test suite generator: $gaStrategy]")
+        log.log(Configs.sectionLevel, "[Test suite generator: $gaStrategy]")
 
         // generate whole solution using the given strategy
         wholeSolution = gaStrategy.generateWholeSolution()
@@ -48,10 +49,10 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     }
 
     private fun generateFinalCoverageReport() {
-        logger.log(Configs.sectionLevel, "Generate final whole solution coverage report")
+        log.log(Configs.sectionLevel, "Generate final whole solution coverage report")
 
         if (wholeSolution.classSolutions.isEmpty()) {
-            logger.log(Level.WARN, "No generated class solution")
+            log.log(Level.WARN, "No generated class solution")
             return
         }
 
@@ -86,7 +87,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     }
 
     private fun decompileJUnitClasses() {
-        logger.log(Configs.sectionLevel, "Decompile class files to java files")
+        log.log(Configs.sectionLevel, "Decompile class files to java files")
 
         Decompiler.decompileJasminToJava(Configs.finalTestOutputPath, Configs.finalDecompiledOutputPath)
     }
@@ -123,5 +124,4 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
             JasminPrinter.printJasminFile(it, outputPath)
         }
     }
-
 }

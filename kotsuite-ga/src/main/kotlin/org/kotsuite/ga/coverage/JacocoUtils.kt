@@ -1,15 +1,14 @@
 package org.kotsuite.ga.coverage
 
-import org.kotsuite.ga.Configs
+import org.apache.logging.log4j.LogManager
+import org.kotsuite.Configs
 import org.kotsuite.ga.chromosome.TestCase
-import org.kotsuite.ga.utils.LoggerUtils
-import org.kotsuite.ga.utils.Utils
-import org.slf4j.LoggerFactory
+import org.kotsuite.utils.LoggerUtils
 import java.io.File
 
 object JacocoUtils {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val log = LogManager.getLogger()
 
     /**
      * Generate exec file with kotsuite agent
@@ -57,7 +56,7 @@ object JacocoUtils {
             if (generateAssert && testCase != null) {
                 testCase.generateAssertByProcess(ps)
             }
-            LoggerUtils.logCommandOutput(log, ps, Configs.SHOW_DEBUG_LEVEL)
+            LoggerUtils.logCommandOutput(log, ps)
 
             ps.waitFor()
         } catch (e: Exception) {

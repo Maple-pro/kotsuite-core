@@ -3,21 +3,20 @@ package org.kotsuite.ga.strategy
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.analysis.Analyzer
-import org.kotsuite.ga.Configs
+import org.kotsuite.Configs
 import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.solution.ClassSolution
 import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.ga.utils.Filter
-import org.kotsuite.ga.utils.SootUtils
 import soot.SootClass
 import soot.SootMethod
 
 abstract class Strategy {
-    private val logger = LogManager.getLogger()
+    private val log = LogManager.getLogger()
 
     open fun generateWholeSolution(): WholeSolution {
-        logger.log(Configs.sectionLevel, "[Whole Solution]")
+        log.log(Configs.sectionLevel, "[Whole Solution]")
 
         // Output the classes that we can analyze
         val classes = Analyzer.classes
@@ -30,7 +29,7 @@ abstract class Strategy {
         }
         val nonEmptyClasses = classes.filter { methodMap.contains(it) && methodMap[it]!!.isNotEmpty() }
         val newMethodMaps =  methodMap.filter { it.value.isNotEmpty() }.entries.sortedBy { it.value.size }
-        logger.log(Level.INFO, "${nonEmptyClasses.size} classes can be analyzed: $nonEmptyClasses")
+        log.log(Level.INFO, "${nonEmptyClasses.size} classes can be analyzed: $nonEmptyClasses")
 
 //        val classSolutions = Analyzer.classes
 //            .filter { Filter.testSuiteGeneratorClassFilter(it) }
@@ -41,7 +40,7 @@ abstract class Strategy {
     }
 
     open fun generateClassSolution(targetClass: SootClass): ClassSolution {
-        logger.log(Configs.sectionLevel, "[Class: ${targetClass.name}]")
+        log.log(Configs.sectionLevel, "[Class: ${targetClass.name}]")
 
         // Generate TestClass for target class
         val testClassName = "${targetClass.shortName}Test"

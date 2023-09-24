@@ -1,16 +1,15 @@
 package org.kotsuite.ga.chromosome.jimple
 
+import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.action.Action
 import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.value.Value
-import org.kotsuite.ga.utils.SootUtils
-import org.slf4j.LoggerFactory
+import org.kotsuite.utils.LocalsAndUnits
+import org.kotsuite.utils.SootUtils
 import soot.Local
-import soot.NullType
 import soot.RefType
 import soot.SootMethod
-import soot.Type
 import soot.Unit
 import soot.VoidType
 import soot.jimple.Jimple
@@ -18,7 +17,7 @@ import soot.jimple.Jimple
 object ActionJimpleGenerator {
 
     private val jimple = Jimple.v()
-    private val logger = LoggerFactory.getLogger(this.javaClass)
+    private val log = LogManager.getLogger()
 
     fun generate(
         action: Action, values: List<Value>, sootMethod: SootMethod,
@@ -34,7 +33,7 @@ object ActionJimpleGenerator {
             }
             is MethodCallAction -> generateMethodCallAction(action, args, sootMethod, collectReturnValue)
             else -> {
-                logger.error("Unimplemented action type: $action")
+                log.error("Unimplemented action type: $action")
                 throw Exception("Unimplemented action type: $action")
             }
         }

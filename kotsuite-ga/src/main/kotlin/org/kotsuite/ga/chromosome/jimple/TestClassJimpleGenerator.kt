@@ -1,7 +1,7 @@
 package org.kotsuite.ga.chromosome.jimple
 
 import org.kotsuite.ga.chromosome.*
-import org.kotsuite.ga.utils.SootUtils
+import org.kotsuite.utils.SootUtils
 import soot.Modifier
 import soot.Scene
 import soot.SootClass

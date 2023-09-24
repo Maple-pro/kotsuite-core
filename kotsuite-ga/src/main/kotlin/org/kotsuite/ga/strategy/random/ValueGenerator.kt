@@ -1,7 +1,7 @@
 package org.kotsuite.ga.strategy.random
 
+import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.value.*
-import org.slf4j.LoggerFactory
 import soot.ArrayType
 import soot.BooleanType
 import soot.DoubleType
@@ -12,7 +12,7 @@ import kotlin.random.Random
 
 object ValueGenerator {
 
-    private val logger = LoggerFactory.getLogger(this.javaClass)
+    private val log = LogManager.getLogger()
 
     fun generatePrimValue(primType: PrimType): Value {
         return when (primType) {
@@ -21,7 +21,7 @@ object ValueGenerator {
             is DoubleType -> generateDoubleValue()
             else -> {
                 // TODO
-                logger.error("Unsupported value type: $primType")
+                log.error("Unsupported value type: $primType")
                 throw Exception("Unsupported value type: $primType")
             }
         }

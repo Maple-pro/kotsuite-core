@@ -32,6 +32,7 @@ dependencies {
     mergedJar(project(":kotsuite-analyzer"))
     mergedJar(project(":kotsuite-client"))
     mergedJar(project(":kotsuite-ga"))
+    mergedJar(project(":kotsuite-common"))
 }
 
 tasks.test {
@@ -39,7 +40,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 
 java {

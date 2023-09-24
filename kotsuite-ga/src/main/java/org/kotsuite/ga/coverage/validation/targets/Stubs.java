@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.kotsuite.ga.coverage.validation.targets;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,8 @@ public class Stubs {
      */
     public static class StubException extends RuntimeException {
 
-        static final long serialVersionUID = 0L;
+        @Serial
+        private static final long serialVersionUID = 0L;
 
     }
 
