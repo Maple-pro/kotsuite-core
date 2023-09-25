@@ -48,7 +48,7 @@ object Analyzer {
     private fun setupSoot(classPath: List<String>, dependencyClassPaths: List<String>): Boolean {
         log.info("Setup Soot: class($includeRules), project($projectPath)")
 
-        val inputClassPaths = mutableListOf<String>()
+        val inputClassPaths = mutableListOf<String>() // 待测类文件路径
         for (path in classPath) {
             val file = File(path)
             if (file.exists() && file.isDirectory) {
@@ -56,18 +56,25 @@ object Analyzer {
             }
         }
 
+        val testFrameworks = Dependency.getTestFramework() // 测试框架依赖 jar 包路径
+        val testDependencies = Dependency.getTestDependencies()
+
+        val sootProcessDir = inputClassPaths + testFrameworks
+        val sootClasspath = (dependencyClassPaths + testDependencies).joinToString(File.pathSeparator)
+
+        log.info("Test frameworks: $testFrameworks")
+
         G.reset()
         with(Options.v()) {
             set_prepend_classpath(true)
-            set_whole_program(true)
+            set_whole_program(false)
             set_output_format(Options.output_format_jimple)
             set_allow_phantom_refs(true)
             set_no_bodies_for_excluded(true)
             set_exclude(getExcludes())
             set_include(ArrayList(includeRules))
-//            set_process_dir(listOf(classPath) + dependencyClassPaths) // [test] load all dependency classes to soot
-            set_process_dir(inputClassPaths + getJunitClassPath(dependencyClassPaths))
-            set_soot_classpath(dependencyClassPaths.joinToString(File.pathSeparator))
+            set_process_dir(sootProcessDir)
+            set_soot_classpath(sootClasspath)
             set_validate(true)
         }
         return true
@@ -79,10 +86,6 @@ object Analyzer {
     private fun runSoot() {
         log.info("Run Soot")
         PackManager.v().runPacks()
-    }
-
-    private fun getJunitClassPath(dependencyClassPaths: List<String>): List<String> {
-        return dependencyClassPaths.filter { it.contains("junit") }
     }
 
     /**
@@ -117,6 +120,7 @@ object Analyzer {
     /**
      * Create a dummy main class and dummy main method which calls the target method.
      * Example main method:
+     *
      *     public static void main(java.lang.String[])
      *     {
      *         com.example.myapplication.FirstFragment dummyObj;

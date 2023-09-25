@@ -5,15 +5,32 @@ import java.io.File
 
 object Dependency {
     /**
-     * Get test framework dependencies from the libs directory,
-     * junit-4.13.2.jar, hamcrest-core-1.3.jar,
-     * mockito-core-5.5.0.jar, mockito-inline-5.5.0.jar, mockito-junit-jupiter-5.5.0.jar,
-     * org.robolectric/4.10.3: robolectric-annotations-4.10.3.jar, robolectric-4.10.3.jar, etc.
-     *
+     * Get test framework jars from the `libs/test-framework/` directory,
+     * which is used to generate statements in the test suite.
      */
-    fun getTestFrameworkDependencies(): List<String> {
-        return listOf(
-            "junit-4.13.2.jar",
-        ).map { Configs.libsPath }
+    fun getTestFramework(): List<String> {
+        val testFrameworkLibs = File("${Configs.libsPath}/test-framework")
+        return getAllJarFilePaths(testFrameworkLibs)
+    }
+
+    /**
+     * Get test dependencies from the `libs/test-dependencies/` directory
+     */
+    fun getTestDependencies(): List<String> {
+        val testDependenciesLibs = File("${Configs.libsPath}/test-dependencies")
+        return getAllJarFilePaths(testDependenciesLibs)
+    }
+
+    private fun getAllJarFilePaths(dir: File): List<String> {
+        return if (dir.exists() && dir.isDirectory) {
+            val jarFiles = mutableListOf<File>()
+            dir.walk()
+                .filter { it.isFile && it.extension == "jar" }
+                .forEach { jarFiles.add(it) }
+
+            jarFiles.map { it.canonicalPath }
+        } else {
+            listOf()
+        }
     }
 }
