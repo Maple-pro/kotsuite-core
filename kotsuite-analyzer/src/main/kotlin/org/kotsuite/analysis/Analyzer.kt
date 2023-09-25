@@ -46,7 +46,7 @@ object Analyzer {
      * Set up soot parameters
      */
     private fun setupSoot(classPath: List<String>, dependencyClassPaths: List<String>): Boolean {
-        log.info("Setup Soot: class($includeRules), project($projectPath")
+        log.info("Setup Soot: class($includeRules), project($projectPath)")
 
         val inputClassPaths = mutableListOf<String>()
         for (path in classPath) {
