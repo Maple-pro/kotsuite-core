@@ -43,6 +43,7 @@ object RandomStrategy: Strategy() {
 
     /**
      * Generate test case for method
+     *
      * TODO:
      * 1. Generate mock action: add mock action type
      * 2. Code reuse

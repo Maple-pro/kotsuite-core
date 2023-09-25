@@ -37,13 +37,13 @@ object JacocoUtils {
 
         val classPaths = listOf(
             classesPath,
-            "${Configs.libsPath}/*",
+            "${Configs.libsPath}/classpath/*",
         ) + Configs.dependencyClassPaths
 
         val cpArg = classPaths.joinToString(File.pathSeparator)
 
         val vmOptions = listOf(
-//            "-javaagent:${Configs.KOTSUITE_AGENT_PATH}=$kotsuiteAgentArgs",
+            "-javaagent:${Configs.kotsuiteAgentPath}=$kotsuiteAgentArgs",
             "-javaagent:${Configs.jacocoAgentPath}=$jacocoAgentArgs",
             "-cp", cpArg,
         )

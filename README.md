@@ -39,13 +39,13 @@ KotMain
 
 # 3. Generate .exec file
 java \
--javaagent:./libs/jacocoagent.jar=includes=*,destfile=./example-projects/MyApplication/sootOutput/report/jacoco-MyApplication.exec,output=file \
+-javaagent:./libs/cli/org.jacoco.agent-0.8.10-runtime.jar=includes=*,destfile=./example-projects/MyApplication/sootOutput/report/jacoco-MyApplication.exec,output=file \
 -cp ./example-projects/MyApplication/kotsuite/MyApplication.jar \
 ExampleTest
 
 # 4. Generate coverage report
 java \
--jar ./libs/jacococli.jar report \
+-jar ./libs/cli/org.jacoco.cli-0.8.10-nodeps.jar report \
 ./example-projects/MyApplication/sootOutput/report/jacoco-MyApplication.exec \
 --classfile=./example-projects/MyApplication/sootOutput \
 --sourcefile=./example-projects/MyApplication/app/src/main/java \

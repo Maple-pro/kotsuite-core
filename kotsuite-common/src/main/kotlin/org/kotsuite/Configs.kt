@@ -40,16 +40,13 @@ object Configs {
     val finalReportOutputPath: String get() = "$finalOutputPath/report"
 
     // dependency jar paths
-//    val kotsuiteAgentPath: String get() = "$libsPath/kotsuite-agent-1.2.jar"
-    val jacocoAgentPath: String get() = "$libsPath/org.jacoco.agent-0.8.10-runtime.jar"
-    val jacocoCliPath: String get() = "$libsPath/org.jacoco.cli-0.8.10-nodeps.jar"
-    val kotlinRuntimePath: String get() = "$libsPath/kotlin-runtime-1.2.71.jar"
-    val kotlinStdLibPath: String get() = "$libsPath/kotlin-stdlib-1.8.10.jar"
-//    val decompilerPath: String get() = "$libsPath/java-decompiler.jar"
-    val decompilerPath: String get() = "$libsPath/fernflower.jar"
-
-    // [test] for test only
-    const val KOTSUITE_AGENT_PATH = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-agent-1.2.jar"
+    val kotsuiteAgentPath: String get() = "$libsPath/cli/kotsuite-agent-1.2.jar"
+    val jacocoAgentPath: String get() = "$libsPath/cli/org.jacoco.agent-0.8.10-runtime.jar"
+    val jacocoCliPath: String get() = "$libsPath/cli/org.jacoco.cli-0.8.10-nodeps.jar"
+    val kotlinRuntimePath: String get() = "$libsPath/classpath/kotlin-runtime-1.2.71.jar"
+    val kotlinStdLibPath: String get() = "$libsPath/classpath/kotlin-stdlib-1.8.10.jar"
+//    val decompilerPath: String get() = "$libsPath/cli/java-decompiler.jar"
+    val decompilerPath: String get() = "$libsPath/cli/fernflower.jar"
 
     // genetic algorithm related configs
     const val MAX_ATTEMPT = 50

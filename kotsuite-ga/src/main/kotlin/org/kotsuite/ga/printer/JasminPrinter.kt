@@ -1,4 +1,4 @@
-package org.kotsuite.ga.chromosome.printer
+package org.kotsuite.ga.printer
 
 import org.kotsuite.Configs
 import soot.SootClass
@@ -27,7 +27,7 @@ object JasminPrinter {
      */
     fun printJasminFile(
         sootClass: SootClass,
-        outputFileDir: String = this.outputFileDir,
+        outputFileDir: String = JasminPrinter.outputFileDir,
         asmBackend: Boolean = true,
     ) {
         val javaVersion = Options.v().java_version()

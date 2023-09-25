@@ -1,4 +1,4 @@
-package org.kotsuite.ga.chromosome.printer
+package org.kotsuite.ga.printer
 
 import soot.SootClass
 import soot.SourceLocator

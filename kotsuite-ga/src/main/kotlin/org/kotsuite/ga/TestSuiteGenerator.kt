@@ -3,8 +3,8 @@ package org.kotsuite.ga
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestClass
-import org.kotsuite.ga.chromosome.jimple.JimpleGenerator
-import org.kotsuite.ga.chromosome.printer.JasminPrinter
+import org.kotsuite.ga.jimple.JimpleGenerator
+import org.kotsuite.ga.printer.JasminPrinter
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
 import org.kotsuite.ga.decompile.Decompiler

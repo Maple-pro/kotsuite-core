@@ -2,8 +2,8 @@ package org.kotsuite.ga.coverage.fitness
 
 import org.kotsuite.Configs
 import org.kotsuite.ga.chromosome.Population
-import org.kotsuite.ga.chromosome.jimple.JimpleGenerator
-import org.kotsuite.ga.chromosome.printer.JasminPrinter
+import org.kotsuite.ga.jimple.JimpleGenerator
+import org.kotsuite.ga.printer.JasminPrinter
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
 import org.kotsuite.utils.SootUtils

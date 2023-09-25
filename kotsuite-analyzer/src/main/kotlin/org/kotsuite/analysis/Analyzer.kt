@@ -57,7 +57,7 @@ object Analyzer {
         }
 
         val testFrameworks = Dependency.getTestFramework() // 测试框架依赖 jar 包路径
-        val testDependencies = Dependency.getTestDependencies()
+        val testDependencies = Dependency.getTestDependencies() // 测试框架依赖
 
         val sootProcessDir = inputClassPaths + testFrameworks
         val sootClasspath = (dependencyClassPaths + testDependencies).joinToString(File.pathSeparator)
