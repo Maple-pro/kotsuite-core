@@ -143,6 +143,10 @@ tasks.shadowJar {
 //    }
 }
 
+tasks.build {
+    dependsOn(tasks["fatJar"])
+}
+
 publishing {
 
     repositories {
