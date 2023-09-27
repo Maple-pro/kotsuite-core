@@ -25,23 +25,15 @@ public class MainMethodVisitor extends MethodVisitor {
         String methodName = options.getTestMethod();
 
         try {
-            Class<?> targetClass = Class.forName(className.replace('/', '.'));
-
             if (methodName.equals("*")) { // invoke all declared methods in target class
+                Class<?> targetClass = Class.forName(className);
                 Method[] methods = targetClass.getDeclaredMethods();
                 for (Method method : methods) {
                     if (method.getName().equals("$jacocoInit")) continue;
-//                    System.out.println("Inserting method: " + method.getName());
-                    addMethodCall(targetClass, method);
+                    addMethodCall(options.getASMTestClass(), method.getName(), Type.getMethodDescriptor(method));
                 }
             } else { // invoke the given method in target class
-                List<Method> targetMethods = getMethodsByName(targetClass, methodName);
-                if (targetMethods.isEmpty()) {
-                    System.err.println("Method not found: " + methodName);
-                    throw new RuntimeException();
-                } else {
-                    addMethodCall(targetClass,targetMethods.get(0));
-                }
+              addMethodCall(options.getASMTestClass(), options.getTestMethod(), options.getTestMethodDesc());
             }
         } catch (ClassNotFoundException e) {
             System.err.println("Class not found: " + className);
@@ -49,30 +41,14 @@ public class MainMethodVisitor extends MethodVisitor {
         }
     }
 
-    private void addMethodCall(Class<?> clazz, Method method) {
-        String className = clazz.getName();
-        String methodName = method.getName();
-        String methodDesc = Type.getMethodDescriptor(method);
-
-        methodVisitor.visitTypeInsn(Opcodes.NEW, className);
+    private void addMethodCall(String asmClassName, String methodName, String methodDesc) {
+        methodVisitor.visitTypeInsn(Opcodes.NEW, asmClassName);
         methodVisitor.visitInsn(Opcodes.DUP);
         methodVisitor.visitMethodInsn(
-                Opcodes.INVOKESPECIAL, className, "<init>", "()V", false
+                Opcodes.INVOKESPECIAL, asmClassName, "<init>", "()V", false
         );
         methodVisitor.visitMethodInsn(
-                Opcodes.INVOKEVIRTUAL, className, methodName, methodDesc, false
+                Opcodes.INVOKEVIRTUAL, asmClassName, methodName, methodDesc, false
         );
-    }
-
-    private List<Method> getMethodsByName(Class<?> clazz, String methodName) {
-        Method[] methods = clazz.getDeclaredMethods();
-        List<Method> targetMethods = new ArrayList<>();
-        for (Method method : methods) {
-            if (method.getName().equals(methodName)) {
-                targetMethods.add(method);
-            }
-        }
-
-        return targetMethods;
     }
 }

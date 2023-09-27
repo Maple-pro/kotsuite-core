@@ -15,6 +15,8 @@ dependencies {
     implementation("org.ow2.asm:asm-commons:9.5")
     implementation("org.ow2.asm:asm-util:9.5")
 
+    implementation("com.google.code.gson:gson:2.10.1")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
