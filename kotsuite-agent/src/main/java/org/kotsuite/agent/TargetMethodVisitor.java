@@ -88,8 +88,6 @@ public class TargetMethodVisitor extends MethodVisitor {
     }
 
     private void printToFile(String filename, String className, String methodName) {
-        // Insert bytecode to store the return value in a local variable
-        //            mv.visitVarInsn(Opcodes.ASTORE, 1); // Store the return value in local variable 1
         mv.visitLdcInsn(filename);
         mv.visitLdcInsn(className);
         mv.visitLdcInsn(methodName);

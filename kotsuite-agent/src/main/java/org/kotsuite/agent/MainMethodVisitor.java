@@ -5,8 +5,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainMethodVisitor extends MethodVisitor {
     AgentOptions options;
