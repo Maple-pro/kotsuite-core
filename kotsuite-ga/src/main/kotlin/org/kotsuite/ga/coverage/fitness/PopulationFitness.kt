@@ -26,9 +26,16 @@ object PopulationFitness {
 
         // Generate fitness for each test cases
         population.testCases.forEach { testCase ->
+            val assertFilePath = "" // TODO
+
             // Run application with jacoco agent and kotsuite agent, which will generate the .exec file
             // Analyze the .exec file to generate the coverage information
-            TestCaseFitness(jimpleTestClass, testCase, population.targetMethod, jimpleMainClass).generateTestCaseFitness()
+            TestCaseFitness(
+                jimpleTestClass, testCase, population.targetMethod, jimpleMainClass, assertFilePath
+            ).generateTestCaseFitness()
+
+            // TODO: pass a assert file path, and use the assert file path to generate the assert for the test case
+            testCase.generateAssertByFile(assertFilePath)
         }
 
         // Generate fitness value for whole population
@@ -39,13 +46,14 @@ object PopulationFitness {
         return population.fitness
     }
 
-    private fun generateTotalPopulationExec(execDataFile: String, jimpleTestClass: SootClass, jimpleMainClass: SootClass) {
-        JacocoUtils.generateExecFileWithKotsuiteAgent(
-            Configs.sootOutputPath,
-            execDataFile,
-            jimpleTestClass.name,
-            "*",
+    private fun generateTotalPopulationExec(
+        execDataFile: String, jimpleTestClass: SootClass, jimpleMainClass: SootClass
+    ) {
+        JacocoUtils.generatePopulationExecFile(
             jimpleMainClass.name,
+            jimpleTestClass.name,
+            execDataFile,
+            Configs.sootOutputPath,
         )
     }
 

@@ -58,4 +58,8 @@ class TestCase(
         this.assertValue = value
     }
 
+    fun generateAssertByFile(assertFilePath: String) {
+        TODO("Not implemented yet")
+    }
+
 }

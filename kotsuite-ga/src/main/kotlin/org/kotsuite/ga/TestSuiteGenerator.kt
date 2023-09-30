@@ -64,12 +64,10 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
         val dateTime = LocalDateTime.now()  // use dateTime to identify the same exec file and report
         val execDataFile = Configs.getFinalExecFilePath(dateTime)
-        JacocoUtils.generateExecFileWithKotsuiteAgent(
-            Configs.finalClassesOutputPath,
-            execDataFile,
-            "",
-            "",
+        JacocoUtils.generateFinalWholeSolutionExecFile(
             dummyMainClass.name,
+            execDataFile,
+            Configs.finalClassesOutputPath,
         )
 
         val execResolver = ExecResolver(

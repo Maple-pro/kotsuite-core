@@ -101,6 +101,9 @@ public class AgentOptions {
     }
 
     public String getASMTestClass() {
+        if (!options.containsKey(TEST_CLASS)) {
+            return "";
+        }
         return options.get(TEST_CLASS).replace('.', '/');
     }
 
@@ -117,6 +120,9 @@ public class AgentOptions {
     }
 
     public String getASMTargetClass() {
+        if (!options.containsKey(TARGET_CLASS)) {
+            return "";
+        }
         return options.get(TARGET_CLASS).replace('.', '/');
     }
 

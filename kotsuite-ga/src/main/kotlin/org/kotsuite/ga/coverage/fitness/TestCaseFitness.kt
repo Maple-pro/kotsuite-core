@@ -5,6 +5,8 @@ import org.kotsuite.Configs
 import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
+import org.kotsuite.utils.ASMUtils
+import org.objectweb.asm.Type
 import soot.SootClass
 import soot.SootMethod
 
@@ -13,6 +15,7 @@ class TestCaseFitness(
     private val testCase: TestCase,
     private val targetMethod: SootMethod,
     private val jimpleMainClass: SootClass,
+    private val assertFilePath: String,
 ) {
 
     private val log = LogManager.getLogger()
@@ -21,17 +24,24 @@ class TestCaseFitness(
     // e.g., `$MODULE_ROOT/kotsuite/exec/jacoco_TempCalleePrintHelloRound0_test_printHello_1`
     private val execDataFile = Configs.getExecFilePath(jimpleTestClass.name, testCase.testCaseName)
 
-    fun generateTestCaseFitness() {
-        JacocoUtils.generateExecFileWithKotsuiteAgent(
-            Configs.sootOutputPath,
-            execDataFile,
+    fun generateTestCaseFitness(): String {
+        val targetMethod = testCase.targetMethod
+        val targetClass = targetMethod.declaringClass
+        val targetMethodDesc = ASMUtils.getMethodDescription(testCase.targetMethod) // Util: create method desc for a soot method
+        JacocoUtils.generateTestCaseExecFile(
+            jimpleMainClass.name,
             jimpleTestClass.name,
             testCase.testCaseName,
-            jimpleMainClass.name,
-            generateAssert = true,
-            testCase,
+            targetClass.name,
+            targetMethod.name,
+            targetMethodDesc,
+            execDataFile,
+            assertFilePath,
+            Configs.sootOutputPath,
         )
         generateFitness()
+
+        return execDataFile
     }
 
     private fun generateFitness() {

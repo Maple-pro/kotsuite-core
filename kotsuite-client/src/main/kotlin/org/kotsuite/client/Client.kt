@@ -63,6 +63,7 @@ class Client(
             Files.createDirectories(Paths.get(execOutputPath))
             Files.createDirectories(Paths.get(jarOutputPath))
             Files.createDirectories(Paths.get(reportOutputPath))
+            Files.createDirectories(Paths.get(assertOutputPath))
 
             Files.createDirectories(Paths.get(finalOutputPath))
             Files.createDirectories(Paths.get(finalClassesOutputPath))

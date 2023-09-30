@@ -30,6 +30,7 @@ object Configs {
     val execOutputPath: String get() = "$kotSuiteOutputPath/exec"
     val jarOutputPath: String get() = "$kotSuiteOutputPath/jar"
     val reportOutputPath: String get() = "$kotSuiteOutputPath/report"
+    val assertOutputPath: String get() = "$kotSuiteOutputPath/assert"
 
     // final output paths
     val finalOutputPath: String get() = "$modulePath/final"
