@@ -12,8 +12,7 @@ import soot.SootMethod
 
 object PopulationFitness {
 
-    fun generatePopulationFitness(population: Population): Fitness? {
-
+    fun generatePopulationFitness(population: Population, assertFilePath: String) {
         // Generate jimple test class
         val jimpleTestClass = JimpleGenerator.generateTestClassFromPopulation(population)
 
@@ -26,24 +25,17 @@ object PopulationFitness {
 
         // Generate fitness for each test cases
         population.testCases.forEach { testCase ->
-            val assertFilePath = "" // TODO
-
             // Run application with jacoco agent and kotsuite agent, which will generate the .exec file
             // Analyze the .exec file to generate the coverage information
             TestCaseFitness(
                 jimpleTestClass, testCase, population.targetMethod, jimpleMainClass, assertFilePath
             ).generateTestCaseFitness()
-
-            // TODO: pass a assert file path, and use the assert file path to generate the assert for the test case
-            testCase.generateAssertByFile(assertFilePath)
         }
 
         // Generate fitness value for whole population
         val execDataFile = Configs.getExecFilePath(jimpleTestClass.name, "*")
         generateTotalPopulationExec(execDataFile, jimpleTestClass, jimpleMainClass)
         population.fitness = generateTotalPopulationFitness(execDataFile, population.targetMethod)
-
-        return population.fitness
     }
 
     private fun generateTotalPopulationExec(

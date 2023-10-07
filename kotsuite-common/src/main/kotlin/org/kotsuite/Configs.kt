@@ -41,7 +41,7 @@ object Configs {
     val finalReportOutputPath: String get() = "$finalOutputPath/report"
 
     // dependency jar paths
-    val kotsuiteAgentPath: String get() = "$libsPath/cli/kotsuite-agent-1.2.jar"
+    val kotsuiteAgentPath: String get() = "$libsPath/cli/kotsuite-agent-shadow-1.2-all.jar"
     val jacocoAgentPath: String get() = "$libsPath/cli/org.jacoco.agent-0.8.10-runtime.jar"
     val jacocoCliPath: String get() = "$libsPath/cli/org.jacoco.cli-0.8.10-nodeps.jar"
     val kotlinRuntimePath: String get() = "$libsPath/classpath/kotlin-runtime-1.2.71.jar"

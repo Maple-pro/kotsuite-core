@@ -1,5 +1,8 @@
 # KotSuite agent
 
+```bash
+cp ~/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-agent-shadow-1.2-all.jar ~/Repos/kotsuite-project/kotsuite-core/libs/cli/
+```
 
 ## Functionality
 

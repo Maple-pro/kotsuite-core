@@ -23,14 +23,12 @@ object JimpleGenerator {
     fun generateTestClassFromPopulation(population: Population): SootClass {
         // generate a dummy test class, e.g., `TempExampleFooRound1`
         val targetClass = population.targetMethod.declaringClass
-        val targetClassName = targetClass.shortName
-        val capitalizedMethodName = population.targetMethod.name.replaceFirstChar { it.uppercase() }
-        val dummyTestClassName = "Temp$targetClassName${capitalizedMethodName}Round${population.round}"
+        val dummyTestClassName = population.getPopulationClassName()
 
         val dummyTestClass = TestClass(dummyTestClassName, targetClass.packageName, population.round)
         dummyTestClass.testCases = population.testCases.toMutableList()
 
-        return TestClassJimpleGenerator.generate(dummyTestClass, collectReturnValue = true, printTestCaseName = true)
+        return TestClassJimpleGenerator.generate(dummyTestClass)
     }
 
 }

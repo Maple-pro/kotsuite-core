@@ -103,7 +103,7 @@ class KotSuiteAgentOptions() {
         options[TARGET_METHOD_DESC] = targetMethodDesc
     }
 
-    private fun getVMArgument(kotsuiteAgentJarFile: File): String {
+    fun getVMArgument(kotsuiteAgentJarFile: File): String {
         return String.format("-javaagent:%s=%s", kotsuiteAgentJarFile, this)
     }
 

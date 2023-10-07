@@ -11,7 +11,6 @@ object TestClassJimpleGenerator {
     /* TODO: to junit class, `RunWith(AndroidJUnit4:class)` */
     fun generate(
         element: TestClass,
-        collectReturnValue: Boolean = false,
         printTestCaseName: Boolean = false,
         generateAssert: Boolean = false,
     ): SootClass {
@@ -32,7 +31,6 @@ object TestClassJimpleGenerator {
         val sootMethods = element.testCases.map {
             TestCaseJimpleGenerator.generate(
                 it, sootClass,
-                collectReturnValue,
                 printTestCaseName,
                 generateAssert,
             )

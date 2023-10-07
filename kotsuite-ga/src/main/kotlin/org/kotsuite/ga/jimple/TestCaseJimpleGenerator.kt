@@ -26,7 +26,6 @@ object TestCaseJimpleGenerator {
 
     fun generate(
         testcase: TestCase, sootClass: SootClass,
-        collectReturnValue: Boolean = false,
         printTestCaseName: Boolean = false,
         generateAssert: Boolean = false,
     ): SootMethod {
@@ -61,7 +60,7 @@ object TestCaseJimpleGenerator {
             )
         )
 
-        if (collectReturnValue || printTestCaseName) {
+        if (printTestCaseName) {
             body.locals.add(printStreamRefLocal)
             body.units.add(printStreamRefAssignStmt)
         }
@@ -95,47 +94,11 @@ object TestCaseJimpleGenerator {
             }
         }
 
-        // print return value and return type
-        if (collectReturnValue && returnValue != null) {
-            // print "<assert>" prefix
-            val printPrefixLocalsAndUnits = createPrintStringStmt("<assert>", printStreamRefLocal)
-            body.locals.addAll(printPrefixLocalsAndUnits.locals)
-            body.units.addAll(printPrefixLocalsAndUnits.units)
-
-            // print return type, e.g., <type>int<type>
-            val printReturnTypeLocalsAndUnits = createPrintStringStmt("<type>${lastAction.method.returnType}</type>", printStreamRefLocal)
-            body.locals.addAll(printReturnTypeLocalsAndUnits.locals)
-            body.units.addAll(printReturnTypeLocalsAndUnits.units)
-
-            // print "<value>" prefix
-            val printValuePrefixLocalsAndUnits = createPrintStringStmt("<value>", printStreamRefLocal)
-            body.locals.addAll(printValuePrefixLocalsAndUnits.locals)
-            body.units.addAll(printValuePrefixLocalsAndUnits.units)
-
-            // print return value
-            val printReturnLocalsAndUnits = createPrintValueStmt(returnValue!!, printStreamRefLocal)
-            body.locals.addAll(printReturnLocalsAndUnits.locals)
-            body.units.addAll(printReturnLocalsAndUnits.units)
-
-            // print "</value>" suffix
-            val printValueSuffixLocalsAndUnits = createPrintStringStmt("</value>", printStreamRefLocal)
-            body.locals.addAll(printValueSuffixLocalsAndUnits.locals)
-            body.units.addAll(printValueSuffixLocalsAndUnits.units)
-
-            // print "</assert>" suffix
-            val printSuffixLocalsAndUnits = createPrintStringStmt("</assert>", printStreamRefLocal)
-            body.locals.addAll(printSuffixLocalsAndUnits.locals)
-            body.units.addAll(printSuffixLocalsAndUnits.units)
-        }
-
-        // generate assert statement
-        if (generateAssert && testcase.assertType != null && testcase.assertValue != null && returnValue != null) {
-            val assertLocalsAndUnits = createAssertStatement(
-                testcase.assertType!!, testcase.assertValue!!, returnValue!!
-            )
-
-            body.locals.addAll(assertLocalsAndUnits.locals)
-            body.units.addAll(assertLocalsAndUnits.units)
+        // Create assert statement
+        if (generateAssert) {
+            val assertionLocalsAndUnits = PrimitiveAssertionJimpleGenerator.addAssertion(testcase, returnValue)
+            body.locals.addAll(assertionLocalsAndUnits.locals)
+            body.units.addAll(assertionLocalsAndUnits.units)
         }
 
         // Create return statement
@@ -207,49 +170,4 @@ object TestCaseJimpleGenerator {
         return LocalsAndUnits(locals, units)
     }
 
-    private fun createAssertStatement(assertType: String, assertValue: String, actualValue: Local): LocalsAndUnits {
-        val locals = mutableListOf<Local>()
-        val units = mutableListOf<Unit>()
-
-        // create the expected value
-        val expectedValue = createLocalByTypeAndValue(assertType, assertValue) ?: return LocalsAndUnits(listOf(), listOf())
-        val assertEqualsRef = getAssertEqualsMethodRef(assertType)
-        val deltaDoubleConstant = DoubleConstant.v(0.1)
-        val invokeStmt = jimple.newInvokeStmt(
-            if (assertType != "double") jimple.newStaticInvokeExpr(assertEqualsRef, expectedValue, actualValue)
-            else jimple.newStaticInvokeExpr(assertEqualsRef, expectedValue, actualValue, deltaDoubleConstant)
-        )
-
-        units.add(invokeStmt)
-
-        return LocalsAndUnits(locals, units)
-    }
-
-    private fun createLocalByTypeAndValue(type: String, value: String): Value? {
-        return when(type) {
-            "boolean" -> {
-                if (value == "true") DIntConstant.v(1, BooleanType.v())
-                else DIntConstant.v(0, BooleanType.v())
-            }
-            "byte" -> null
-            "char" -> null
-            "double" -> DoubleConstant.v(value.toDouble())
-            "float" -> FloatConstant.v(value.toFloat())
-            "int" -> LongConstant.v(value.toLong())
-//            "int" -> IntConstant.v(value.toInt())
-            "long" -> LongConstant.v(value.toLong())
-            "java.lang.String" -> StringConstant.v(value)
-            else -> return null
-        }
-    }
-
-    private fun getAssertEqualsMethodRef(type: String): SootMethodRef {
-        val assertClass = Scene.v().getSootClass("org.junit.Assert")
-        val subSig = when(type) {
-            "int" -> "void assertEquals(long,long)"
-            "double" -> "void assertEquals(double,double,double)"
-            else -> "void assertEquals(java.lang.Object,java.lang.Object)"
-        }
-        return assertClass.getMethod(subSig).makeRef()
-    }
 }

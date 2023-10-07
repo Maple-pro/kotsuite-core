@@ -24,51 +24,38 @@ dependencies {
     testImplementation("org.slf4j:slf4j-simple:2.0.6")
 }
 
-tasks.jar {
-    manifest {
-        attributes(
-            "Premain-Class" to "org.kotsuite.agent.Main",
-            "Agent-Class" to "org.kotsuite.agent.Main",
-            "Can-Redefine-Classes" to "true",
-            "Can-Retransfrom-Classes" to "true"
-        )
-    }
-}
-
-tasks.shadowJar {
-    archiveBaseName.set("kotsuite-agent-shadow")
-
-    manifest {
-        attributes(
-            "Premain-Class" to "org.kotsuite.agent.Main",
-            "Agent-Class" to "org.kotsuite.agent.Main",
-            "Can-Redefine-Classes" to "true",
-            "Can-Retransfrom-Classes" to "true"
-        )
-    }
-}
-
-tasks.build {
-    dependsOn(tasks.shadowJar)
-}
-
-tasks.register("fatJar", Jar::class.java) {
-    archiveBaseName.set("kotsuite-agent-fat")
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    manifest {
-        attributes(
-            "Premain-Class" to "org.kotsuite.agent.Main",
-            "Agent-Class" to "org.kotsuite.agent.Main",
-            "Can-Redefine-Classes" to "true",
-            "Can-Retransfrom-Classes" to "true"
-        )
+tasks {
+    jar {
+        manifest {
+            attributes(
+                "Premain-Class" to "org.kotsuite.agent.Main",
+                "Agent-Class" to "org.kotsuite.agent.Main",
+                "Can-Redefine-Classes" to "true",
+                "Can-Retransfrom-Classes" to "true"
+            )
+        }
     }
 
-    from(
-        configurations.runtimeClasspath.get()
-            .map { zipTree(it) }
-            .also { from(it) }
-    )
+    shadowJar {
+        archiveBaseName.set("kotsuite-agent-shadow")
+
+        manifest {
+            attributes(
+                "Premain-Class" to "org.kotsuite.agent.Main",
+                "Agent-Class" to "org.kotsuite.agent.Main",
+                "Can-Redefine-Classes" to "true",
+                "Can-Retransfrom-Classes" to "true"
+            )
+        }
+    }
+
+    val copyJarToTarget by creating(Copy::class.java) {
+        from(shadowJar)
+        into(file("/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs/cli/"))
+    }
+
+    build {
+        dependsOn(shadowJar)
+        dependsOn(copyJarToTarget)
+    }
 }

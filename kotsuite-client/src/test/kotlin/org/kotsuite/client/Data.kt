@@ -682,5 +682,5 @@ object Data {
         "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/tmp/kotlin-classes/debug",
         "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/intermediates/compile_r_class_jar/debug/R.jar!/",
         "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Commons/commons/build/generated/res/resValues/debug",
-    )
+        )
 }

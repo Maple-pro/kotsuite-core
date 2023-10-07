@@ -3,6 +3,7 @@ package org.kotsuite.ga.strategy.standard
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
+import org.kotsuite.ga.assertion.AssertionGenerator
 import org.kotsuite.ga.chromosome.Population
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.coverage.fitness.Fitness
@@ -11,6 +12,7 @@ import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.ga.strategy.random.RandomStrategy
 import soot.SootClass
 import soot.SootMethod
+import java.io.File
 
 /**
  * testCaseGeneration(classUnderTest: Class)
@@ -72,10 +74,19 @@ object StandardGAStrategy: Strategy() {
         while(true) {
             log.log(Configs.sectionLevel, "[Round $round]")
 
-            // 1. get test suite coverage info
-            val fitness = PopulationFitness.generatePopulationFitness(curPopulation) ?: break
+            // Get test suite coverage info
+            log.debug("Generating population coverage info...")
+            val assertFileName = curPopulation.getPopulationAssertionName() + ".txt"
+            val assertFilePath = Configs.assertOutputPath + File.separatorChar + assertFileName
+            PopulationFitness.generatePopulationFitness(curPopulation, assertFilePath)
 
-            // 2. meet the coverage criteria ? output : continue
+            // Generate assertion for each testcase
+            log.debug("Adding assertion to each testcase...")
+            AssertionGenerator.addAssertions(curPopulation, File(assertFilePath))
+
+            // Meet the coverage criteria ? output : continue
+            log.debug("Check whether the fitness of the population meets the requirements...")
+            val fitness = curPopulation.fitness ?: Fitness(0.0, 0.0)
             log.log(Level.INFO, "Fitness: $fitness")
             val isCoverTargets = isCoverTargets(fitness)
             if (isCoverTargets) break
@@ -83,14 +94,15 @@ object StandardGAStrategy: Strategy() {
             round++
             if (round > MAX_ATTEMPT) break
 
-            // 3. select, mutate and crossover
-            log.log(Level.INFO, "Select, mutate and crossover")
+            // Select, mutate and crossover
+            log.debug("Select, mutate and crossover...")
             curPopulation = curPopulation.select().mutate().crossover()
 
             curPopulation.round = round
         }
 
-        // TODO: remove duplicate test cases
+        // Remove duplicated test cases
+        curPopulation.minimizer()
 
         return MethodSolution(targetMethod, curPopulation.testCases)
     }

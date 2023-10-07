@@ -58,12 +58,11 @@ public class AgentOptions {
         if (optionStr != null && !optionStr.isEmpty()) {
             for (String entry : optionStr.split(",")) {
                 String[] parts = entry.split("=");
-                if (parts.length != 2) {
-                    throw new IllegalArgumentException("Invalid option: " + entry);
-                }
-
                 String key = parts[0].trim();
-                String value = parts[1].trim();
+                String value = "";
+                if (parts.length == 2) {
+                    value = parts[1].trim();
+                }
                 if (!VALID_OPTIONS.contains(key)) {
                     throw new IllegalArgumentException("Invalid option: " + key);
                 }

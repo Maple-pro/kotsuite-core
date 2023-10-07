@@ -49,7 +49,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     }
 
     private fun generateFinalCoverageReport() {
-        log.log(Configs.sectionLevel, "Generate final whole solution coverage report")
+        log.log(Configs.sectionLevel, "[Generate final whole solution coverage report]")
 
         if (wholeSolution.classSolutions.isEmpty()) {
             log.log(Level.WARN, "No generated class solution")
@@ -80,12 +80,10 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         val finalXMLReportPath = Configs.getFinalXMLReportPath(dateTime)
         execResolver.generateHTMLReport(finalHTMLReportPath)
         execResolver.generateXMLReport(finalXMLReportPath)
-
-//        CoverageGenerator.generate()
     }
 
     private fun decompileJUnitClasses() {
-        log.log(Configs.sectionLevel, "Decompile class files to java files")
+        log.log(Configs.sectionLevel, "[Decompile class files to java files]")
 
         Decompiler.decompileJasminToJava(Configs.finalTestOutputPath, Configs.finalDecompiledOutputPath)
     }

@@ -39,8 +39,8 @@ object Commands {
         mainClassName: String,
         classPath: String,
     ) {
-        val jacocoOptionsStr = jacocoAgentOptions.getQuotedVMArgument(jacocoAgentJarFile)
-        val kotsuiteOptionsStr = kotsuiteAgentOptions.getQuotedVMArgument(kotsuiteAgentJarFile)
+        val jacocoOptionsStr = getJacocoVMArgument(jacocoAgentOptions, jacocoAgentJarFile)
+        val kotsuiteOptionsStr = kotsuiteAgentOptions.getVMArgument(kotsuiteAgentJarFile)
 
         val vmArguments = listOf(
             jacocoOptionsStr,
@@ -67,12 +67,16 @@ object Commands {
         mainClassName: String,
         classPath: String,
     ) {
-        val jacocoOptionsStr = jacocoAgentOptions.getQuotedVMArgument(jacocoAgentJarFile)
+        val jacocoOptionsStr = getJacocoVMArgument(jacocoAgentOptions, jacocoAgentJarFile)
         val vmArguments = listOf(
             jacocoOptionsStr,
             "-cp", classPath,
         )
         val command = arrayOf("java") + vmArguments + arrayOf(mainClassName)
         runCommand(command)
+    }
+
+    private fun getJacocoVMArgument(jacocoAgentOptions: AgentOptions, jacocoAgentJarFile: File): String {
+        return String.format("-javaagent:%s=%s", jacocoAgentJarFile, jacocoAgentOptions)
     }
 }
