@@ -8,7 +8,15 @@ import soot.SootClass
 
 object TestClassJimpleGenerator {
 
-    /* TODO: to junit class, `RunWith(AndroidJUnit4:class)` */
+    /**
+     * TODO:
+     * Add annotation: `RunWith(AndroidJUnit4:class)`, `RunWith(RobolectricTestRunner.class)`, `RunWith(MockitoJUnitRunner.class)`
+     *
+     * @param element
+     * @param printTestCaseName
+     * @param generateAssert
+     * @return
+     */
     fun generate(
         element: TestClass,
         printTestCaseName: Boolean = false,

@@ -11,7 +11,7 @@ object Configs {
     // log related configs
     val sectionLevel: Level = Level.forName("SECTION", 350)
     val successLevel: Level = Level.forName("SUCCESS", 360)
-    const val LOG_COMMAND_OUTPUT = false
+    const val LOG_COMMAND_OUTPUT = true
 
     // project related configs
     lateinit var projectPath: String
@@ -40,7 +40,7 @@ object Configs {
     val finalExecOutputPath: String get() = "$finalOutputPath/exec"
     val finalReportOutputPath: String get() = "$finalOutputPath/report"
 
-    // dependency jar paths
+    // cli jar paths
     val kotsuiteAgentPath: String get() = "$libsPath/cli/kotsuite-agent-shadow-1.2-all.jar"
     val jacocoAgentPath: String get() = "$libsPath/cli/org.jacoco.agent-0.8.10-runtime.jar"
     val jacocoCliPath: String get() = "$libsPath/cli/org.jacoco.cli-0.8.10-nodeps.jar"
@@ -48,6 +48,7 @@ object Configs {
     val kotlinStdLibPath: String get() = "$libsPath/classpath/kotlin-stdlib-1.8.10.jar"
 //    val decompilerPath: String get() = "$libsPath/cli/java-decompiler.jar"
     val decompilerPath: String get() = "$libsPath/cli/fernflower.jar"
+    val mainClassFile: String get() = "$libsPath/cli/KotMain.class"
 
     // genetic algorithm related configs
     const val MAX_ATTEMPT = 50

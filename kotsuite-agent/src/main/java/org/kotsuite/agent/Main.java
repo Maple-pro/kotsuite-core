@@ -37,21 +37,19 @@ public class Main {
 //            System.out.println("Transforming class: " + className);
 
             // First visitor: add method call statements
-            if (options.isInsertCall() && className.equals(options.getASMMainClass())) {
-//                System.out.println("Start insert method call visitor");
-                ClassReader reader = new ClassReader(classfileBuffer);
-                ClassWriter writer = new ClassWriter(
-                        reader,
-                        ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
-                );
-                reader.accept(new MainClassVisitor(writer, options), ClassReader.EXPAND_FRAMES);
-
-                return writer.toByteArray();
-            }
+//            if (options.isInsertCall() && className.equals(options.getASMMainClass())) {
+//                ClassReader reader = new ClassReader(classfileBuffer);
+//                ClassWriter writer = new ClassWriter(
+//                        reader,
+//                        ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
+//                );
+//                reader.accept(new MainClassVisitor(writer, options), ClassReader.EXPAND_FRAMES);
+//
+//                return writer.toByteArray();
+//            }
 
             // Second visitor: get return value of the test case
             if (options.isCollectAssert() && className.equals(options.getASMTargetClass())) {
-//                System.out.println("Start assert collector visitor");
                 ClassReader reader = new ClassReader(classfileBuffer);
                 ClassWriter writer = new ClassWriter(
                         reader,

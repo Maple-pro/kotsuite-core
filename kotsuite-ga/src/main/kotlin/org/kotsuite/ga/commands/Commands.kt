@@ -36,18 +36,20 @@ object Commands {
         kotsuiteAgentJarFile: File,
         jacocoAgentOptions: AgentOptions,
         kotsuiteAgentOptions: KotSuiteAgentOptions,
+        cliArguments: KotMainCliOptions,
         mainClassName: String,
         classPath: String,
     ) {
         val jacocoOptionsStr = getJacocoVMArgument(jacocoAgentOptions, jacocoAgentJarFile)
         val kotsuiteOptionsStr = kotsuiteAgentOptions.getVMArgument(kotsuiteAgentJarFile)
+        val cliArgumentsArr = cliArguments.getCliArguments()
 
         val vmArguments = listOf(
             jacocoOptionsStr,
             kotsuiteOptionsStr,
             "-cp", classPath,
         )
-        val command = arrayOf("java") + vmArguments + arrayOf(mainClassName)
+        val command = arrayOf("java") + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
         runCommand(command)
     }
 

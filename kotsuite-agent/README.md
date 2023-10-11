@@ -14,13 +14,10 @@ cp ~/Repos/kotsuite-project/kotsuite-core/kotsuite-agent/build/libs/kotsuite-age
 ```bash
 java \
   -javaagent:./kotsuite-agent-shadow-1.2-all.jar= \
-    insertCall=true, \
     collectAssert=true, \
     outputFile=assert.txt, \
-    mainClass=KotMain, \
     testClass=com.FooTest, \
     testMethod=testBar, \
-    testMethodDesc='()V', \
     targetClass=com.Foo, \
     targetMethod=bar, \
     targetMethodDesc='()Ljava/lang/String;' \ 

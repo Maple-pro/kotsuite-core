@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.jacoco.core.runtime.AgentOptions
 import org.kotsuite.Configs
 import org.kotsuite.ga.commands.Commands
+import org.kotsuite.ga.commands.KotMainCliOptions
 import org.kotsuite.ga.commands.KotSuiteAgentOptions
 import java.io.File
 
@@ -47,16 +48,19 @@ object JacocoUtils {
 
         val kotSuiteAgentOptions = KotSuiteAgentOptions()
         with(kotSuiteAgentOptions) {
-            setInsertCall(true)
             setCollectAssert(true)
             setOutputFile(assertFile)
-            setMainClass(mainClassName)
             setTestClass(testClassName)
             setTestMethod(testCaseName)
-            setTestMethodDesc(testMethodDesc)
             setTargetClass(targetClass)
             setTargetMethod(targetMethod)
             setTargetMethodDesc(targetMethodDesc)
+        }
+
+        val kotMainCliOptions = KotMainCliOptions()
+        with(kotMainCliOptions) {
+            setClass(listOf(testClassName))
+            setMethod(testCaseName)
         }
 
         val cp = listOf(classesPath, "${Configs.libsPath}/classpath/*",) + Configs.dependencyClassPaths
@@ -67,6 +71,7 @@ object JacocoUtils {
             File(Configs.kotsuiteAgentPath),
             jacocoAgentOptions,
             kotSuiteAgentOptions,
+            kotMainCliOptions,
             mainClassName,
             cpStr,
         )

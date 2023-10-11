@@ -17,32 +17,43 @@ object PopulationFitness {
         val jimpleTestClass = JimpleGenerator.generateTestClassFromPopulation(population)
 
         // Create a main class `SootMain` with an empty main method
-        val jimpleMainClass = SootUtils.generateMainClass(Configs.mainClass, listOf())
+//        val jimpleMainClass = SootUtils.generateMainClass(Configs.mainClass, listOf())
 
         // Print main class and test classes into file using jasmin format
         JasminPrinter.printJasminFile(jimpleTestClass)
-        JasminPrinter.printJasminFile(jimpleMainClass)
+//        JasminPrinter.printJasminFile(jimpleMainClass)
 
         // Generate fitness for each test cases
         population.testCases.forEach { testCase ->
             // Run application with jacoco agent and kotsuite agent, which will generate the .exec file
             // Analyze the .exec file to generate the coverage information
             TestCaseFitness(
-                jimpleTestClass, testCase, population.targetMethod, jimpleMainClass, assertFilePath
+                jimpleTestClass,
+                testCase,
+                population.targetMethod,
+//                jimpleMainClass,
+                assertFilePath
             ).generateTestCaseFitness()
         }
 
         // Generate fitness value for whole population
         val execDataFile = Configs.getExecFilePath(jimpleTestClass.name, "*")
-        generateTotalPopulationExec(execDataFile, jimpleTestClass, jimpleMainClass)
+        generateTotalPopulationExec(
+            execDataFile,
+            jimpleTestClass,
+//            jimpleMainClass
+        )
         population.fitness = generateTotalPopulationFitness(execDataFile, population.targetMethod)
     }
 
     private fun generateTotalPopulationExec(
-        execDataFile: String, jimpleTestClass: SootClass, jimpleMainClass: SootClass
+        execDataFile: String,
+        jimpleTestClass: SootClass,
+//        jimpleMainClass: SootClass
     ) {
         JacocoUtils.generatePopulationExecFile(
-            jimpleMainClass.name,
+//            jimpleMainClass.name,
+            Configs.mainClass,
             jimpleTestClass.name,
             execDataFile,
             Configs.sootOutputPath,

@@ -58,14 +58,15 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
         testClasses = wholeSolution.classSolutions.map { it.testClass }
 
-        dummyMainClass = generateDummyMainClass()
+//        dummyMainClass = generateDummyMainClass()
 
         printJasminFiles(Configs.finalClassesOutputPath)
 
         val dateTime = LocalDateTime.now()  // use dateTime to identify the same exec file and report
         val execDataFile = Configs.getFinalExecFilePath(dateTime)
         JacocoUtils.generateFinalWholeSolutionExecFile(
-            dummyMainClass.name,
+//            dummyMainClass.name,
+            Configs.mainClass,
             execDataFile,
             Configs.finalClassesOutputPath,
         )

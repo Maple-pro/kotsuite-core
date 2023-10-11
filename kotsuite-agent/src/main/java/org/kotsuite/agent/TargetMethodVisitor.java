@@ -18,7 +18,6 @@ public class TargetMethodVisitor extends MethodVisitor {
      */
     @Override
     public void visitInsn(int opcode) {
-//        System.out.println("opcode: " + opcode);
         if ((opcode == Opcodes.IRETURN) || (opcode == Opcodes.LRETURN) || (opcode == Opcodes.FRETURN)
                 || (opcode == Opcodes.DRETURN) || (opcode == Opcodes.ARETURN) || (opcode == Opcodes.RETURN)) {
             // Load the method return type onto the stack based on the return type

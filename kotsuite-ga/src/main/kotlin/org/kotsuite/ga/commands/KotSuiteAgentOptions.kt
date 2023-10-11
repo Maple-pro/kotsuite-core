@@ -3,25 +3,19 @@ package org.kotsuite.ga.commands
 import org.apache.logging.log4j.LogManager
 import java.io.File
 
-const val INSERT_CALL = "insertCall"
 const val COLLECT_ASSERT = "collectAssert"
 const val OUTPUT_FILE = "outputFile"
-const val MAIN_CLASS = "mainClass"
 const val TEST_CLASS = "testClass"
 const val TEST_METHOD = "testMethod"
-const val TEST_METHOD_DESC = "testMethodDesc"
 const val TARGET_CLASS = "targetClass"
 const val TARGET_METHOD = "targetMethod"
 const val TARGET_METHOD_DESC = "targetMethodDesc"
 
 private val VALID_OPTIONS = listOf(
-    INSERT_CALL,
     COLLECT_ASSERT,
     OUTPUT_FILE,
-    MAIN_CLASS,
     TEST_CLASS,
     TEST_METHOD,
-    TEST_METHOD_DESC,
     TARGET_CLASS,
     TARGET_METHOD,
     TARGET_METHOD_DESC,
@@ -55,14 +49,6 @@ class KotSuiteAgentOptions() {
 
     private val options = HashMap<String, String>()
 
-    fun setInsertCall(insertCall: Boolean) {
-        options[INSERT_CALL] = if (insertCall) {
-            "true"
-        } else {
-            "false"
-        }
-    }
-
     fun setCollectAssert(collectAssert: Boolean) {
         options[COLLECT_ASSERT] = if(collectAssert) {
             "true"
@@ -75,20 +61,12 @@ class KotSuiteAgentOptions() {
         options[OUTPUT_FILE] = outputFile
     }
 
-    fun setMainClass(mainClass: String) {
-        options[MAIN_CLASS] = mainClass
-    }
-
     fun setTestClass(testClass: String) {
         options[TEST_CLASS] = testClass
     }
 
     fun setTestMethod(testMethod: String) {
         options[TEST_METHOD] = testMethod
-    }
-
-    fun setTestMethodDesc(testMethodDesc: String) {
-        options[TEST_METHOD_DESC] = testMethodDesc
     }
 
     fun setTargetClass(targetClass: String) {

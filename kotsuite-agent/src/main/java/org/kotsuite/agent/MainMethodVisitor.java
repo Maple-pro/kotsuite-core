@@ -31,7 +31,7 @@ public class MainMethodVisitor extends MethodVisitor {
                     addMethodCall(options.getASMTestClass(), method.getName(), Type.getMethodDescriptor(method));
                 }
             } else { // invoke the given method in target class
-              addMethodCall(options.getASMTestClass(), options.getTestMethod(), options.getTestMethodDesc());
+//              addMethodCall(options.getASMTestClass(), options.getTestMethod(), options.getTestMethodDesc());
             }
         } catch (ClassNotFoundException e) {
             System.err.println("Class not found: " + className);

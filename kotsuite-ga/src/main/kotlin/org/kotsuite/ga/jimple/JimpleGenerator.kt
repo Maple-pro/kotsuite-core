@@ -21,7 +21,7 @@ object JimpleGenerator {
      * @return              the generated SootClasses
      */
     fun generateTestClassFromPopulation(population: Population): SootClass {
-        // generate a dummy test class, e.g., `TempExampleFooRound1`
+        // generate a dummy test class, e.g., `TempExampleFooRound1ID0`
         val targetClass = population.targetMethod.declaringClass
         val dummyTestClassName = population.getPopulationClassName()
 

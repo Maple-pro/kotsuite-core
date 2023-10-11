@@ -34,7 +34,7 @@ object TestCaseJimpleGenerator {
         val lastAction = testcase.actions.last() as MethodCallAction
 
         // Create `@Test` annotation
-        val defaultAnnotationTag = VisibilityAnnotationTag(AnnotationConstants.RUNTIME_INVISIBLE)
+        val defaultAnnotationTag = VisibilityAnnotationTag(AnnotationConstants.RUNTIME_VISIBLE)
         val junitTestAnnotation = AnnotationTag("Lorg/junit/Test;")
         defaultAnnotationTag.addAnnotation(junitTestAnnotation)
         sootMethod.addTag(defaultAnnotationTag)

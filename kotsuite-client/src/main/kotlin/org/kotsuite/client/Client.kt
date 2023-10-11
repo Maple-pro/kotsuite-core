@@ -71,6 +71,9 @@ class Client(
             Files.createDirectories(Paths.get(finalDecompiledOutputPath))
             Files.createDirectories(Paths.get(finalExecOutputPath))
             Files.createDirectories(Paths.get(finalReportOutputPath))
+
+            File(mainClassFile).copyTo(File("$finalClassesOutputPath/KotMain.class"), true)
+            File(mainClassFile).copyTo(File("$sootOutputPath/KotMain.class"), true)
         }
     }
 
