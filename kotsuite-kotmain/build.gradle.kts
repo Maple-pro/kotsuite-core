@@ -20,7 +20,7 @@ tasks {
         into(file("/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs/cli/"))
     }
 
-    build {
+    classes {
         dependsOn(copyKotMainClassFileToTarget)
     }
 

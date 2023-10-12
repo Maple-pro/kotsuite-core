@@ -4,8 +4,5 @@ import org.junit.jupiter.api.Test
 
 class TestCaseFitnessTest {
     @Test fun testGenerateTestCaseFitness() {
-
-
-        TODO()
     }
 }
