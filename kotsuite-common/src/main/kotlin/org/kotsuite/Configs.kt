@@ -11,7 +11,7 @@ object Configs {
     // log related configs
     val sectionLevel: Level = Level.forName("SECTION", 350)
     val successLevel: Level = Level.forName("SUCCESS", 360)
-    const val LOG_COMMAND_OUTPUT = true
+    const val LOG_COMMAND_OUTPUT = false
 
     // project related configs
     lateinit var projectPath: String

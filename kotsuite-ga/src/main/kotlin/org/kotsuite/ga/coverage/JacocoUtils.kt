@@ -6,6 +6,7 @@ import org.kotsuite.Configs
 import org.kotsuite.ga.commands.Commands
 import org.kotsuite.ga.commands.KotMainCliOptions
 import org.kotsuite.ga.commands.KotSuiteAgentOptions
+import org.kotsuite.ga.solution.WholeSolution
 import java.io.File
 
 object JacocoUtils {
@@ -87,6 +88,7 @@ object JacocoUtils {
      * @param mainClassName
      */
     fun generateFinalWholeSolutionExecFile(
+        wholeSolution: WholeSolution,
         mainClassName: String,
         execDataFile: String,
         classesPath: String,
@@ -97,11 +99,20 @@ object JacocoUtils {
             destfile = execDataFile
             output = AgentOptions.OutputMode.file
         }
+
+        val testClasses = wholeSolution.classSolutions.map { it.testClass.getFullTestClassName() }
+        val kotMainCliOptions = KotMainCliOptions()
+        with(kotMainCliOptions) {
+            setClass(testClasses)
+            setMethod("*")
+        }
+
         val cp = listOf(classesPath, "${Configs.libsPath}/classpath/*",) + Configs.dependencyClassPaths
         val cpStr = cp.joinToString(File.pathSeparator)
         Commands.runJVMWithJacocoAgent(
             File(Configs.jacocoAgentPath),
             jacocoAgentOptions,
+            kotMainCliOptions,
             mainClassName,
             cpStr,
         )

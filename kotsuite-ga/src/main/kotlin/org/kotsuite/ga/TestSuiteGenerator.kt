@@ -65,7 +65,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         val dateTime = LocalDateTime.now()  // use dateTime to identify the same exec file and report
         val execDataFile = Configs.getFinalExecFilePath(dateTime)
         JacocoUtils.generateFinalWholeSolutionExecFile(
-//            dummyMainClass.name,
+            wholeSolution,
             Configs.mainClass,
             execDataFile,
             Configs.finalClassesOutputPath,
@@ -107,7 +107,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         jimpleClasses.forEach {
             JasminPrinter.printJasminFile(it, outputPath)
         }
-        JasminPrinter.printJasminFile(dummyMainClass, outputPath)
+//        JasminPrinter.printJasminFile(dummyMainClass, outputPath)
     }
 
     /**

@@ -26,7 +26,7 @@ object TestClassJimpleGenerator {
         Scene.v().loadClassAndSupport("java.lang.Object")
 
         // Declare 'public class $element.testClassName'
-        val sootClass = SootClass("${element.packageName}.${element.testClassName}", Modifier.PUBLIC)
+        val sootClass = SootClass(element.getFullTestClassName(), Modifier.PUBLIC)
 
         // extends Object
         sootClass.superclass = Scene.v().getSootClass("java.lang.Object")

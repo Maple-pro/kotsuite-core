@@ -66,6 +66,7 @@ object Commands {
     fun runJVMWithJacocoAgent(
         jacocoAgentJarFile: File,
         jacocoAgentOptions: AgentOptions,
+        cliArguments: KotMainCliOptions,
         mainClassName: String,
         classPath: String,
     ) {
@@ -74,7 +75,9 @@ object Commands {
             jacocoOptionsStr,
             "-cp", classPath,
         )
-        val command = arrayOf("java") + vmArguments + arrayOf(mainClassName)
+        val cliArgumentsArr = cliArguments.getCliArguments()
+
+        val command = arrayOf("java") + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
         runCommand(command)
     }
 
