@@ -4,6 +4,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+@Deprecated
 public class MainClassVisitor extends ClassVisitor {
     AgentOptions options;
     public MainClassVisitor(ClassVisitor classVisitor, AgentOptions options) {

@@ -6,6 +6,7 @@ import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
 
+@Deprecated
 public class MainMethodVisitor extends MethodVisitor {
     AgentOptions options;
     private final MethodVisitor methodVisitor;

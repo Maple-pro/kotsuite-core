@@ -14,7 +14,6 @@ class TestCaseFitness(
     private val jimpleTestClass: SootClass,
     private val testCase: TestCase,
     private val targetMethod: SootMethod,
-//    private val jimpleMainClass: SootClass,
     private val assertFilePath: String,
 ) {
 
@@ -29,7 +28,6 @@ class TestCaseFitness(
         val targetClass = targetMethod.declaringClass
         val targetMethodDesc = ASMUtils.getMethodDescription(testCase.targetMethod) // Util: create method desc for a soot method
         JacocoUtils.generateTestCaseExecFile(
-//            jimpleMainClass.name,
             Configs.mainClass,
             jimpleTestClass.name,
             testCase.testCaseName,

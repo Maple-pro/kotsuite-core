@@ -7,6 +7,7 @@ import org.kotsuite.utils.FileUtils.isLinux
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@Deprecated("No longer used")
 object CoverageGenerator {
 
     private val log = LogManager.getLogger()

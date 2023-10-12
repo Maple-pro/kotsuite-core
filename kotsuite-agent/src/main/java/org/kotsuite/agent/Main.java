@@ -13,7 +13,6 @@ public class Main {
      * @param agentArgs the target class and method, e.g., <code>ExampleTest.foo</code> or <code>ExampleTest.*</code>
      */
     public static void premain(String agentArgs, Instrumentation inst) {
-//        System.out.println("premain!!!");
         options = new AgentOptions(agentArgs);
         try {
             inst.addTransformer(new ClassCalleeTransformer());
@@ -34,21 +33,7 @@ public class Main {
                 ProtectionDomain protectionDomain,
                 byte[] classfileBuffer
         ) {
-//            System.out.println("Transforming class: " + className);
-
-            // First visitor: add method call statements
-//            if (options.isInsertCall() && className.equals(options.getASMMainClass())) {
-//                ClassReader reader = new ClassReader(classfileBuffer);
-//                ClassWriter writer = new ClassWriter(
-//                        reader,
-//                        ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS
-//                );
-//                reader.accept(new MainClassVisitor(writer, options), ClassReader.EXPAND_FRAMES);
-//
-//                return writer.toByteArray();
-//            }
-
-            // Second visitor: get return value of the test case
+            // Add visitor: get return value of the test case
             if (options.isCollectAssert() && className.equals(options.getASMTargetClass())) {
                 ClassReader reader = new ClassReader(classfileBuffer);
                 ClassWriter writer = new ClassWriter(

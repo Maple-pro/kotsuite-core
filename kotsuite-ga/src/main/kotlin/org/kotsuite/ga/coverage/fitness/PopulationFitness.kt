@@ -16,12 +16,8 @@ object PopulationFitness {
         // Generate jimple test class
         val jimpleTestClass = JimpleGenerator.generateTestClassFromPopulation(population)
 
-        // Create a main class `SootMain` with an empty main method
-//        val jimpleMainClass = SootUtils.generateMainClass(Configs.mainClass, listOf())
-
         // Print main class and test classes into file using jasmin format
         JasminPrinter.printJasminFile(jimpleTestClass)
-//        JasminPrinter.printJasminFile(jimpleMainClass)
 
         // Generate fitness for each test cases
         population.testCases.forEach { testCase ->
@@ -31,7 +27,6 @@ object PopulationFitness {
                 jimpleTestClass,
                 testCase,
                 population.targetMethod,
-//                jimpleMainClass,
                 assertFilePath
             ).generateTestCaseFitness()
         }
@@ -41,7 +36,6 @@ object PopulationFitness {
         generateTotalPopulationExec(
             execDataFile,
             jimpleTestClass,
-//            jimpleMainClass
         )
         population.fitness = generateTotalPopulationFitness(execDataFile, population.targetMethod)
     }
@@ -49,10 +43,8 @@ object PopulationFitness {
     private fun generateTotalPopulationExec(
         execDataFile: String,
         jimpleTestClass: SootClass,
-//        jimpleMainClass: SootClass
     ) {
         JacocoUtils.generatePopulationExecFile(
-//            jimpleMainClass.name,
             Configs.mainClass,
             jimpleTestClass.name,
             execDataFile,

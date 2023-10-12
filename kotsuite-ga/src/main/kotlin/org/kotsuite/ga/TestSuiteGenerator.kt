@@ -24,7 +24,6 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     private lateinit var testClasses: List<TestClass>
     private lateinit var jimpleClasses: List<SootClass>
     private lateinit var jimpleClassesWithAssertion: List<SootClass>
-    private lateinit var dummyMainClass: SootClass
 
     /**
      * Generate test cases using given strategy
@@ -58,8 +57,6 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
         testClasses = wholeSolution.classSolutions.map { it.testClass }
 
-//        dummyMainClass = generateDummyMainClass()
-
         printJasminFiles(Configs.finalClassesOutputPath)
 
         val dateTime = LocalDateTime.now()  // use dateTime to identify the same exec file and report
@@ -89,16 +86,6 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         Decompiler.decompileJasminToJava(Configs.finalTestOutputPath, Configs.finalDecompiledOutputPath)
     }
 
-    private fun generateDummyMainClass(): SootClass {
-        // Generate main class and main method to call all test cases
-        val targetMethods = jimpleClasses
-            .map { it.methods }
-            .reduce { methods, method -> methods + method }
-            .filter { !Filter.constructorMethodFilter(it) }
-
-        return SootUtils.generateMainClass(Configs.mainClass, targetMethods)
-    }
-
     /**
      * Print generated test classes and dummy main class to bytecode
      * For coverage generation, don't have assertions
@@ -107,7 +94,6 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         jimpleClasses.forEach {
             JasminPrinter.printJasminFile(it, outputPath)
         }
-//        JasminPrinter.printJasminFile(dummyMainClass, outputPath)
     }
 
     /**

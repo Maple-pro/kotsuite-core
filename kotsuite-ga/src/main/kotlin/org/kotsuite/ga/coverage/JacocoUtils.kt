@@ -38,8 +38,6 @@ object JacocoUtils {
         assertFile: String,
         classesPath: String,
     ) {
-        val testMethodDesc = "()V"
-
         val jacocoAgentOptions = AgentOptions()
         with(jacocoAgentOptions) {
             includes = Configs.includeFiles
