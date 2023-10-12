@@ -76,6 +76,7 @@ object Analyzer {
             set_process_dir(sootProcessDir)
             set_soot_classpath(sootClasspath)
             set_validate(true)
+//            set_app(true)
         }
         return true
     }

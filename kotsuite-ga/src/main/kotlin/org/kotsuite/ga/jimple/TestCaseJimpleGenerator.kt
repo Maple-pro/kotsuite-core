@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.utils.LocalsAndUnits
+import org.kotsuite.utils.SootUtils
 import soot.*
 import soot.Unit
 import soot.dava.internal.javaRep.DIntConstant
@@ -34,10 +35,7 @@ object TestCaseJimpleGenerator {
         val lastAction = testcase.actions.last() as MethodCallAction
 
         // Create `@Test` annotation
-        val defaultAnnotationTag = VisibilityAnnotationTag(AnnotationConstants.RUNTIME_VISIBLE)
-        val junitTestAnnotation = AnnotationTag("Lorg/junit/Test;")
-        defaultAnnotationTag.addAnnotation(junitTestAnnotation)
-        sootMethod.addTag(defaultAnnotationTag)
+        sootMethod.addTag(SootUtils.generateTestAnnotation())
 
         // Create the method body
         val body = jimple.newBody(sootMethod)

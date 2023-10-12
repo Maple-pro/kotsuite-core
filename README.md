@@ -1,5 +1,10 @@
 # KotSuite
 
+## How to run the program?
+
+1. Build `kotsuite-agent` module: it will generate the `kotsuite-agent-shadow-1.x-all.jar` and put it in `libs/cli`
+2. Build `kotsuite-kotmain` module: it will generate the `KotMain.class` file and put it in `libs/cli`
+
 ## How to transform Kotlin source code to bytecode?
 
 ```bash

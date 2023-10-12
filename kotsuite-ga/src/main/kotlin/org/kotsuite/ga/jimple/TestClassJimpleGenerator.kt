@@ -2,9 +2,15 @@ package org.kotsuite.ga.jimple
 
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.utils.SootUtils
+import soot.Kind
 import soot.Modifier
 import soot.Scene
 import soot.SootClass
+import soot.tagkit.AnnotationClassElem
+import soot.tagkit.AnnotationConstants
+import soot.tagkit.AnnotationElem
+import soot.tagkit.AnnotationTag
+import soot.tagkit.VisibilityAnnotationTag
 
 object TestClassJimpleGenerator {
 
@@ -30,6 +36,10 @@ object TestClassJimpleGenerator {
 
         // extends Object
         sootClass.superclass = Scene.v().getSootClass("java.lang.Object")
+
+        // Create `@RunWith()` annotation
+        sootClass.addTag(SootUtils.generateRunWithMockitoAnnotation())
+
         Scene.v().addClass(sootClass)
 
         // Create <init> method

@@ -8,6 +8,11 @@ import java.io.File
 object Commands {
     private val log = LogManager.getLogger()
 
+    private val jvmArgs = listOf(
+        "-XX:+EnableDynamicAgentLoading",
+        "-Xshare:off",
+    )
+
     private fun runCommand(command: Array<String>) {
         try {
             val ps = Runtime.getRuntime().exec(command)
@@ -49,7 +54,7 @@ object Commands {
             kotsuiteOptionsStr,
             "-cp", classPath,
         )
-        val command = arrayOf("java") + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
+        val command = arrayOf("java") + jvmArgs + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
         runCommand(command)
     }
 
@@ -77,7 +82,7 @@ object Commands {
         )
         val cliArgumentsArr = cliArguments.getCliArguments()
 
-        val command = arrayOf("java") + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
+        val command = arrayOf("java") + jvmArgs + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
         runCommand(command)
     }
 
