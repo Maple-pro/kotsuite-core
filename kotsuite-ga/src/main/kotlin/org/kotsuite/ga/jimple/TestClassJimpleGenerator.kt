@@ -15,8 +15,7 @@ import soot.tagkit.VisibilityAnnotationTag
 object TestClassJimpleGenerator {
 
     /**
-     * TODO:
-     * Add annotation: `RunWith(AndroidJUnit4:class)`, `RunWith(RobolectricTestRunner.class)`, `RunWith(MockitoJUnitRunner.class)`
+     * Generate jimple class for the given TestClass
      *
      * @param element
      * @param printTestCaseName

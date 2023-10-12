@@ -2,25 +2,27 @@ package org.kotsuite.ga.strategy.random
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.value.*
-import soot.ArrayType
-import soot.BooleanType
-import soot.DoubleType
-import soot.IntType
-import soot.PrimType
-import soot.RefType
+import org.kotsuite.ga.chromosome.value.Value
+import soot.*
 import kotlin.random.Random
 
 object ValueGenerator {
 
     private val log = LogManager.getLogger()
 
+    private val charPool = ('a'..'z') + ('A'..'Z') + ('0'..'9') + '-' + '+'
+
     fun generatePrimValue(primType: PrimType): Value {
         return when (primType) {
-            is IntType -> generateIntValue()
             is BooleanType -> generateBooleanValue()
+            is ByteType -> generateByteValue()
+            is CharType -> generateCharValue()
             is DoubleType -> generateDoubleValue()
+            is FloatType -> generateFloatValue()
+            is IntType -> generateIntValue()
+            is LongType -> generateLongValue()
+            is ShortType -> generateShortValue()
             else -> {
-                // TODO
                 log.error("Unsupported value type: $primType")
                 throw Exception("Unsupported value type: $primType")
             }
@@ -28,8 +30,6 @@ object ValueGenerator {
     }
 
     fun generateStringValue(): Value {
-        val charPool = ('a'..'z') + ('A'..'Z') + ('0'..'9') + '-' + '+'
-
         val len = Random.nextInt(100)
         var str = ""
         if (len != 0) {
@@ -43,45 +43,129 @@ object ValueGenerator {
 
     fun generateArrayValue (arrayType: ArrayType): ArrayValue<out Any> {
         return when(arrayType.baseType) {
-            RefType.v("java.lang.Integer") -> {
-                val randomArray = generateRandomIntArray()
-                ArrayValue(randomArray)
+            is PrimType -> {
+                ArrayValue(generateRandomPrimArray(arrayType.baseType))
             }
             RefType.v("java.lang.String") -> {
                 val stringArray = arrayOf("")
                 ArrayValue(stringArray)
             }
             else -> {
-                // TODO
+                // TODO: deal with more ref array type
                 throw Exception("Unsupported Array Type: $arrayType")
             }
         }
     }
 
-    private fun generateIntValue(): IntValue {
-        val lowerBound = -100
-        val upperBound = 100
-        return IntValue(Random.nextInt(lowerBound, upperBound))
+    private fun generateBooleanValue(): BooleanValue {
+        return BooleanValue(generateBoolean())
     }
 
-    private fun generateBooleanValue(): BooleanValue{
-        val booleanValues = listOf(true, false)
-        return BooleanValue(booleanValues[Random.nextInt(0, 2)])
+    private fun generateByteValue(): ByteValue {
+        return ByteValue(generateByte())
+    }
+
+    private fun generateCharValue(): CharValue {
+        return CharValue(generateChar())
     }
 
     private fun generateDoubleValue(): DoubleValue{
-        val lowerBound = -100.0
-        val upperBound = 100.0
-        return DoubleValue(Random.nextDouble(lowerBound, upperBound))
+        return DoubleValue(generateDouble())
     }
 
-    private fun generateRandomIntArray(): Array<Int> {
+    private fun generateFloatValue(): FloatValue {
+        return FloatValue(generateFloat())
+    }
+
+    private fun generateIntValue(): IntValue {
+        return IntValue(generateInt())
+    }
+
+    private fun generateLongValue(): LongValue {
+        return LongValue(generateLong())
+    }
+
+    private fun generateShortValue(): ShortValue {
+        return ShortValue(generateShort())
+    }
+
+    private fun generateRandomPrimArray(type: Type): Array<Any> {
         val maxLen = 10
+        val len = Random.nextInt(maxLen)
+
+        return when(type) {
+            is BooleanType -> {
+                (0..len).map { generateBoolean() }.toTypedArray()
+            }
+            is ByteType -> {
+                (0..len).map { generateByte() }.toTypedArray()
+            }
+            is CharType -> {
+                (0..len).map { generateChar() }.toTypedArray()
+            }
+            is DoubleType -> {
+                (0..len).map { generateDouble() }.toTypedArray()
+            }
+            is FloatType -> {
+                (0..len).map { generateFloat() }.toTypedArray()
+            }
+            is IntType -> {
+                (0..len).map { generateInt() }.toTypedArray()
+            }
+            is LongType -> {
+                (0..len).map { generateLong() }.toTypedArray()
+            }
+            is ShortType -> {
+                (0..len).map { generateShort() }.toTypedArray()
+            }
+            else -> {
+                log.error("Unsupported value type: $type")
+                throw Exception("Unsupported value type: $type")
+            }
+        }
+    }
+
+    private fun generateBoolean(): Boolean {
+        val booleanValues = listOf(true, false)
+        return booleanValues[Random.nextInt(0, 2)]
+    }
+
+    private fun generateByte(): Byte {
+        return Random.nextBytes(1)[0]
+    }
+
+    private fun generateChar(): Char {
+        return charPool[Random.nextInt(charPool.size)]
+    }
+
+    private fun generateDouble(): Double {
+        val lowerBound = -100.0
+        val upperBound = 100.0
+        return Random.nextDouble(lowerBound, upperBound)
+    }
+
+    private fun generateFloat(): Float {
+        val lowerBound = -100.0f
+        val upperBound = 100.0f
+        return Random.nextFloat() * (upperBound - lowerBound) + lowerBound
+    }
+
+    private fun generateInt(): Int {
         val lowerBound = -100
         val upperBound = 100
+        return Random.nextInt(lowerBound, upperBound)
+    }
 
-        val len = Random.nextInt(maxLen)
-        return (0..len).map { Random.nextInt(lowerBound, upperBound) }.toTypedArray()
+    private fun generateLong(): Long {
+        val lowerBound = -100L
+        val upperBound = 100L
+        return Random.nextLong(lowerBound, upperBound)
+    }
+
+    private fun generateShort(): Short {
+        val lowerBound = -100
+        val upperBound = 100
+        return Random.nextInt(lowerBound, upperBound).toShort()
     }
 
 }
