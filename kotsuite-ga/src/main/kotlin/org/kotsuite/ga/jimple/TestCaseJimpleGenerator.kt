@@ -32,7 +32,6 @@ object TestCaseJimpleGenerator {
     ): SootMethod {
         val sootMethod = SootMethod(testcase.testCaseName, null, VoidType.v(), Modifier.PUBLIC)
         var returnValue: Local? = null
-        val lastAction = testcase.actions.last() as MethodCallAction
 
         // Create `@Test` annotation
         sootMethod.addTag(SootUtils.generateTestAnnotation())

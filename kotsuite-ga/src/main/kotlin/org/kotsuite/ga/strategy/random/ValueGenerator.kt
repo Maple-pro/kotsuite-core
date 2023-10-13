@@ -12,6 +12,7 @@ object ValueGenerator {
 
     private val charPool = ('a'..'z') + ('A'..'Z') + ('0'..'9') + '-' + '+'
 
+    @Throws(Exception::class)
     fun generatePrimValue(primType: PrimType): Value {
         return when (primType) {
             is BooleanType -> generateBooleanValue()
@@ -44,15 +45,15 @@ object ValueGenerator {
     fun generateArrayValue (arrayType: ArrayType): ArrayValue<out Any> {
         return when(arrayType.baseType) {
             is PrimType -> {
-                ArrayValue(generateRandomPrimArray(arrayType.baseType))
+                ArrayValue(generateRandomPrimArray(arrayType.baseType), arrayType)
             }
             RefType.v("java.lang.String") -> {
                 val stringArray = arrayOf("")
-                ArrayValue(stringArray)
+                ArrayValue(stringArray, arrayType)
             }
             else -> {
                 // TODO: deal with more ref array type
-                throw Exception("Unsupported Array Type: $arrayType")
+                ArrayValue(arrayOf(), arrayType)
             }
         }
     }

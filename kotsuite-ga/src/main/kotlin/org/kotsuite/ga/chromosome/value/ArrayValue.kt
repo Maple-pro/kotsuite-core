@@ -1,3 +1,5 @@
 package org.kotsuite.ga.chromosome.value
 
-class ArrayValue<T>(val arrayValue: Array<T>): Value()
+import soot.ArrayType
+
+class ArrayValue<T>(val arrayValue: Array<T>, val arrayType: ArrayType): Value()

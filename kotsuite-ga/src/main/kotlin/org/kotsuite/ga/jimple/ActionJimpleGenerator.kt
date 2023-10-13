@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.action.Action
 import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
+import org.kotsuite.ga.chromosome.parameter.ArrayParameter
 import org.kotsuite.ga.chromosome.value.Value
 import org.kotsuite.utils.LocalsAndUnits
 import org.kotsuite.utils.SootUtils
@@ -19,12 +20,22 @@ object ActionJimpleGenerator {
     private val jimple = Jimple.v()
     private val log = LogManager.getLogger()
 
+    @Throws(Exception::class)
     fun generate(
         action: Action, values: List<Value>, sootMethod: SootMethod,
         collectReturnValue: Boolean = false
     ): LocalsAndUnits {
+        val locals = mutableListOf<Local>()
+        val units = mutableListOf<Unit>()
+
         val args = action.parameters.map {
-            ParameterJimpleGenerator.generate(it, values, sootMethod)
+            val value = ParameterJimpleGenerator.generate(it, values, sootMethod)
+
+            if (it is ArrayParameter) {
+                locals.add(value as Local)
+            }
+
+            value
         }
 
         val actionLocalsAndUnits = when (action) {
@@ -38,7 +49,10 @@ object ActionJimpleGenerator {
             }
         }
 
-        return actionLocalsAndUnits
+        locals.addAll(actionLocalsAndUnits.locals)
+        units.addAll(actionLocalsAndUnits.units)
+
+        return LocalsAndUnits(locals, units)
     }
 
     private fun generateConstructorAction(action: ConstructorAction, args: List<soot.Value>): LocalsAndUnits {

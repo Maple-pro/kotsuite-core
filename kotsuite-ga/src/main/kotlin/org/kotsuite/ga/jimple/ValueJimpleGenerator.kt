@@ -2,12 +2,14 @@ package org.kotsuite.ga.jimple
 
 import org.kotsuite.ga.chromosome.value.*
 import soot.BooleanType
+import soot.ByteType
+import soot.CharType
+import soot.Local
+import soot.PrimType
+import soot.RefType
+import soot.ShortType
 import soot.dava.internal.javaRep.DIntConstant
-import soot.jimple.DoubleConstant
-import soot.jimple.FloatConstant
-import soot.jimple.IntConstant
-import soot.jimple.LongConstant
-import soot.jimple.StringConstant
+import soot.jimple.*
 
 object ValueJimpleGenerator {
 
@@ -35,11 +37,11 @@ object ValueJimpleGenerator {
     }
 
     private fun generateByteValue(value: ByteValue): soot.Value {
-        TODO()
+        return DIntConstant.v(value.byteValue.toInt(), ByteType.v())
     }
 
     private fun generateCharValue(value: CharValue): soot.Value {
-        TODO()
+        return DIntConstant.v(value.charValue.code, CharType.v())
     }
 
     private fun generateDoubleValue(value: DoubleValue): soot.Value {
@@ -59,14 +61,33 @@ object ValueJimpleGenerator {
     }
 
     private fun generateShortValue(value: ShortValue): soot.Value {
-        TODO()
+        return DIntConstant.v(value.shortValue.toInt(), ShortType.v())
     }
 
     private fun generateStringValue(value: StringValue): soot.Value {
         return StringConstant.v(value.stringValue)
     }
 
-    private fun<T> generateArrayValue(value: ArrayValue<T>): soot.Value {
-        TODO("Unsupported.")
+    private fun<T> generateArrayValue(value: ArrayValue<T>): Local {
+        val randomValue = (0..999999).random()
+        val localName = "arr_$randomValue"
+
+        val arrayLocal = Jimple.v().newLocal(localName, value.arrayType)
+        val arraySize = IntConstant.v(value.arrayValue.size)
+        val newArrayExpr = Jimple.v().newNewArrayExpr(value.arrayType.baseType, arraySize)
+        val assignStmt = Jimple.v().newAssignStmt(arrayLocal, newArrayExpr)
+
+        when(value.arrayType.baseType) {
+            is PrimType -> {
+            }
+            RefType.v("java.lang.String") -> {
+
+            }
+            else -> {
+
+            }
+        }
+
+        return arrayLocal
     }
 }

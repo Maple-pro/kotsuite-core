@@ -34,11 +34,19 @@ abstract class Strategy {
 //        val classSolutions = Analyzer.classes
 //            .filter { Filter.testSuiteGeneratorClassFilter(it) }
 //            .map { generateClassSolution(it) }
-        val classSolutions = nonEmptyClasses.map { generateClassSolution(it) }
+        val classSolutions = nonEmptyClasses.map {
+            try {
+                generateClassSolution(it)
+            } catch (e: Exception) {
+                log.error("Failed to generate class solution for class: $it")
+                ClassSolution(it, TestClass("${it.shortName}Test", it.packageName), listOf())
+            }
+        }
 
         return WholeSolution(classSolutions)
     }
 
+    @Throws(Exception::class)
     open fun generateClassSolution(targetClass: SootClass): ClassSolution {
         log.log(Configs.sectionLevel, "[Class: ${targetClass.name}]")
 
@@ -47,12 +55,22 @@ abstract class Strategy {
         val testClass = TestClass(testClassName, targetClass.packageName)
 
         val methodSolutions = targetClass.methods
-            .filter { Filter.testSuiteGeneratorMethodFilter(it) }
-            .map { generateMethodSolution(it, targetClass) }
+            .filter {
+                Filter.testSuiteGeneratorMethodFilter(it)
+            }
+            .map {
+                try {
+                    generateMethodSolution(it, targetClass)
+                } catch (e: Exception) {
+                    log.error("Failed to generate method solution for method: $it")
+                    MethodSolution(it, listOf())
+                }
+            }
 
         return ClassSolution(targetClass, testClass, methodSolutions)
     }
 
+    @Throws(Exception::class)
     abstract fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution
 
 }
