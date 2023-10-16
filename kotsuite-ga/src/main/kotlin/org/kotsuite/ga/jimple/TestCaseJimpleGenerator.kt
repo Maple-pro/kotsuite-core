@@ -3,20 +3,12 @@ package org.kotsuite.ga.jimple
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.chromosome.action.MethodCallAction
-import org.kotsuite.utils.LocalsAndUnits
 import org.kotsuite.utils.SootUtils
 import soot.*
 import soot.Unit
-import soot.dava.internal.javaRep.DIntConstant
-import soot.jimple.DoubleConstant
-import soot.jimple.FloatConstant
 import soot.jimple.Jimple
-import soot.jimple.LongConstant
 import soot.jimple.StringConstant
 import soot.jimple.internal.JimpleLocal
-import soot.tagkit.AnnotationConstants
-import soot.tagkit.AnnotationTag
-import soot.tagkit.VisibilityAnnotationTag
 import java.util.UUID
 
 object TestCaseJimpleGenerator {
@@ -41,9 +33,7 @@ object TestCaseJimpleGenerator {
         sootMethod.activeBody = body
 
         // Create this local
-        val thisLocalsAndUnits = createThisLocal(sootClass)
-        body.locals.addAll(thisLocalsAndUnits.locals)
-        body.units.addAll(thisLocalsAndUnits.units)
+        createThisLocal(body, sootClass)
 
         // Add local: java.io.printStream tmpRef
         val printStreamRefLocal = jimple.newLocal("printStream}", RefType.v("java.io.PrintStream"))
@@ -64,9 +54,7 @@ object TestCaseJimpleGenerator {
 
         // Create `println` statement
         if (printTestCaseName) {
-            val printlnLocalsAndUnits = createPrintStringStmt(sootMethod.name, printStreamRefLocal)
-            body.locals.addAll(printlnLocalsAndUnits.locals)
-            body.units.addAll(printlnLocalsAndUnits.units)
+            createPrintStringStmt(body, sootMethod.name, printStreamRefLocal)
         }
 
         // Create statements
@@ -74,28 +62,18 @@ object TestCaseJimpleGenerator {
             if (index == testcase.actions.lastIndex
                 && action is MethodCallAction
                 && action.method.returnType !is VoidType
-                ) {  // put the last action into print statement to collect return value
-
+            ) {  // put the last action into print statement to collect return value
                 // If the action is the last action, and it is a method call action, and it has return value,
                 // then assign the method call expression to a variable
-                val localsAndUnits = ActionJimpleGenerator.generate(action, testcase.values, sootMethod, true)
-                body.locals.addAll(localsAndUnits.locals)
-                body.units.addAll(localsAndUnits.units)
-
-                returnValue = localsAndUnits.locals.first()
-
+                returnValue = ActionJimpleGenerator.generate(body, action, testcase.values, sootMethod, true)
             } else {  // just transform the action to normal invoke-statement
-                val localsAndUnits = ActionJimpleGenerator.generate(action, testcase.values, sootMethod)
-                body.locals.addAll(localsAndUnits.locals)
-                body.units.addAll(localsAndUnits.units)
+                ActionJimpleGenerator.generate(body, action, testcase.values, sootMethod)
             }
         }
 
         // Create assert statement
         if (generateAssert) {
-            val assertionLocalsAndUnits = PrimitiveAssertionJimpleGenerator.addAssertion(testcase, returnValue)
-            body.locals.addAll(assertionLocalsAndUnits.locals)
-            body.units.addAll(assertionLocalsAndUnits.units)
+            PrimitiveAssertionJimpleGenerator.addAssertion(body, testcase, returnValue)
         }
 
         // Create return statement
@@ -105,37 +83,31 @@ object TestCaseJimpleGenerator {
         return sootMethod
     }
 
-    private fun createThisLocal(sootClass: SootClass): LocalsAndUnits {
+    private fun createThisLocal(body: Body, sootClass: SootClass) {
         val thisLocal = JimpleLocal("this", sootClass.type)
         val thisStmt = jimple.newIdentityStmt(thisLocal, jimple.newThisRef(sootClass.type))
 
-        return LocalsAndUnits(listOf(thisLocal), listOf(thisStmt))
+        body.locals.addAll(listOf(thisLocal))
+        body.units.addAll(listOf(thisStmt))
     }
 
-    private fun createPrintStringStmt(message: String, printStreamRefLocal: Local): LocalsAndUnits {
-        val locals = mutableListOf<Local>()
-        val units = mutableListOf<Unit>()
-
+    private fun createPrintStringStmt(body: Body, message: String, printStreamRefLocal: Local) {
         // Add local: message
         val messageLocal = jimple.newLocal("message_${UUID.randomUUID()}", RefType.v("java.lang.String"))
         val messageAssignStmt = jimple.newAssignStmt(messageLocal, StringConstant.v(message))
 
-        locals.add(messageLocal)
-        units.add(messageAssignStmt)
+        body.locals.add(messageLocal)
+        body.units.add(messageAssignStmt)
 
-        val localsAndUnits = createPrintValueStmt(messageLocal, printStreamRefLocal)
-        locals.addAll(localsAndUnits.locals)
-        units.addAll(localsAndUnits.units)
-
-        return LocalsAndUnits(locals, units)
+        createPrintValueStmt(body, messageLocal, printStreamRefLocal)
     }
 
-    private fun createPrintValueStmt(messageLocal: Local, printStreamRefLocal: Local): LocalsAndUnits {
+    private fun createPrintValueStmt(body: Body, messageLocal: Local, printStreamRefLocal: Local) {
         val locals = mutableListOf<Local>()
         val units = mutableListOf<Unit>()
 
         if (messageLocal.type !is PrimType && messageLocal.type.toString() != "java.lang.String") {
-            return LocalsAndUnits(locals, units)
+            return
         }
 
         // invoke `toString()` method
@@ -164,7 +136,8 @@ object TestCaseJimpleGenerator {
 //        locals.add(printStreamRefLocal)
         units.add(printlnInvokeStmt)
 
-        return LocalsAndUnits(locals, units)
+        body.locals.addAll(locals)
+        body.units.addAll(units)
     }
 
 }

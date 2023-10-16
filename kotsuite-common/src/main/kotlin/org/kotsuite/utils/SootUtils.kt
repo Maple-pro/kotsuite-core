@@ -152,23 +152,20 @@ object SootUtils {
         targetMethods.forEach { targetMethod ->
             val targetClassFullName = targetMethod.declaringClass.name
             if (!alreadyInstancedClasses.contains(targetClassFullName)) { // If there is no instance of the target class
-                val instanceLocalsAndUnits = generateInstance(targetMethod.declaringClass)
-
-                locals.addAll(instanceLocalsAndUnits.locals)
-                units.addAll(instanceLocalsAndUnits.units)
+                val instanceLocals = generateInstance(jimpleBody, targetMethod.declaringClass)
 
                 alreadyInstancedClasses.add(targetClassFullName)
 
-                instances.add(instanceLocalsAndUnits.locals.first())
+                if (instanceLocals != null) {
+                    instances.add(instanceLocals)
+                }
             }
 
             val instance = instances.first { instance ->
                 instance.type == targetMethod.declaringClass.type
             }
 
-            val methodCallLocalsAndUnits = generateMethodCallStmt(targetMethod, instance)
-            locals.addAll(methodCallLocalsAndUnits.locals)
-            units.addAll(methodCallLocalsAndUnits.units)
+            generateMethodCallStmt(jimpleBody, targetMethod, instance)
         }
 
 //        val targetClassType = RefType.v(targetMethods.first().declaringClass)
@@ -198,13 +195,20 @@ object SootUtils {
         return mainMethod
     }
 
-    private fun generateInstance(targetClass: SootClass): LocalsAndUnits {
+    /**
+     * Generate instance
+     *
+     * @param body
+     * @param targetClass
+     * @return instance local
+     */
+    private fun generateInstance(body: Body, targetClass: SootClass): Local? {
         val jimple = Jimple.v()
         val instanceName = "dummy${targetClass.shortName}Obj"  // instance obj name, e.g., dummyExampleObj
         val allocatedTargetObj = jimple.newLocal(instanceName, targetClass.type)
         val assignStmt = jimple.newAssignStmt(allocatedTargetObj, jimple.newNewExpr(targetClass.type))
 
-        val constructorMethod = getConstructor(targetClass) ?: return LocalsAndUnits(listOf(), listOf())
+        val constructorMethod = getConstructor(targetClass) ?: return null
 
         val constructorArgs = Collections.nCopies(constructorMethod.parameterCount, NullConstant.v())
         val constructorInvokeStmt = jimple.newInvokeStmt(
@@ -213,13 +217,13 @@ object SootUtils {
                 )
             )
 
-        return LocalsAndUnits(
-            listOf(allocatedTargetObj),
-            listOf(assignStmt, constructorInvokeStmt)
-        )
+        body.locals.addAll(listOf(allocatedTargetObj))
+        body.units.addAll(listOf(assignStmt, constructorInvokeStmt))
+
+        return allocatedTargetObj
     }
 
-    private fun generateMethodCallStmt(targetMethod: SootMethod, instanceObj: Local): LocalsAndUnits {
+    private fun generateMethodCallStmt(body: Body, targetMethod: SootMethod, instanceObj: Local) {
         val args = Collections.nCopies(targetMethod.parameterCount, NullConstant.v())
         val invokeStmt = Jimple.v().newInvokeStmt(
                 Jimple.v().newVirtualInvokeExpr(
@@ -227,10 +231,7 @@ object SootUtils {
                 )
             )
 
-        return LocalsAndUnits(
-            listOf(),
-            listOf(invokeStmt)
-        )
+        body.units.add(invokeStmt)
     }
 
     fun generateTestAnnotation(): VisibilityAnnotationTag {

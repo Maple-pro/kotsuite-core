@@ -6,8 +6,8 @@ import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.parameter.ArrayParameter
 import org.kotsuite.ga.chromosome.value.Value
-import org.kotsuite.utils.LocalsAndUnits
 import org.kotsuite.utils.SootUtils
+import soot.Body
 import soot.Local
 import soot.RefType
 import soot.SootMethod
@@ -20,42 +20,50 @@ object ActionJimpleGenerator {
     private val jimple = Jimple.v()
     private val log = LogManager.getLogger()
 
+    /**
+     * Generate
+     *
+     * @param body
+     * @param action
+     * @param values
+     * @param sootMethod
+     * @param collectReturnValue
+     * @return return local
+     */
     @Throws(Exception::class)
     fun generate(
+        body: Body,
         action: Action, values: List<Value>, sootMethod: SootMethod,
         collectReturnValue: Boolean = false
-    ): LocalsAndUnits {
-        val locals = mutableListOf<Local>()
-        val units = mutableListOf<Unit>()
+    ): Local? {
+        var returnLocal: Local? = null
 
         val args = action.parameters.map {
             val value = ParameterJimpleGenerator.generate(it, values, sootMethod)
-
             if (it is ArrayParameter) {
-                locals.add(value as Local)
+                body.locals.add(value as Local)
             }
 
             value
         }
 
-        val actionLocalsAndUnits = when (action) {
+        when (action) {
             is ConstructorAction -> {
-                generateConstructorAction(action, args)
+                generateConstructorAction(body, action, args)
             }
-            is MethodCallAction -> generateMethodCallAction(action, args, sootMethod, collectReturnValue)
+            is MethodCallAction -> {
+                returnLocal = generateMethodCallAction(body, action, args, sootMethod, collectReturnValue)
+            }
             else -> {
                 log.error("Unimplemented action type: $action")
                 throw Exception("Unimplemented action type: $action")
             }
         }
 
-        locals.addAll(actionLocalsAndUnits.locals)
-        units.addAll(actionLocalsAndUnits.units)
-
-        return LocalsAndUnits(locals, units)
+        return returnLocal
     }
 
-    private fun generateConstructorAction(action: ConstructorAction, args: List<soot.Value>): LocalsAndUnits {
+    private fun generateConstructorAction(body: Body, action: ConstructorAction, args: List<soot.Value>) {
         val sootClassType = RefType.v(action.constructor.declaringClass)  // sootClassType == action.variable.refType
         val allocateObj = jimple.newLocal(action.variable.localName, action.variable.refType)
         val allocateObjAssignStmt = jimple.newAssignStmt(allocateObj, jimple.newNewExpr(sootClassType))
@@ -63,16 +71,17 @@ object ActionJimpleGenerator {
             jimple.newSpecialInvokeExpr(allocateObj, action.constructor.makeRef(), args)
         )
 
-        return LocalsAndUnits(
-            listOf(allocateObj),
-            listOf(allocateObjAssignStmt, invokeStmt)
-        )
+        body.locals.add(allocateObj)
+        body.units.addAll(listOf(allocateObjAssignStmt, invokeStmt))
     }
 
     private fun generateMethodCallAction(
+        body: Body,
         action: MethodCallAction, args: List<soot.Value>, sootMethod: SootMethod,
         collectReturnValue: Boolean = false
-    ): LocalsAndUnits {
+    ): Local? {
+        var returnLocal: Local? = null
+
         val locals = mutableListOf<Local>()
         val units = mutableListOf<Unit>()
 
@@ -87,12 +96,17 @@ object ActionJimpleGenerator {
 
             locals.add(returnValue)
             units.add(assignStmt)
+
+            returnLocal = returnValue
         } else {
             val invokeStmt = jimple.newInvokeStmt(invokeExpr)
             units.add(invokeStmt)
         }
 
-        return LocalsAndUnits(locals, units)
+        body.locals.addAll(locals)
+        body.units.addAll(units)
+
+        return returnLocal
     }
 
 }

@@ -1,7 +1,6 @@
 package org.kotsuite.ga.jimple
 
 import org.kotsuite.ga.chromosome.TestCase
-import org.kotsuite.utils.LocalsAndUnits
 import soot.*
 import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.*
@@ -12,33 +11,34 @@ object PrimitiveAssertionJimpleGenerator {
     private const val ASSERT_EQUALS_METHOD_SUB_REF = "void assertEquals(java.lang.Object,java.lang.Object)"
     private val assertEqualsMethodRef = assertClass.getMethod(ASSERT_EQUALS_METHOD_SUB_REF).makeRef()
 
-    fun addAssertion(testCase: TestCase, returnValue: Local?): LocalsAndUnits {
+    fun addAssertion(body: Body, testCase: TestCase, returnValue: Local?) {
         val assertion = testCase.assertion
-        if (returnValue == null || assertion == null ||
-            assertion.assertType.isEmpty() || assertion.assertValue.isEmpty()
+        if (returnValue == null
+            || assertion == null
+            || assertion.assertType.isEmpty()
+            || assertion.assertValue.isEmpty()
         ) {
-            return LocalsAndUnits(listOf(), listOf())
+            return
         }
 
-        return createAssertStatement(assertion.assertType, assertion.assertValue, returnValue)
+        return createAssertStatement(body, assertion.assertType, assertion.assertValue, returnValue)
     }
 
-    private fun createAssertStatement(assertType: String, assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createAssertStatement(body: Body, assertType: String, assertValue: String, actualValue: Local) {
         val assertTypeJavaClass = getJavaClass(assertType)
-        return when (assertTypeJavaClass) {
-            "java.lang.Boolean" -> createBooleanAssertionStmt(assertValue, actualValue)
-            "java.lang.Byte" -> createByteAssertionStmt(assertValue, actualValue)
-            "java.lang.Character" -> createCharacterAssertionStmt(assertValue, actualValue)
-            "java.lang.Double" -> createDoubleAssertionStmt(assertValue, actualValue)
-            "java.lang.Float" -> createFloatAssertionStmt(assertValue, actualValue)
-            "java.lang.Integer" -> createIntegerAssertionStmt(assertValue, actualValue)
-            "java.lang.Long" -> createLongAssertionStmt(assertValue, actualValue)
-            "java.lang.String" -> createStringAssertionStmt(assertValue, actualValue)
-            else -> LocalsAndUnits(listOf(), listOf())
+        when (assertTypeJavaClass) {
+            "java.lang.Boolean" -> createBooleanAssertionStmt(body, assertValue, actualValue)
+            "java.lang.Byte" -> createByteAssertionStmt(body, assertValue, actualValue)
+            "java.lang.Character" -> createCharacterAssertionStmt(body, assertValue, actualValue)
+            "java.lang.Double" -> createDoubleAssertionStmt(body, assertValue, actualValue)
+            "java.lang.Float" -> createFloatAssertionStmt(body, assertValue, actualValue)
+            "java.lang.Integer" -> createIntegerAssertionStmt(body, assertValue, actualValue)
+            "java.lang.Long" -> createLongAssertionStmt(body, assertValue, actualValue)
+            "java.lang.String" -> createStringAssertionStmt(body, assertValue, actualValue)
         }
     }
 
-    private fun createBooleanAssertionStmt(assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createBooleanAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
         val expectedValue = if (assertValue == "true") {
             DIntConstant.v(1, BooleanType.v())
         } else {
@@ -54,13 +54,11 @@ object PrimitiveAssertionJimpleGenerator {
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        return LocalsAndUnits(
-            listOf(expectedObject),
-            listOf(assignStmt, initStmt, invokeStmt)
-        )
+        body.locals.addAll(listOf(expectedObject))
+        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
     }
 
-    private fun createByteAssertionStmt(assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createByteAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
         val expectedValue = DIntConstant.v(assertValue.toInt(), ByteType.v())
 
         val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Byte"))
@@ -72,13 +70,11 @@ object PrimitiveAssertionJimpleGenerator {
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        return LocalsAndUnits(
-            listOf(expectedObject),
-            listOf(assignStmt, initStmt, invokeStmt)
-        )
+        body.locals.addAll(listOf(expectedObject))
+        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
     }
 
-    private fun createCharacterAssertionStmt(assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createCharacterAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
         val expectedValue = DIntConstant.v(assertValue.toInt(), CharType.v())
 
         val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Character"))
@@ -90,13 +86,11 @@ object PrimitiveAssertionJimpleGenerator {
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        return LocalsAndUnits(
-            listOf(expectedObject),
-            listOf(assignStmt, initStmt, invokeStmt)
-        )
+        body.locals.addAll(listOf(expectedObject))
+        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
     }
 
-    private fun createDoubleAssertionStmt(assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createDoubleAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
         val expectedValue = DoubleConstant.v(assertValue.toDouble())
 
         val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Double"))
@@ -108,13 +102,11 @@ object PrimitiveAssertionJimpleGenerator {
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        return LocalsAndUnits(
-            listOf(expectedObject),
-            listOf(assignStmt, initStmt, invokeStmt)
-        )
+        body.locals.addAll(listOf(expectedObject))
+        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
     }
 
-    private fun createFloatAssertionStmt(assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createFloatAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
         val expectedValue = FloatConstant.v(assertValue.toFloat())
 
         val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Float"))
@@ -126,13 +118,11 @@ object PrimitiveAssertionJimpleGenerator {
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        return LocalsAndUnits(
-            listOf(expectedObject),
-            listOf(assignStmt, initStmt, invokeStmt)
-        )
+        body.locals.addAll(listOf(expectedObject))
+        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
     }
 
-    private fun createIntegerAssertionStmt(assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createIntegerAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
         val expectedValue = IntConstant.v(assertValue.toInt())
 
         val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Integer"))
@@ -144,13 +134,11 @@ object PrimitiveAssertionJimpleGenerator {
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        return LocalsAndUnits(
-            listOf(expectedObject),
-            listOf(assignStmt, initStmt, invokeStmt)
-        )
+        body.locals.addAll(listOf(expectedObject))
+        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
     }
 
-    private fun createLongAssertionStmt(assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createLongAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
         val expectedValue = LongConstant.v(assertValue.toLong())
 
         val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Long"))
@@ -162,13 +150,11 @@ object PrimitiveAssertionJimpleGenerator {
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        return LocalsAndUnits(
-            listOf(expectedObject),
-            listOf(assignStmt, initStmt, invokeStmt)
-        )
+        body.locals.addAll(listOf(expectedObject))
+        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
     }
 
-    private fun createStringAssertionStmt(assertValue: String, actualValue: Local): LocalsAndUnits {
+    private fun createStringAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
         val expectedValue = StringConstant.v(assertValue)
 
         val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.String"))
@@ -180,10 +166,8 @@ object PrimitiveAssertionJimpleGenerator {
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        return LocalsAndUnits(
-            listOf(expectedObject),
-            listOf(assignStmt, initStmt, invokeStmt)
-        )
+        body.locals.addAll(listOf(expectedObject))
+        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
     }
 
     private fun getJavaClass(type: String): String {
