@@ -1,28 +1,22 @@
 package org.kotsuite.utils
 
-import soot.BooleanType
-import soot.ByteType
-import soot.CharType
-import soot.DoubleType
-import soot.FloatType
-import soot.IntType
-import soot.LongType
-import soot.RefType
-import soot.ShortType
-import soot.SootMethod
-import soot.Type
-import soot.VoidType
+import soot.*
 
 object ASMUtils {
+
+    fun SootClass.getClassDescriptor(): String {
+        return "L" + this.name.replace('.', '/') + ";"
+    }
+
     /**
      * Convert to ASM method description
      *
      * @param method sootMethod, e.g., int methodName(java.lang.String, int)
      * @return e.g., (Ljava/lang/String;I)I
      */
-    fun getMethodDescription(method: SootMethod): String {
-        val returnType = method.returnType
-        val parameterTypes = method.parameterTypes
+    fun SootMethod.getMethodDescription(): String {
+        val returnType = this.returnType
+        val parameterTypes = this.parameterTypes
         val stringBuilder = StringBuilder()
         stringBuilder.append("(")
         parameterTypes.forEach {

@@ -1,6 +1,6 @@
 package org.kotsuite.ga.utils
 
-import org.kotsuite.utils.SootUtils
+import org.kotsuite.utils.SootUtils.getConstructor
 import soot.RefType
 import soot.SootClass
 import soot.SootMethod
@@ -43,7 +43,7 @@ object Filter {
         }
 
         // 构造函数参数是否包含 Android 内部类
-        val constructorMethod = SootUtils.getConstructor(sootClass) ?: return true
+        val constructorMethod = sootClass.getConstructor() ?: return true
         for (type in constructorMethod.parameterTypes) {
             if (type is RefType && isAndroidRelatedClass(type.sootClass)) {
                 return true

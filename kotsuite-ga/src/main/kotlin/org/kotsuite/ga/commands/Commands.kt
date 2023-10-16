@@ -2,7 +2,7 @@ package org.kotsuite.ga.commands
 
 import org.apache.logging.log4j.LogManager
 import org.jacoco.core.runtime.AgentOptions
-import org.kotsuite.utils.LoggerUtils
+import org.kotsuite.utils.LoggerUtils.logCommandOutput
 import java.io.File
 
 object Commands {
@@ -16,7 +16,7 @@ object Commands {
     private fun runCommand(command: Array<String>) {
         try {
             val ps = Runtime.getRuntime().exec(command)
-            LoggerUtils.logCommandOutput(log, ps)
+            log.logCommandOutput(ps)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

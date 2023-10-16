@@ -2,7 +2,7 @@ package org.kotsuite.ga.decompile
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
-import org.kotsuite.utils.LoggerUtils
+import org.kotsuite.utils.LoggerUtils.logCommandOutput
 
 /**
  * Decompile .class file to java file and kotlin file
@@ -28,7 +28,7 @@ object Decompiler {
 
         try {
             val ps = Runtime.getRuntime().exec(command)
-            LoggerUtils.logCommandOutput(log, ps)
+            log.logCommandOutput(ps)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

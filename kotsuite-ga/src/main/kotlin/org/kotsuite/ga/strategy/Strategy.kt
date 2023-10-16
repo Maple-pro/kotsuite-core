@@ -63,6 +63,7 @@ abstract class Strategy {
                     generateMethodSolution(it, targetClass)
                 } catch (e: Exception) {
                     log.error("Failed to generate method solution for method: $it")
+                    log.error("Exception: $e")
                     MethodSolution(it, listOf())
                 }
             }

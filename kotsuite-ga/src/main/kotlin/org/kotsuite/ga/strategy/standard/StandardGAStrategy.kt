@@ -38,8 +38,7 @@ object StandardGAStrategy: Strategy() {
 
     private val log = LogManager.getLogger()
 
-//    private const val maxAttempt = Configs.maxAttempt
-    private const val MAX_ATTEMPT = 1  // [test] for test only
+    private const val MAX_ATTEMPT = Configs.MAX_ATTEMPT
 
     /**
      * Steps:
@@ -92,7 +91,7 @@ object StandardGAStrategy: Strategy() {
             if (isCoverTargets) break
 
             round++
-            if (round > MAX_ATTEMPT) break
+            if (round >= MAX_ATTEMPT) break
 
             // Select, mutate and crossover
             log.debug("Select, mutate and crossover...")
@@ -102,7 +101,7 @@ object StandardGAStrategy: Strategy() {
         }
 
         // Remove duplicated test cases
-        curPopulation.minimizer()
+//        curPopulation.minimizer()
 
         return MethodSolution(targetMethod, curPopulation.testCases)
     }

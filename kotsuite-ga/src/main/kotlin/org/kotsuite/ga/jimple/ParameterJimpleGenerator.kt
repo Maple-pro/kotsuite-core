@@ -3,7 +3,7 @@ package org.kotsuite.ga.jimple
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
-import org.kotsuite.utils.SootUtils
+import org.kotsuite.utils.SootUtils.getLocalByName
 import soot.SootMethod
 import soot.Value
 
@@ -16,7 +16,7 @@ object ParameterJimpleGenerator {
                 ValueJimpleGenerator.generateJimpleValueFromChromosomeValue(sootMethod.activeBody, values[parameter.valueIndex])
             }
             is RefTypeParameter -> {
-                SootUtils.getLocalByName(sootMethod, parameter.variable.localName)
+                sootMethod.getLocalByName(parameter.variable.localName)
             }
             else -> {
                 log.error("Unsupported parameter type: $parameter")

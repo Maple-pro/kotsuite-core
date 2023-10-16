@@ -107,11 +107,7 @@ class Population(
         }
     }
 
-    /**
-     * TODO: Minimizer
-     *
-     */
     fun minimizer() {
-
+        TODO("Not implemented yet")
     }
 }

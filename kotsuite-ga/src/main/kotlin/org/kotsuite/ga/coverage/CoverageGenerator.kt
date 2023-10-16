@@ -2,8 +2,8 @@ package org.kotsuite.ga.coverage
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
-import org.kotsuite.utils.LoggerUtils
 import org.kotsuite.utils.FileUtils.isLinux
+import org.kotsuite.utils.LoggerUtils.logCommandOutput
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -68,7 +68,7 @@ object CoverageGenerator {
         try {
             log.info("Run command: ${args.joinToString(" ")}")
             val ps = Runtime.getRuntime().exec(args)
-            LoggerUtils.logCommandOutput(log, ps)
+            log.logCommandOutput(ps)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

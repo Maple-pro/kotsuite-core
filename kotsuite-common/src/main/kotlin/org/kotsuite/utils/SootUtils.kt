@@ -22,8 +22,8 @@ object SootUtils {
      * @return
      */
     @Throws(Exception::class)
-    fun getLocalByName(sootMethod: SootMethod, localName: String): Local {
-        val body = sootMethod.activeBody
+    fun SootMethod.getLocalByName(localName: String): Local {
+        val body = this.activeBody
         var local: Local? = null
         for (l in body.locals) {
             if (l.name == localName) {
@@ -46,17 +46,18 @@ object SootUtils {
      * @param sootClass
      * @return
      */
-    fun getConstructor(sootClass: SootClass): SootMethod? {
+    fun SootClass.getConstructor(): SootMethod? {
         return try {
 //            sootClass.getMethod("void <init>()")
-            sootClass.getMethodByName("<init>")
+            this.getMethodByName("<init>")
         } catch (ex: RuntimeException) {
-            if (sootClass.methods.none { it.name == "<init>" }) {
+            if (this.methods.none { it.name == "<init>" }) {
                 return null
             }
-            sootClass.methods.first { it.name == "<init>" }
+            this.methods.first { it.name == "<init>" }
         }
     }
+
 
     /**
      * Generate main class. If the main class exist, it will replace the main method body.
@@ -208,7 +209,7 @@ object SootUtils {
         val allocatedTargetObj = jimple.newLocal(instanceName, targetClass.type)
         val assignStmt = jimple.newAssignStmt(allocatedTargetObj, jimple.newNewExpr(targetClass.type))
 
-        val constructorMethod = getConstructor(targetClass) ?: return null
+        val constructorMethod = targetClass.getConstructor() ?: return null
 
         val constructorArgs = Collections.nCopies(constructorMethod.parameterCount, NullConstant.v())
         val constructorInvokeStmt = jimple.newInvokeStmt(

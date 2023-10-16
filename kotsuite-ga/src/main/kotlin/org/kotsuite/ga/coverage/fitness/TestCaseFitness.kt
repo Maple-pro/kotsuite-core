@@ -5,8 +5,7 @@ import org.kotsuite.Configs
 import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
-import org.kotsuite.utils.ASMUtils
-import org.objectweb.asm.Type
+import org.kotsuite.utils.ASMUtils.getMethodDescription
 import soot.SootClass
 import soot.SootMethod
 
@@ -26,7 +25,7 @@ class TestCaseFitness(
     fun generateTestCaseFitness(): String {
         val targetMethod = testCase.targetMethod
         val targetClass = targetMethod.declaringClass
-        val targetMethodDesc = ASMUtils.getMethodDescription(testCase.targetMethod) // Util: create method desc for a soot method
+        val targetMethodDesc = testCase.targetMethod.getMethodDescription() // Util: create method desc for a soot method
         JacocoUtils.generateTestCaseExecFile(
             Configs.mainClass,
             jimpleTestClass.name,

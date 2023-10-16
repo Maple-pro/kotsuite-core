@@ -1,18 +1,18 @@
 package org.kotsuite.ga.strategy.random
 
+import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.chromosome.*
-import org.kotsuite.ga.chromosome.action.Action
-import org.kotsuite.ga.chromosome.action.ConstructorAction
-import org.kotsuite.ga.chromosome.action.MethodCallAction
+import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.solution.MethodSolution
-import org.kotsuite.utils.SootUtils
+import org.kotsuite.utils.SootUtils.getConstructor
 import soot.*
 import kotlin.collections.ArrayList
 
 object RandomStrategy: Strategy() {
+    private val log = LogManager.getLogger()
 
     override fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution {
         return MethodSolution(targetMethod, generateTestCasesForMethod(targetMethod))
@@ -53,13 +53,35 @@ object RandomStrategy: Strategy() {
      * @return
      */
     private fun generateTestCaseForMethod(targetMethod: SootMethod, testCaseName: String): TestCase {
-        val testCase = TestCase(testCaseName, targetMethod, 0)
+        val testCase = TestCase(testCaseName, targetMethod)
         val targetClass = targetMethod.declaringClass
+        var variable: Variable
 
         val constructorAction = generateConstructorAction(testCase, targetClass)
         testCase.actions.add(constructorAction)
+        variable = constructorAction.variable
 
-        val methodCallAction = generateMethodCallAction(testCase, constructorAction.variable, targetMethod)
+        // 初始化实例对象
+        when (val initializationType = getInitializationType(targetClass)) {
+            // 使用构造函数初始化
+            InitializationType.CONSTRUCTOR -> {
+                val constructorAction = generateConstructorAction(testCase, targetClass)
+                testCase.actions.add(constructorAction)
+                variable = constructorAction.variable
+            }
+            // 使用 mock 或 spy 初始化对象，并随机 mock 对象的行为
+            InitializationType.MOCK, InitializationType.SPY -> {
+                val mockObjectAction = generateMockObjectAction(initializationType, targetClass)
+                testCase.actions.add(mockObjectAction)
+//                variable = mockObjectAction.variable
+
+//                val mockWhenMethod = getMockWhenMethod(targetClass, targetMethod)
+//                val mockWhenAction = generateMockWhenAction(variable, mockWhenMethod)
+//                testCase.actions.add(mockWhenAction)
+            }
+        }
+
+        val methodCallAction = generateMethodCallAction(testCase, variable, targetMethod)
         testCase.actions.add(methodCallAction)
 
         return testCase
@@ -68,12 +90,56 @@ object RandomStrategy: Strategy() {
     private fun generateConstructorAction(testCase: TestCase, targetClass: SootClass): ConstructorAction {
         val variableName = "${targetClass.shortName}_obj"
         val variable = Variable(variableName, targetClass.type)
-        val constructor = SootUtils.getConstructor(targetClass)
+        val constructor = targetClass.getConstructor()
 
         val constructorAction = ConstructorAction(variable, constructor!!, mutableListOf())
         dealActionParameters(testCase, constructorAction, constructor)
 
         return constructorAction
+    }
+
+    private fun generateMockObjectAction(initializationType: InitializationType, targetClass: SootClass): MockObjectAction {
+        return when (initializationType) {
+            InitializationType.MOCK -> {
+                val variableName = "${targetClass.shortName}_mock_obj"
+                val variable = Variable(variableName, targetClass.type)
+                MockObjectAction(variable, initializationType, targetClass, mutableListOf())
+            }
+            InitializationType.SPY -> {
+                val variableName = "${targetClass.shortName}_spy_obj"
+                val variable = Variable(variableName, targetClass.type)
+                MockObjectAction(variable, initializationType, targetClass, mutableListOf())
+            }
+
+            InitializationType.CONSTRUCTOR -> {
+                log.error("Initialization type can not be CONSTRUCTOR")
+                throw IllegalArgumentException("Initialization type can not be CONSTRUCTOR")
+            }
+        }
+    }
+
+    /**
+     * Generate mock when action
+     * 问题：函数参数？函数返回的值？
+     *
+     * @param variable
+     * @param mockMethod
+     * @return
+     */
+    private fun generateMockWhenAction(variable: Variable, mockMethod: SootMethod): MockWhenAction {
+        TODO()
+    }
+
+    /**
+     * Get mock when method
+     * 问题：如何判断mock那些函数？
+     *
+     * @param targetClass
+     * @param targetMethod
+     * @return
+     */
+    private fun getMockWhenMethod(targetClass: SootClass, targetMethod: SootMethod): SootMethod {
+        TODO()
     }
 
     private fun generateMethodCallAction(
@@ -136,6 +202,17 @@ object RandomStrategy: Strategy() {
                 action.parameters.add(parameter)
             }
         }
+    }
+
+    /**
+     * Get initialization type
+     * 问题：用什么策略来决定初始化类型？
+     *
+     * @param sootClass
+     * @return
+     */
+    private fun getInitializationType(sootClass: SootClass): InitializationType {
+        return InitializationType.MOCK
     }
 
     @Override

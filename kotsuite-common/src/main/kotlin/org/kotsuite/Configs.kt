@@ -51,7 +51,7 @@ object Configs {
     val mainClassFile: String get() = "$libsPath/cli/KotMain.class"
 
     // genetic algorithm related configs
-    const val MAX_ATTEMPT = 50
+    const val MAX_ATTEMPT = 1
     const val TARGET_LINE_COVERAGE = 0.6  // Line coverage
     const val TARGET_CC_COVERAGE = 0.9  // Cyclomatic complexity coverage
 

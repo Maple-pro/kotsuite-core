@@ -1,12 +1,10 @@
 package org.kotsuite.ga.jimple
 
 import org.apache.logging.log4j.LogManager
-import org.kotsuite.ga.chromosome.action.Action
-import org.kotsuite.ga.chromosome.action.ConstructorAction
-import org.kotsuite.ga.chromosome.action.MethodCallAction
+import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.parameter.ArrayParameter
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
-import org.kotsuite.utils.SootUtils
+import org.kotsuite.utils.SootUtils.getLocalByName
 import soot.*
 import soot.Unit
 import soot.jimple.Jimple
@@ -47,6 +45,12 @@ object ActionJimpleGenerator {
             is ConstructorAction -> {
                 generateConstructorAction(body, action, args)
             }
+            is MockObjectAction -> {
+                MockObjectActionJimpleGenerator.generate(body, action)
+            }
+            is MockWhenAction -> {
+                TODO()
+            }
             is MethodCallAction -> {
                 returnLocal = generateMethodCallAction(body, action, args, sootMethod, collectReturnValue)
             }
@@ -81,7 +85,7 @@ object ActionJimpleGenerator {
         val locals = mutableListOf<Local>()
         val units = mutableListOf<Unit>()
 
-        val obj = SootUtils.getLocalByName(sootMethod, action.variable.localName)
+        val obj = sootMethod.getLocalByName(action.variable.localName)
         val invokeExpr = jimple.newVirtualInvokeExpr(obj, action.method.makeRef(), args)
 
         // assign the return value to a variable if exist
