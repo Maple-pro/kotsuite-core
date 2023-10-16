@@ -6,7 +6,7 @@ import org.kotsuite.ga.chromosome.action.Action
 import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.parameter.*
-import org.kotsuite.ga.chromosome.value.Value
+import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.utils.SootUtils
 import soot.*
@@ -97,7 +97,7 @@ object RandomStrategy: Strategy() {
         var valueIndex = testCase.values.size
 
         method.parameterTypes.forEach {
-            val value: Value?
+            val value: ChromosomeValue?
             val parameter: Parameter?
 
             when (it) {

@@ -5,14 +5,10 @@ import org.kotsuite.ga.chromosome.action.Action
 import org.kotsuite.ga.chromosome.action.ConstructorAction
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.chromosome.parameter.ArrayParameter
-import org.kotsuite.ga.chromosome.value.Value
+import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.utils.SootUtils
-import soot.Body
-import soot.Local
-import soot.RefType
-import soot.SootMethod
+import soot.*
 import soot.Unit
-import soot.VoidType
 import soot.jimple.Jimple
 
 object ActionJimpleGenerator {
@@ -33,7 +29,7 @@ object ActionJimpleGenerator {
     @Throws(Exception::class)
     fun generate(
         body: Body,
-        action: Action, values: List<Value>, sootMethod: SootMethod,
+        action: Action, values: List<ChromosomeValue>, sootMethod: SootMethod,
         collectReturnValue: Boolean = false
     ): Local? {
         var returnLocal: Local? = null
@@ -63,7 +59,7 @@ object ActionJimpleGenerator {
         return returnLocal
     }
 
-    private fun generateConstructorAction(body: Body, action: ConstructorAction, args: List<soot.Value>) {
+    private fun generateConstructorAction(body: Body, action: ConstructorAction, args: List<Value>) {
         val sootClassType = RefType.v(action.constructor.declaringClass)  // sootClassType == action.variable.refType
         val allocateObj = jimple.newLocal(action.variable.localName, action.variable.refType)
         val allocateObjAssignStmt = jimple.newAssignStmt(allocateObj, jimple.newNewExpr(sootClassType))
@@ -77,7 +73,7 @@ object ActionJimpleGenerator {
 
     private fun generateMethodCallAction(
         body: Body,
-        action: MethodCallAction, args: List<soot.Value>, sootMethod: SootMethod,
+        action: MethodCallAction, args: List<Value>, sootMethod: SootMethod,
         collectReturnValue: Boolean = false
     ): Local? {
         var returnLocal: Local? = null

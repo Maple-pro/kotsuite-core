@@ -2,7 +2,7 @@ package org.kotsuite.ga.strategy.random
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.value.*
-import org.kotsuite.ga.chromosome.value.Value
+import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import soot.*
 import kotlin.random.Random
 
@@ -13,7 +13,7 @@ object ValueGenerator {
     private val charPool = ('a'..'z') + ('A'..'Z') + ('0'..'9') + '-' + '+'
 
     @Throws(Exception::class)
-    fun generatePrimValue(primType: PrimType): Value {
+    fun generatePrimValue(primType: PrimType): ChromosomeValue {
         return when (primType) {
             is BooleanType -> generateBooleanValue()
             is ByteType -> generateByteValue()
@@ -30,7 +30,7 @@ object ValueGenerator {
         }
     }
 
-    fun generateStringValue(): Value {
+    fun generateStringValue(): ChromosomeValue {
         val len = Random.nextInt(100)
         var str = ""
         if (len != 0) {
@@ -39,55 +39,55 @@ object ValueGenerator {
             }.joinToString("")
         }
 
-        return StringValue(str)
+        return StringChromosomeValue(str)
     }
 
-    fun generateArrayValue (arrayType: ArrayType): ArrayValue<out Any> {
+    fun generateArrayValue (arrayType: ArrayType): ArrayChromosomeValue<out Any> {
         return when(arrayType.baseType) {
             is PrimType -> {
-                ArrayValue(generateRandomPrimArray(arrayType.baseType), arrayType)
+                ArrayChromosomeValue(generateRandomPrimArray(arrayType.baseType), arrayType)
             }
             RefType.v("java.lang.String") -> {
                 val stringArray = arrayOf("")
-                ArrayValue(stringArray, arrayType)
+                ArrayChromosomeValue(stringArray, arrayType)
             }
             else -> {
                 // TODO: deal with more ref array type
-                ArrayValue(arrayOf(), arrayType)
+                ArrayChromosomeValue(arrayOf(), arrayType)
             }
         }
     }
 
-    private fun generateBooleanValue(): BooleanValue {
-        return BooleanValue(generateBoolean())
+    private fun generateBooleanValue(): BooleanChromosomeValue {
+        return BooleanChromosomeValue(generateBoolean())
     }
 
-    private fun generateByteValue(): ByteValue {
-        return ByteValue(generateByte())
+    private fun generateByteValue(): ByteChromosomeValue {
+        return ByteChromosomeValue(generateByte())
     }
 
-    private fun generateCharValue(): CharValue {
-        return CharValue(generateChar())
+    private fun generateCharValue(): CharChromosomeValue {
+        return CharChromosomeValue(generateChar())
     }
 
-    private fun generateDoubleValue(): DoubleValue{
-        return DoubleValue(generateDouble())
+    private fun generateDoubleValue(): DoubleChromosomeValue{
+        return DoubleChromosomeValue(generateDouble())
     }
 
-    private fun generateFloatValue(): FloatValue {
-        return FloatValue(generateFloat())
+    private fun generateFloatValue(): FloatChromosomeValue {
+        return FloatChromosomeValue(generateFloat())
     }
 
-    private fun generateIntValue(): IntValue {
-        return IntValue(generateInt())
+    private fun generateIntValue(): IntChromosomeValue {
+        return IntChromosomeValue(generateInt())
     }
 
-    private fun generateLongValue(): LongValue {
-        return LongValue(generateLong())
+    private fun generateLongValue(): LongChromosomeValue {
+        return LongChromosomeValue(generateLong())
     }
 
-    private fun generateShortValue(): ShortValue {
-        return ShortValue(generateShort())
+    private fun generateShortValue(): ShortChromosomeValue {
+        return ShortChromosomeValue(generateShort())
     }
 
     private fun generateRandomPrimArray(type: Type): Array<Any> {
