@@ -1,9 +1,9 @@
-package org.kotsuite.utils
+package org.kotsuite.utils.soot
 
 import org.apache.logging.log4j.LogManager
 import soot.*
-import soot.jimple.Jimple
-import soot.jimple.NullConstant
+import soot.dava.internal.javaRep.DIntConstant
+import soot.jimple.*
 import soot.tagkit.AnnotationClassElem
 import soot.tagkit.AnnotationConstants
 import soot.tagkit.AnnotationTag
@@ -22,22 +22,20 @@ object SootUtils {
      * @return
      */
     @Throws(Exception::class)
-    fun SootMethod.getLocalByName(localName: String): Local {
+    fun SootMethod.getLocalByName(localName: String): Local? {
         val body = this.activeBody
-        var local: Local? = null
-        for (l in body.locals) {
-            if (l.name == localName) {
-                local = l
-                break
+        return body.getLocalByName(localName)
+    }
+
+    fun Body.getLocalByName(localName: String): Local? {
+        for (local in this.locals) {
+            if (local.name == localName) {
+                return local
             }
         }
 
-        if (local == null) {
-            log.error("Can't get local: $localName")
-            throw Exception("Can't get local: $localName")
-        }
-
-        return local
+        log.error("Cannot get local: $localName")
+        return null
     }
 
     /**
@@ -57,7 +55,6 @@ object SootUtils {
             this.methods.first { it.name == "<init>" }
         }
     }
-
 
     /**
      * Generate main class. If the main class exist, it will replace the main method body.
@@ -96,7 +93,7 @@ object SootUtils {
      * @param sootClass
      * @return init method
      */
-    fun createInitMethod(sootClass: SootClass): SootMethod {
+    fun SootClass.generateInitMethod(): SootMethod {
         val jimple = Jimple.v()
 
         // Create a constructor method
@@ -106,9 +103,9 @@ object SootUtils {
         constructorMethod.activeBody = body
 
         // Add `this` local variable to the constructor body
-        val thisLocal = jimple.newLocal("this", sootClass.type)
+        val thisLocal = jimple.newLocal("this", this.type)
         body.locals.add(thisLocal)
-        val thisStmt = jimple.newIdentityStmt(thisLocal, jimple.newThisRef(sootClass.type))
+        val thisStmt = jimple.newIdentityStmt(thisLocal, jimple.newThisRef(this.type))
         body.units.add(thisStmt)
 
         // Call the superclass constructor using `super()`
@@ -233,31 +230,6 @@ object SootUtils {
             )
 
         body.units.add(invokeStmt)
-    }
-
-    fun generateTestAnnotation(): VisibilityAnnotationTag {
-        val defaultAnnotationTag = VisibilityAnnotationTag(AnnotationConstants.RUNTIME_VISIBLE)
-        val junitTestAnnotation = AnnotationTag("Lorg/junit/Test;")
-        defaultAnnotationTag.addAnnotation(junitTestAnnotation)
-
-        return defaultAnnotationTag
-    }
-
-    fun generateRunWithMockitoAnnotation(): VisibilityAnnotationTag {
-        return generateRunWithAnnotation("Lorg/mockito/junit/MockitoJUnitRunner;")
-    }
-
-    fun generateRunWithRobolectricAnnotation(): VisibilityAnnotationTag {
-        return generateRunWithAnnotation("Lorg/robolectric/RobolectricTestRunner;")
-    }
-
-    private fun generateRunWithAnnotation(elemDesc: String): VisibilityAnnotationTag {
-        val defaultAnnotationTag = VisibilityAnnotationTag(AnnotationConstants.RUNTIME_VISIBLE)
-        val mockitoAnnotationElem = AnnotationClassElem(elemDesc, 'c', "value")
-        val runWithAnnotation = AnnotationTag("Lorg/junit/runner/RunWith;", listOf(mockitoAnnotationElem))
-        defaultAnnotationTag.addAnnotation(runWithAnnotation)
-
-        return defaultAnnotationTag
     }
 
 }

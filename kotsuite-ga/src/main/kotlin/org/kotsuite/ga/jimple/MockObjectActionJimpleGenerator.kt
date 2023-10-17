@@ -21,8 +21,9 @@ object MockObjectActionJimpleGenerator {
         }
 
         val allocateObj = jimple.newLocal(mockObjectAction.variable.localName, mockObjectAction.variable.refType)
+        val tempObj = jimple.newLocal("tempMockObj", RefType.v("java.lang.Object"))
 
-        body.locals.add(allocateObj)
+        body.locals.addAll(listOf(allocateObj, tempObj))
 
         val mockMethodRef = when (mockObjectAction.mockType) {
             InitializationType.MOCK -> {
@@ -38,9 +39,11 @@ object MockObjectActionJimpleGenerator {
         }
 
         val mockClassConstant = ClassConstant.v(mockObjectAction.mockClass.getClassDescriptor())
-        val mockInvokeStmt = jimple.newInvokeStmt(
+        val mockInvokeStmt = jimple.newAssignStmt(
+            tempObj,
             jimple.newStaticInvokeExpr(mockMethodRef, mockClassConstant)
         )
-        body.units.add(mockInvokeStmt)
+        val castStmt = jimple.newAssignStmt(allocateObj, jimple.newCastExpr(tempObj, allocateObj.type))
+        body.units.addAll(listOf(mockInvokeStmt, castStmt))
     }
 }

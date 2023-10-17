@@ -2,7 +2,7 @@ package org.kotsuite.analysis
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
-import org.kotsuite.utils.SootUtils
+import org.kotsuite.utils.soot.SootUtils
 import soot.*
 import soot.options.Options
 import java.io.File

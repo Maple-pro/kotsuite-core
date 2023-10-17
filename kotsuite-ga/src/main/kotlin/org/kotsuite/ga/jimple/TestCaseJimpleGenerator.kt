@@ -3,7 +3,7 @@ package org.kotsuite.ga.jimple
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.chromosome.action.MethodCallAction
-import org.kotsuite.utils.SootUtils
+import org.kotsuite.utils.soot.AnnotationUtils
 import soot.*
 import soot.Unit
 import soot.jimple.Jimple
@@ -26,7 +26,7 @@ object TestCaseJimpleGenerator {
         var returnValue: Local? = null
 
         // Create `@Test` annotation
-        sootMethod.addTag(SootUtils.generateTestAnnotation())
+        sootMethod.addTag(AnnotationUtils.generateTestAnnotation())
 
         // Create the method body
         val body = jimple.newBody(sootMethod)

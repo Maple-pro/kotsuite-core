@@ -7,7 +7,7 @@ import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.solution.MethodSolution
-import org.kotsuite.utils.SootUtils.getConstructor
+import org.kotsuite.utils.soot.SootUtils.getConstructor
 import soot.*
 import kotlin.collections.ArrayList
 
@@ -57,9 +57,9 @@ object RandomStrategy: Strategy() {
         val targetClass = targetMethod.declaringClass
         var variable: Variable
 
-        val constructorAction = generateConstructorAction(testCase, targetClass)
-        testCase.actions.add(constructorAction)
-        variable = constructorAction.variable
+//        val constructorAction = generateConstructorAction(testCase, targetClass)
+//        testCase.actions.add(constructorAction)
+//        variable = constructorAction.variable
 
         // 初始化实例对象
         when (val initializationType = getInitializationType(targetClass)) {
@@ -73,11 +73,12 @@ object RandomStrategy: Strategy() {
             InitializationType.MOCK, InitializationType.SPY -> {
                 val mockObjectAction = generateMockObjectAction(initializationType, targetClass)
                 testCase.actions.add(mockObjectAction)
-//                variable = mockObjectAction.variable
+                variable = mockObjectAction.variable
 
-//                val mockWhenMethod = getMockWhenMethod(targetClass, targetMethod)
-//                val mockWhenAction = generateMockWhenAction(variable, mockWhenMethod)
-//                testCase.actions.add(mockWhenAction)
+                // TODO
+                val mockWhenMethod = getMockWhenMethod(targetClass, targetMethod)
+                val mockWhenAction = generateMockWhenAction(variable, mockWhenMethod)
+                testCase.actions.add(mockWhenAction)
             }
         }
 

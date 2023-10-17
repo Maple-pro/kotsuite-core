@@ -10,8 +10,6 @@ import org.kotsuite.ga.coverage.JacocoUtils
 import org.kotsuite.ga.decompile.Decompiler
 import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.ga.strategy.Strategy
-import org.kotsuite.ga.utils.Filter
-import org.kotsuite.utils.SootUtils
 import soot.SootClass
 import java.time.LocalDateTime
 import org.kotsuite.Configs

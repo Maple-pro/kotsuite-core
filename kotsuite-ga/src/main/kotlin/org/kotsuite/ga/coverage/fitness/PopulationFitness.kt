@@ -6,7 +6,6 @@ import org.kotsuite.ga.jimple.JimpleGenerator
 import org.kotsuite.ga.printer.JasminPrinter
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
-import org.kotsuite.utils.SootUtils
 import soot.SootClass
 import soot.SootMethod
 
