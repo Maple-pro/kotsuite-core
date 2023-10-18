@@ -3,47 +3,28 @@ package org.kotsuite.ga.jimple
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.action.InitializationType
 import org.kotsuite.ga.chromosome.action.MockObjectAction
-import org.kotsuite.utils.ASMUtils.getClassDescriptor
+import org.kotsuite.utils.soot.MockType
+import org.kotsuite.utils.soot.MockUtils.generateMockLocal
 import soot.*
-import soot.jimple.ClassConstant
-import soot.jimple.Jimple
 import java.lang.IllegalArgumentException
 
 object MockObjectActionJimpleGenerator {
     private val log = LogManager.getLogger()
-    private val jimple = Jimple.v()
-    private val mockitoClass: SootClass? = Scene.v().getSootClass("org.mockito.Mockito")
 
-    fun generate(body: Body, mockObjectAction: MockObjectAction) {
-        if (mockitoClass == null) {
-            log.error("Does not have Mockito dependency")
-            throw IllegalArgumentException("Does not have Mockito dependency")
-        }
-
-        val allocateObj = jimple.newLocal(mockObjectAction.variable.localName, mockObjectAction.variable.refType)
-        val tempObj = jimple.newLocal("tempMockObj", RefType.v("java.lang.Object"))
-
-        body.locals.addAll(listOf(allocateObj, tempObj))
-
-        val mockMethodRef = when (mockObjectAction.mockType) {
-            InitializationType.MOCK -> {
-                mockitoClass.getMethod("java.lang.Object mock(java.lang.Class)").makeRef()
-            }
-            InitializationType.SPY -> {
-                mockitoClass.getMethod("java.lang.Object spy(java.lang.Class)").makeRef()
-            }
+    fun MockObjectAction.generateMockObjectStmt(body: Body) {
+        val mockType = when (this.mockType) {
+            InitializationType.MOCK -> MockType.MOCK
+            InitializationType.SPY -> MockType.SPY
             else -> {
                 log.error("Initialization type can not be CONSTRUCTOR")
                 throw IllegalArgumentException("Initialization type can not be CONSTRUCTOR")
             }
         }
 
-        val mockClassConstant = ClassConstant.v(mockObjectAction.mockClass.getClassDescriptor())
-        val mockInvokeStmt = jimple.newAssignStmt(
-            tempObj,
-            jimple.newStaticInvokeExpr(mockMethodRef, mockClassConstant)
+        this.mockClass.type.generateMockLocal(
+            body,
+            mockType,
+            this.variable.localName
         )
-        val castStmt = jimple.newAssignStmt(allocateObj, jimple.newCastExpr(tempObj, allocateObj.type))
-        body.units.addAll(listOf(mockInvokeStmt, castStmt))
     }
 }

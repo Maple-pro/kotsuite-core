@@ -3,7 +3,6 @@ package org.kotsuite.ga
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestClass
-import org.kotsuite.ga.jimple.JimpleGenerator
 import org.kotsuite.ga.printer.JasminPrinter
 import org.kotsuite.ga.coverage.ExecResolver
 import org.kotsuite.ga.coverage.JacocoUtils
@@ -13,6 +12,7 @@ import org.kotsuite.ga.strategy.Strategy
 import soot.SootClass
 import java.time.LocalDateTime
 import org.kotsuite.Configs
+import org.kotsuite.ga.jimple.JimpleGenerator.generateJimpleTestClasses
 
 class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
@@ -32,8 +32,8 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         // generate whole solution using the given strategy
         wholeSolution = gaStrategy.generateWholeSolution()
 
-        jimpleClasses = JimpleGenerator.generateTestClassesFromWholeSolution(wholeSolution, false)
-        jimpleClassesWithAssertion = JimpleGenerator.generateTestClassesFromWholeSolution(wholeSolution, true)
+        jimpleClasses = wholeSolution.generateJimpleTestClasses(false)
+        jimpleClassesWithAssertion = wholeSolution.generateJimpleTestClasses(true)
 
         // generate whole solution coverage report
         generateFinalCoverageReport()

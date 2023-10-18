@@ -1,8 +1,9 @@
 package org.kotsuite.ga.jimple
 
-import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.chromosome.action.MethodCallAction
+import org.kotsuite.ga.jimple.ActionJimpleGenerator.generateJimpleStmt
+import org.kotsuite.ga.jimple.PrimitiveAssertionJimpleGenerator.addAssertion
 import org.kotsuite.utils.soot.AnnotationUtils
 import soot.*
 import soot.Unit
@@ -13,16 +14,14 @@ import java.util.UUID
 
 object TestCaseJimpleGenerator {
 
-    private val log = LogManager.getLogger()
-
     private val jimple = Jimple.v()
 
-    fun generate(
-        testcase: TestCase, sootClass: SootClass,
+    fun TestCase.generateJimpleTestMethod(
+        sootClass: SootClass,
         printTestCaseName: Boolean = false,
         generateAssert: Boolean = false,
     ): SootMethod {
-        val sootMethod = SootMethod(testcase.testCaseName, null, VoidType.v(), Modifier.PUBLIC)
+        val sootMethod = SootMethod(this.testCaseName, null, VoidType.v(), Modifier.PUBLIC)
         var returnValue: Local? = null
 
         // Create `@Test` annotation
@@ -58,22 +57,22 @@ object TestCaseJimpleGenerator {
         }
 
         // Create statements
-        testcase.actions.forEachIndexed { index, action ->
-            if (index == testcase.actions.lastIndex
+        this.actions.forEachIndexed { index, action ->
+            if (index == this.actions.lastIndex
                 && action is MethodCallAction
                 && action.method.returnType !is VoidType
             ) {  // put the last action into print statement to collect return value
                 // If the action is the last action, and it is a method call action, and it has return value,
                 // then assign the method call expression to a variable
-                returnValue = ActionJimpleGenerator.generate(body, action, testcase.values, sootMethod, true)
+                returnValue = action.generateJimpleStmt(body, this.values, sootMethod, true)
             } else {  // just transform the action to normal invoke-statement
-                ActionJimpleGenerator.generate(body, action, testcase.values, sootMethod)
+                action.generateJimpleStmt(body, this.values, sootMethod)
             }
         }
 
         // Create assert statement
         if (generateAssert) {
-            PrimitiveAssertionJimpleGenerator.addAssertion(body, testcase, returnValue)
+            this.addAssertion(body, returnValue)
         }
 
         // Create return statement

@@ -2,7 +2,6 @@ package org.kotsuite.ga.jimple
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.value.*
-import org.kotsuite.utils.soot.SootUtils
 import org.kotsuite.utils.soot.ValueUtils
 import org.kotsuite.utils.soot.ValueUtils.generatePrimTypeJimpleValue
 import soot.*

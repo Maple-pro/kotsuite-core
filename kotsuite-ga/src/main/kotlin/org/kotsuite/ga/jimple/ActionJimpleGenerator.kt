@@ -4,6 +4,9 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.parameter.ArrayParameter
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
+import org.kotsuite.ga.jimple.MockObjectActionJimpleGenerator.generateMockObjectStmt
+import org.kotsuite.ga.jimple.MockWhenActionJimpleGenerator.generateMockWhenStmt
+import org.kotsuite.ga.jimple.ParameterJimpleGenerator.generateJimpleValue
 import org.kotsuite.utils.soot.SootUtils.getLocalByName
 import soot.*
 import soot.Unit
@@ -15,25 +18,24 @@ object ActionJimpleGenerator {
     private val log = LogManager.getLogger()
 
     /**
-     * Generate
+     * Generate jimple statement from Action
      *
      * @param body
-     * @param action
      * @param values
      * @param sootMethod
      * @param collectReturnValue
-     * @return return local
+     * @return if the action is the last action of the method, return the return value of the method
      */
     @Throws(Exception::class)
-    fun generate(
+    fun Action.generateJimpleStmt(
         body: Body,
-        action: Action, values: List<ChromosomeValue>, sootMethod: SootMethod,
+        values: List<ChromosomeValue>, sootMethod: SootMethod,
         collectReturnValue: Boolean = false
     ): Local? {
         var returnLocal: Local? = null
 
-        val args = action.parameters.map {
-            val value = ParameterJimpleGenerator.generate(it, values, sootMethod)
+        val args = this.parameters.map {
+            val value = it.generateJimpleValue(values, sootMethod)
             if (it is ArrayParameter) {
                 body.locals.add(value as Local)
             }
@@ -41,22 +43,22 @@ object ActionJimpleGenerator {
             value
         }
 
-        when (action) {
+        when (this) {
             is ConstructorAction -> {
-                generateConstructorAction(body, action, args)
+                generateConstructorAction(body, this, args)
             }
             is MockObjectAction -> {
-                MockObjectActionJimpleGenerator.generate(body, action)
+                this.generateMockObjectStmt(body)
             }
             is MockWhenAction -> {
-                MockWhenActionJimpleGenerator.generate(body, action)
+                this.generateMockWhenStmt(body)
             }
             is MethodCallAction -> {
-                returnLocal = generateMethodCallAction(body, action, args, sootMethod, collectReturnValue)
+                returnLocal = generateMethodCallAction(body, this, args, sootMethod, collectReturnValue)
             }
             else -> {
-                log.error("Unimplemented action type: $action")
-                throw Exception("Unimplemented action type: $action")
+                log.error("Unimplemented action type: $this")
+                throw Exception("Unimplemented action type: $this")
             }
         }
 

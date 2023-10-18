@@ -75,7 +75,7 @@ object RandomStrategy: Strategy() {
                 testCase.actions.add(mockObjectAction)
                 variable = mockObjectAction.variable
 
-                // TODO
+                // TODO: 可能是函数列表或属性？
                 val mockWhenMethod = getMockWhenMethod(targetClass, targetMethod)
                 val mockWhenAction = generateMockWhenAction(variable, mockWhenMethod)
                 testCase.actions.add(mockWhenAction)
@@ -206,6 +206,7 @@ object RandomStrategy: Strategy() {
     }
 
     /**
+     * TODO
      * Get initialization type
      * 问题：用什么策略来决定初始化类型？
      *

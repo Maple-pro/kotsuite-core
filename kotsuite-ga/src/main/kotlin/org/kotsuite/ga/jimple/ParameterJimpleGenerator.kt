@@ -10,17 +10,17 @@ import soot.Value
 object ParameterJimpleGenerator {
     private val log = LogManager.getLogger()
 
-    fun generate(parameter: Parameter, values: List<ChromosomeValue>, sootMethod: SootMethod): Value {
-        return when (parameter) {
+    fun Parameter.generateJimpleValue(values: List<ChromosomeValue>, sootMethod: SootMethod): Value {
+        return when (this) {
             is PrimParameter, is StringParameter, is ArrayParameter -> {
-                ValueJimpleGenerator.generateJimpleValueFromChromosomeValue(sootMethod.activeBody, values[parameter.valueIndex])
+                ValueJimpleGenerator.generateJimpleValueFromChromosomeValue(sootMethod.activeBody, values[this.valueIndex])
             }
             is RefTypeParameter -> {
-                val value = sootMethod.getLocalByName(parameter.variable.localName)
-                return value ?: throw Exception("Cannot find local variable: ${parameter.variable.localName}")
+                val value = sootMethod.getLocalByName(this.variable.localName)
+                return value ?: throw Exception("Cannot find local variable: ${this.variable.localName}")
             }
             else -> {
-                log.error("Unsupported parameter type: $parameter")
+                log.error("Unsupported parameter type: $this")
                 throw Exception()
             }
         }

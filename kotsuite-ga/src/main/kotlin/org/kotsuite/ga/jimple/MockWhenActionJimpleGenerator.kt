@@ -3,7 +3,8 @@ package org.kotsuite.ga.jimple
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.action.MockWhenAction
 import org.kotsuite.utils.IDUtils
-import org.kotsuite.utils.MockUtils.generateMockLocal
+import org.kotsuite.utils.soot.MockType
+import org.kotsuite.utils.soot.MockUtils.generateMockLocal
 import org.kotsuite.utils.soot.SootUtils.getLocalByName
 import org.kotsuite.utils.soot.ValueUtils.generateRandomValue
 import soot.*
@@ -17,17 +18,17 @@ object MockWhenActionJimpleGenerator {
     private const val MOCK_WHEN_METHOD_SIG = "<org.mockito.Mockito: org.mockito.stubbing.OngoingStubbing when(java.lang.Object)>"
     private const val THEN_RETURN_METHOD_SIG = "<org.mockito.stubbing.OngoingStubbing: java.lang.Object thenReturn(java.lang.Object)>"
 
-    fun generate(body: Body, mockWhenAction: MockWhenAction) {
+    fun MockWhenAction.generateMockWhenStmt(body: Body) {
         if (mockitoClass == null) {
             log.error("Does not have Mockito dependency")
             throw IllegalArgumentException("Does not have Mockito dependency")
         }
 
-        val targetMockMethodRef = mockWhenAction.mockMethod.makeRef()
+        val targetMockMethodRef = this.mockMethod.makeRef()
         val mockWhenMethodRef = Scene.v().getMethod(MOCK_WHEN_METHOD_SIG).makeRef()
         val thenReturnMethodRef = Scene.v().getMethod(THEN_RETURN_METHOD_SIG).makeRef()
 
-        val obj = body.getLocalByName(mockWhenAction.variable.localName) ?: return
+        val obj = body.getLocalByName(this.variable.localName) ?: return
 
         // invoke the target method, e.g., $i0 = virtualinvoke r1.<org.example.Grammar: int foo()>();
         val tempObj1 = jimple.newLocal("tempMockObj${IDUtils.getId()}", targetMockMethodRef.returnType)
@@ -56,7 +57,10 @@ object MockWhenActionJimpleGenerator {
     private fun generateThenReturnValue(body: Body, type: Type): Value {
         return when (type) {
             is PrimType -> type.generateRandomValue()
-            is RefType -> type.generateMockLocal(body)
+            is RefType -> {
+                val mockReturnValueLocalName = "" // TODO
+                type.generateMockLocal(body, mockType = MockType.MOCK, localName = mockReturnValueLocalName)
+            }
             is ArrayType -> type.generateRandomValue()
             else -> {
                 log.error("Unsupported mock when return type: $type")

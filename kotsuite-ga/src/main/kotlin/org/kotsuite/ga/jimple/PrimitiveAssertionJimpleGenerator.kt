@@ -11,8 +11,8 @@ object PrimitiveAssertionJimpleGenerator {
     private const val ASSERT_EQUALS_METHOD_SUB_REF = "void assertEquals(java.lang.Object,java.lang.Object)"
     private val assertEqualsMethodRef = assertClass.getMethod(ASSERT_EQUALS_METHOD_SUB_REF).makeRef()
 
-    fun addAssertion(body: Body, testCase: TestCase, returnValue: Local?) {
-        val assertion = testCase.assertion
+    fun TestCase.addAssertion(body: Body, returnValue: Local?) {
+        val assertion = this.assertion
         if (returnValue == null
             || assertion == null
             || assertion.assertType.isEmpty()
