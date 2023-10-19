@@ -38,7 +38,10 @@ object MockWhenActionJimpleGenerator {
         )
 
         // invoke the `mock` or `spy` method
-        val tempObj2 = jimple.newLocal("tempMockObj${IDUtils.getId()}", RefType.v("org.mockito.stubbing.OngoingStubbing"))
+        val tempObj2 = jimple.newLocal(
+            "tempMockObj${IDUtils.getId()}",
+            RefType.v("org.mockito.stubbing.OngoingStubbing")
+        )
         val mockWhenInvokeStmt = jimple.newAssignStmt(
             tempObj2,
             jimple.newStaticInvokeExpr(mockWhenMethodRef, tempObj1)
@@ -58,7 +61,7 @@ object MockWhenActionJimpleGenerator {
         return when (type) {
             is PrimType -> type.generateRandomValue()
             is RefType -> {
-                val mockReturnValueLocalName = "" // TODO
+                val mockReturnValueLocalName = "mockReturnValue${IDUtils.getId()}"
                 type.generateMockLocal(body, mockType = MockType.MOCK, localName = mockReturnValueLocalName)
             }
             is ArrayType -> type.generateRandomValue()

@@ -1,5 +1,6 @@
 package org.kotsuite.analysis
 
+import com.google.gson.GsonBuilder
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
 import org.kotsuite.utils.soot.SootUtils
@@ -62,7 +63,8 @@ object Analyzer {
         val sootProcessDir = inputClassPaths + testFrameworks
         val sootClasspath = (dependencyClassPaths + testDependencies).joinToString(File.pathSeparator)
 
-        log.info("Test frameworks: $testFrameworks")
+        val gson = GsonBuilder().setPrettyPrinting().create()
+        log.debug("Test frameworks: \n${gson.toJson(testFrameworks)}")
 
         G.reset()
         with(Options.v()) {

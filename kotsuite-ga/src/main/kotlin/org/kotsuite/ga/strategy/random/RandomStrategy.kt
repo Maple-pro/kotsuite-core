@@ -55,7 +55,7 @@ object RandomStrategy: Strategy() {
     private fun generateTestCaseForMethod(targetMethod: SootMethod, testCaseName: String): TestCase {
         val testCase = TestCase(testCaseName, targetMethod)
         val targetClass = targetMethod.declaringClass
-        var variable: Variable
+        val variable: Variable
 
 //        val constructorAction = generateConstructorAction(testCase, targetClass)
 //        testCase.actions.add(constructorAction)
@@ -160,7 +160,6 @@ object RandomStrategy: Strategy() {
         action: Action,
         method: SootMethod,
     ) {
-
         var valueIndex = testCase.values.size
 
         method.parameterTypes.forEach {
@@ -207,8 +206,9 @@ object RandomStrategy: Strategy() {
 
     /**
      * TODO
-     * Get initialization type
-     * 问题：用什么策略来决定初始化类型？
+     * Get initialization type, strategy:
+     *
+     * 1.
      *
      * @param sootClass
      * @return

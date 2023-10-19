@@ -6,7 +6,10 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@Deprecated("The config has been moved to `org.kotsuite.Configs`")
+@Deprecated(
+    "No longer used",
+    ReplaceWith("org.kotsuite.Configs")
+)
 private object Configs {
 
     // log related configs
