@@ -3,7 +3,7 @@ package org.kotsuite.analysis
 import com.google.gson.GsonBuilder
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
-import org.kotsuite.utils.soot.SootUtils
+import org.kotsuite.soot.SootUtils
 import soot.*
 import soot.options.Options
 import java.io.File
@@ -122,23 +122,26 @@ object Analyzer {
 
     /**
      * Create a dummy main class and dummy main method which calls the target method.
-     * Example main method:
      *
-     *     public static void main(java.lang.String[])
-     *     {
-     *         com.example.myapplication.FirstFragment dummyObj;
-     *         java.lang.String[] args;
+     * ```java
+     * // Example main method
      *
-     *         args := @parameter0: java.lang.String[];
+     * public static void main(java.lang.String[])
+     * {
+     *     com.example.myapplication.FirstFragment dummyObj;
+     *     java.lang.String[] args;
      *
-     *         dummyObj = new com.example.myapplication.FirstFragment;
+     *     args := @parameter0: java.lang.String[];
      *
-     *         specialinvoke dummyObj.<com.example.myapplication.FirstFragment: void <init>()>();
+     *     dummyObj = new com.example.myapplication.FirstFragment;
      *
-     *         virtualinvoke dummyObj.<com.example.myapplication.FirstFragment: void onDestroyView()>();
+     *     specialinvoke dummyObj.<com.example.myapplication.FirstFragment: void <init>()>();
      *
-     *         return;
-     *     }
+     *     virtualinvoke dummyObj.<com.example.myapplication.FirstFragment: void onDestroyView()>();
+     *
+     *     return;
+     * }
+     * ```
      *
      * @param sootTestMethod the target soot method
      * @return the dummy main class

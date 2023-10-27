@@ -3,7 +3,7 @@ package org.kotsuite.ga.jimple
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
-import org.kotsuite.utils.soot.SootUtils.getLocalByName
+import org.kotsuite.soot.SootUtils.getLocalByName
 import soot.SootMethod
 import soot.Value
 

@@ -1,11 +1,11 @@
-package org.kotsuite.utils.soot
+package org.kotsuite.soot
 
 import soot.tagkit.AnnotationClassElem
 import soot.tagkit.AnnotationConstants
 import soot.tagkit.AnnotationTag
 import soot.tagkit.VisibilityAnnotationTag
 
-object AnnotationUtils {
+object Annotation {
     fun generateTestAnnotation(): VisibilityAnnotationTag {
         val defaultAnnotationTag = VisibilityAnnotationTag(AnnotationConstants.RUNTIME_VISIBLE)
         val junitTestAnnotation = AnnotationTag("Lorg/junit/Test;")

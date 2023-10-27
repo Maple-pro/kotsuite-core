@@ -9,7 +9,7 @@ import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.solution.ClassSolution
 import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.ga.solution.WholeSolution
-import org.kotsuite.utils.soot.Filter
+import org.kotsuite.soot.Filter
 import soot.SootClass
 import soot.SootMethod
 

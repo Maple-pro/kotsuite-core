@@ -7,7 +7,7 @@ import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.jimple.MockObjectActionJimpleGenerator.generateMockObjectStmt
 import org.kotsuite.ga.jimple.MockWhenActionJimpleGenerator.generateMockWhenStmt
 import org.kotsuite.ga.jimple.ParameterJimpleGenerator.generateJimpleValue
-import org.kotsuite.utils.soot.SootUtils.getLocalByName
+import org.kotsuite.soot.SootUtils.getLocalByName
 import soot.*
 import soot.Unit
 import soot.jimple.Jimple
@@ -47,7 +47,7 @@ object ActionJimpleGenerator {
             is ConstructorAction -> {
                 generateConstructorAction(body, this, args)
             }
-            is MockObjectAction -> {
+            is TestDoubleAction -> {
                 this.generateMockObjectStmt(body)
             }
             is MockWhenAction -> {

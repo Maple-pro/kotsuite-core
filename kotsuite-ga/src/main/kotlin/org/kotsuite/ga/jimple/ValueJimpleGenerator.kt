@@ -2,25 +2,25 @@ package org.kotsuite.ga.jimple
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.value.*
-import org.kotsuite.utils.soot.ValueUtils
-import org.kotsuite.utils.soot.ValueUtils.generatePrimTypeJimpleValue
+import org.kotsuite.soot.Value
+import org.kotsuite.soot.Value.generatePrimTypeJimpleValue
 import soot.*
 import soot.jimple.*
 
 object ValueJimpleGenerator {
     private val log = LogManager.getLogger()
 
-    fun generateJimpleValueFromChromosomeValue(body: Body, chromosomeValue: ChromosomeValue): Value {
+    fun generateJimpleValueFromChromosomeValue(body: Body, chromosomeValue: ChromosomeValue): soot.Value {
         return when (chromosomeValue) {
-            is BooleanChromosomeValue -> ValueUtils.generateBooleanValue(chromosomeValue.booleanValue)
-            is ByteChromosomeValue -> ValueUtils.generateByteValue(chromosomeValue.byteValue)
-            is CharChromosomeValue -> ValueUtils.generateCharValue(chromosomeValue.charValue)
-            is DoubleChromosomeValue -> ValueUtils.generateDoubleValue(chromosomeValue.doubleValue)
-            is FloatChromosomeValue -> ValueUtils.generateFloatValue(chromosomeValue.floatValue)
-            is IntChromosomeValue -> ValueUtils.generateIntValue(chromosomeValue.intValue)
-            is LongChromosomeValue -> ValueUtils.generateLongValue(chromosomeValue.longValue)
-            is ShortChromosomeValue -> ValueUtils.generateShortValue(chromosomeValue.shortValue)
-            is StringChromosomeValue -> ValueUtils.generateStringValue(chromosomeValue.stringValue)
+            is BooleanChromosomeValue -> Value.generateBooleanValue(chromosomeValue.booleanValue)
+            is ByteChromosomeValue -> Value.generateByteValue(chromosomeValue.byteValue)
+            is CharChromosomeValue -> Value.generateCharValue(chromosomeValue.charValue)
+            is DoubleChromosomeValue -> Value.generateDoubleValue(chromosomeValue.doubleValue)
+            is FloatChromosomeValue -> Value.generateFloatValue(chromosomeValue.floatValue)
+            is IntChromosomeValue -> Value.generateIntValue(chromosomeValue.intValue)
+            is LongChromosomeValue -> Value.generateLongValue(chromosomeValue.longValue)
+            is ShortChromosomeValue -> Value.generateShortValue(chromosomeValue.shortValue)
+            is StringChromosomeValue -> Value.generateStringValue(chromosomeValue.stringValue)
             is ArrayChromosomeValue<*> -> generateArrayValue(body, chromosomeValue)
             else -> {
                 throw Exception("Unsupported value type: $chromosomeValue")
@@ -51,7 +51,7 @@ object ValueJimpleGenerator {
 
                 is RefType -> {
                     if (value.arrayType.baseType == RefType.v("java.lang.String")) {
-                        val itemValue = ValueUtils.generateStringValue(item as String)
+                        val itemValue = Value.generateStringValue(item as String)
                         val itemAssignStmt = Jimple.v().newAssignStmt(arrayRef, itemValue)
                         body.units.add(itemAssignStmt)
                     }

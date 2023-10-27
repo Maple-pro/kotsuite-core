@@ -1,15 +1,18 @@
 package org.kotsuite.ga.jimple
 
+import org.apache.logging.log4j.LogManager
+import org.kotsuite.AssertionConstants
+import org.kotsuite.PrimitiveConstants
 import org.kotsuite.ga.chromosome.TestCase
 import soot.*
 import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.*
 
 object PrimitiveAssertionJimpleGenerator {
+    private val log = LogManager.getLogger()
+
     private val jimple = Jimple.v()
-    private val assertClass = Scene.v().getSootClass("org.junit.Assert")
-    private const val ASSERT_EQUALS_METHOD_SUB_REF = "void assertEquals(java.lang.Object,java.lang.Object)"
-    private val assertEqualsMethodRef = assertClass.getMethod(ASSERT_EQUALS_METHOD_SUB_REF).makeRef()
+    private val assertEqualsMethodRef = Scene.v().getMethod(AssertionConstants.assertEquals_method_sig).makeRef()
 
     fun TestCase.addAssertion(body: Body, returnValue: Local?) {
         val assertion = this.assertion
@@ -18,6 +21,7 @@ object PrimitiveAssertionJimpleGenerator {
             || assertion.assertType.isEmpty()
             || assertion.assertValue.isEmpty()
         ) {
+            log.warn("Cannot add assertion statement")
             return
         }
 
@@ -26,148 +30,86 @@ object PrimitiveAssertionJimpleGenerator {
 
     private fun createAssertStatement(body: Body, assertType: String, assertValue: String, actualValue: Local) {
         val assertTypeJavaClass = getJavaClass(assertType)
-        when (assertTypeJavaClass) {
-            "java.lang.Boolean" -> createBooleanAssertionStmt(body, assertValue, actualValue)
-            "java.lang.Byte" -> createByteAssertionStmt(body, assertValue, actualValue)
-            "java.lang.Character" -> createCharacterAssertionStmt(body, assertValue, actualValue)
-            "java.lang.Double" -> createDoubleAssertionStmt(body, assertValue, actualValue)
-            "java.lang.Float" -> createFloatAssertionStmt(body, assertValue, actualValue)
-            "java.lang.Integer" -> createIntegerAssertionStmt(body, assertValue, actualValue)
-            "java.lang.Long" -> createLongAssertionStmt(body, assertValue, actualValue)
-            "java.lang.String" -> createStringAssertionStmt(body, assertValue, actualValue)
+        val expectedValue = string2Value(assertValue, assertTypeJavaClass)
+
+        val expectedObject = when (assertTypeJavaClass) {
+            "java.lang.Boolean" -> {
+                createExpectedObject(body, expectedValue, PrimitiveConstants.boolean_class_name, PrimitiveConstants.boolean_constructor_method_sig)
+            }
+            "java.lang.Byte" -> {
+                createExpectedObject(body, expectedValue, PrimitiveConstants.byte_class_name, PrimitiveConstants.byte_constructor_method_sig)
+            }
+            "java.lang.Character" -> {
+                createExpectedObject(body, expectedValue, PrimitiveConstants.character_class_name, PrimitiveConstants.character_constructor_method_sig)
+            }
+            "java.lang.Double" -> {
+                createExpectedObject(body, expectedValue, PrimitiveConstants.double_class_name, PrimitiveConstants.double_constructor_method_sig)
+            }
+            "java.lang.Float" -> {
+                createExpectedObject(body, expectedValue, PrimitiveConstants.float_class_name, PrimitiveConstants.float_constructor_method_sig)
+            }
+            "java.lang.Integer" -> {
+                createExpectedObject(body, expectedValue, PrimitiveConstants.integer_class_name, PrimitiveConstants.integer_constructor_method_sig)
+            }
+            "java.lang.Long" -> {
+                createExpectedObject(body, expectedValue, PrimitiveConstants.long_class_name, PrimitiveConstants.long_constructor_method_sig)
+            }
+            "java.lang.String" -> {
+                createExpectedObject(body, expectedValue, PrimitiveConstants.string_class_name, PrimitiveConstants.string_constructor_method_sig)
+            }
+            else -> {
+                throw Exception("Unsupported assert type: $assertTypeJavaClass")
+            }
+        }
+
+        createAssertionStatement(body, expectedObject, actualValue)
+    }
+
+    private fun string2Value(assertValue: String, assertTypeJavaClass: String): Value {
+        return when (assertTypeJavaClass) {
+            "java.lang.Boolean" -> {
+                if (assertValue == "true") {
+                    DIntConstant.v(1, BooleanType.v())
+                } else {
+                    DIntConstant.v(0, BooleanType.v())
+                }
+            }
+            "java.lang.Byte" -> DIntConstant.v(assertValue.toInt(), ByteType.v())
+            "java.lang.Character" -> DIntConstant.v(assertValue.toInt(), CharType.v())
+            "java.lang.Double" -> DoubleConstant.v(assertValue.toDouble())
+            "java.lang.Float" -> FloatConstant.v(assertValue.toFloat())
+            "java.lang.Integer" -> IntConstant.v(assertValue.toInt())
+            "java.lang.Long" -> LongConstant.v(assertValue.toLong())
+            "java.lang.String" -> StringConstant.v(assertValue)
+            else -> {
+                throw Exception("Unsupported assert type: $assertTypeJavaClass")
+            }
         }
     }
 
-    private fun createBooleanAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
-        val expectedValue = if (assertValue == "true") {
-            DIntConstant.v(1, BooleanType.v())
-        } else {
-            DIntConstant.v(0, BooleanType.v())
-        }
-
-        val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Boolean"))
-        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v("java.lang.Boolean")))
-        val constructorRef = Scene.v().getMethod("<java.lang.Boolean: void <init>(boolean)>").makeRef()
+    private fun createExpectedObject(
+        body: Body,
+        expectedValue: Value,
+        expectedObjectClassName: String,
+        expectedObjectClassConstructorSig: String
+    ): Local {
+        val expectedObject = jimple.newLocal("expectedObject", RefType.v(expectedObjectClassName))
+        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v(expectedObjectClassName)))
+        val constructorRef = Scene.v().getMethod(expectedObjectClassConstructorSig).makeRef()
         val initStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(expectedObject, constructorRef, expectedValue))
 
-        val invokeStmt = jimple.newInvokeStmt(
-            jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
-        )
-
         body.locals.addAll(listOf(expectedObject))
-        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
+        body.units.addAll(listOf(assignStmt, initStmt))
+
+        return expectedObject
     }
 
-    private fun createByteAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
-        val expectedValue = DIntConstant.v(assertValue.toInt(), ByteType.v())
-
-        val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Byte"))
-        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v("java.lang.Byte")))
-        val constructorRef = Scene.v().getMethod("<java.lang.Byte: void <init>(byte)>").makeRef()
-        val initStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(expectedObject, constructorRef, expectedValue))
-
+    private fun createAssertionStatement(body: Body, expectedObject: Local, actualValue: Local) {
         val invokeStmt = jimple.newInvokeStmt(
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
 
-        body.locals.addAll(listOf(expectedObject))
-        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
-    }
-
-    private fun createCharacterAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
-        val expectedValue = DIntConstant.v(assertValue.toInt(), CharType.v())
-
-        val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Character"))
-        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v("java.lang.Character")))
-        val constructorRef = Scene.v().getMethod("<java.lang.Character: void <init>(char)>").makeRef()
-        val initStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(expectedObject, constructorRef, expectedValue))
-
-        val invokeStmt = jimple.newInvokeStmt(
-            jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
-        )
-
-        body.locals.addAll(listOf(expectedObject))
-        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
-    }
-
-    private fun createDoubleAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
-        val expectedValue = DoubleConstant.v(assertValue.toDouble())
-
-        val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Double"))
-        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v("java.lang.Double")))
-        val constructorRef = Scene.v().getMethod("<java.lang.Double: void <init>(double)>").makeRef()
-        val initStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(expectedObject, constructorRef, expectedValue))
-
-        val invokeStmt = jimple.newInvokeStmt(
-            jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
-        )
-
-        body.locals.addAll(listOf(expectedObject))
-        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
-    }
-
-    private fun createFloatAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
-        val expectedValue = FloatConstant.v(assertValue.toFloat())
-
-        val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Float"))
-        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v("java.lang.Float")))
-        val constructorRef = Scene.v().getMethod("<java.lang.Float: void <init>(float)>").makeRef()
-        val initStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(expectedObject, constructorRef, expectedValue))
-
-        val invokeStmt = jimple.newInvokeStmt(
-            jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
-        )
-
-        body.locals.addAll(listOf(expectedObject))
-        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
-    }
-
-    private fun createIntegerAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
-        val expectedValue = IntConstant.v(assertValue.toInt())
-
-        val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Integer"))
-        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v("java.lang.Integer")))
-        val constructorRef = Scene.v().getMethod("<java.lang.Integer: void <init>(int)>").makeRef()
-        val initStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(expectedObject, constructorRef, expectedValue))
-
-        val invokeStmt = jimple.newInvokeStmt(
-            jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
-        )
-
-        body.locals.addAll(listOf(expectedObject))
-        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
-    }
-
-    private fun createLongAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
-        val expectedValue = LongConstant.v(assertValue.toLong())
-
-        val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.Long"))
-        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v("java.lang.Long")))
-        val constructorRef = Scene.v().getMethod("<java.lang.Long: void <init>(long)>").makeRef()
-        val initStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(expectedObject, constructorRef, expectedValue))
-
-        val invokeStmt = jimple.newInvokeStmt(
-            jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
-        )
-
-        body.locals.addAll(listOf(expectedObject))
-        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
-    }
-
-    private fun createStringAssertionStmt(body: Body, assertValue: String, actualValue: Local) {
-        val expectedValue = StringConstant.v(assertValue)
-
-        val expectedObject = jimple.newLocal("expectedObject", RefType.v("java.lang.String"))
-        val assignStmt = jimple.newAssignStmt(expectedObject, jimple.newNewExpr(RefType.v("java.lang.String")))
-        val constructorRef = Scene.v().getMethod("<java.lang.String: void <init>(string)>").makeRef()
-        val initStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(expectedObject, constructorRef, expectedValue))
-
-        val invokeStmt = jimple.newInvokeStmt(
-            jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
-        )
-
-        body.locals.addAll(listOf(expectedObject))
-        body.units.addAll(listOf(assignStmt, initStmt, invokeStmt))
+        body.units.addAll(listOf(invokeStmt))
     }
 
     private fun getJavaClass(type: String): String {

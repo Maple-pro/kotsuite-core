@@ -2,6 +2,7 @@ package org.kotsuite.analysis
 
 data class MethodSignature(
     val clazz: String, val returnType: String, val methodName: String, val params: Array<String>) {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

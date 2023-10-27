@@ -83,8 +83,8 @@ class MainTest {
         val moduleClassPath = moduleClassPaths.joinToString(File.pathSeparator)
         val sourcePath = moduleSourcePaths.joinToString(File.pathSeparator)
 //        val includeRules = "com.simplemobiletools.commons.helpers.Converters"
-        val includeRules = "com.simplemobiletools.commons.helpers.AlphanumericComparator"
-//        val includeRules = "com.simplemobiletools.commons"
+//        val includeRules = "com.simplemobiletools.commons.helpers.AlphanumericComparator"
+        val includeRules = "com.simplemobiletools.commons"
         val libsPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs"
         val strategy = "ga"
         val dependency = Data.simpleCommonsDependencies.joinToString(File.pathSeparator)

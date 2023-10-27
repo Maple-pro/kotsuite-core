@@ -11,7 +11,6 @@ object ASMUtils {
     /**
      * Convert to ASM method description
      *
-     * @param method sootMethod, e.g., int methodName(java.lang.String, int)
      * @return e.g., (Ljava/lang/String;I)I
      */
     fun SootMethod.getMethodDescription(): String {

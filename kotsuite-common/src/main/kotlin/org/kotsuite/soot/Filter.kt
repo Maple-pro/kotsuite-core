@@ -1,6 +1,6 @@
-package org.kotsuite.utils.soot
+package org.kotsuite.soot
 
-import org.kotsuite.utils.soot.SootUtils.getConstructor
+import org.kotsuite.soot.SootUtils.getConstructor
 import soot.RefType
 import soot.SootClass
 import soot.SootMethod

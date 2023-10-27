@@ -1,4 +1,4 @@
-package org.kotsuite.utils.soot
+package org.kotsuite.soot
 
 import org.apache.logging.log4j.LogManager
 import soot.*
@@ -17,7 +17,6 @@ object SootUtils {
     /**
      * Get local variable by variable name in a method
      *
-     * @param sootMethod
      * @param localName
      * @return
      */
@@ -40,9 +39,6 @@ object SootUtils {
 
     /**
      * Get constructor of a soot class
-     *
-     * @param sootClass
-     * @return
      */
     fun SootClass.getConstructor(): SootMethod? {
         return try {
@@ -90,7 +86,6 @@ object SootUtils {
     /**
      * Create init method for a soot class
      *
-     * @param sootClass
      * @return init method
      */
     fun SootClass.generateInitMethod(): SootMethod {
@@ -165,28 +160,6 @@ object SootUtils {
 
             generateMethodCallStmt(jimpleBody, targetMethod, instance)
         }
-
-//        val targetClassType = RefType.v(targetMethods.first().declaringClass)
-//        val allocatedTargetObj = jimple.newLocal("dummyObj", targetClassType)
-//        locals.add(allocatedTargetObj)
-//        units.add(jimple.newAssignStmt(allocatedTargetObj, jimple.newNewExpr(targetClassType)))
-//
-//        val constructorMethod = targetClassType.sootClass.getMethod("void <init>()")
-//        val constructorArgs = Collections.nCopies(constructorMethod.parameterCount, NullConstant.v())
-//        units.add(
-//            jimple.newInvokeStmt(
-//                jimple.newSpecialInvokeExpr(allocatedTargetObj, constructorMethod.makeRef(), constructorArgs)
-//            )
-//        )
-//
-//        targetMethods.forEach {
-//            val targetMethodArgs = Collections.nCopies(it.parameterCount, NullConstant.v())
-//            units.add(
-//                jimple.newInvokeStmt(
-//                    jimple.newVirtualInvokeExpr(allocatedTargetObj, it.makeRef(), targetMethodArgs)
-//                )
-//            )
-//        }
 
         units.add(jimple.newReturnVoidStmt())
 

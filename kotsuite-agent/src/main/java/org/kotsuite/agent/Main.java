@@ -9,7 +9,6 @@ public class Main {
     static AgentOptions options;
 
     /**
-     *
      * @param agentArgs the target class and method, e.g., <code>ExampleTest.foo</code> or <code>ExampleTest.*</code>
      */
     public static void premain(String agentArgs, Instrumentation inst) {

@@ -7,7 +7,8 @@ import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.solution.MethodSolution
-import org.kotsuite.utils.soot.SootUtils.getConstructor
+import org.kotsuite.soot.SootUtils.getConstructor
+import org.kotsuite.soot.TestDoubleType
 import soot.*
 import kotlin.collections.ArrayList
 
@@ -62,7 +63,7 @@ object RandomStrategy: Strategy() {
 //        variable = constructorAction.variable
 
         // 初始化实例对象
-        when (val initializationType = getInitializationType(targetClass)) {
+        when (val initializationType = targetClass.getInitializationType()) {
             // 使用构造函数初始化
             InitializationType.CONSTRUCTOR -> {
                 val constructorAction = generateConstructorAction(testCase, targetClass)
@@ -70,8 +71,9 @@ object RandomStrategy: Strategy() {
                 variable = constructorAction.variable
             }
             // 使用 mock 或 spy 初始化对象，并随机 mock 对象的行为
-            InitializationType.MOCK, InitializationType.SPY -> {
-                val mockObjectAction = generateMockObjectAction(initializationType, targetClass)
+            InitializationType.TEST_DOUBLE -> {
+                val testDoubleType = targetClass.getTestDoubleType()
+                val mockObjectAction = generateMockObjectAction(testDoubleType, targetClass)
                 testCase.actions.add(mockObjectAction)
                 variable = mockObjectAction.variable
 
@@ -99,24 +101,24 @@ object RandomStrategy: Strategy() {
         return constructorAction
     }
 
-    private fun generateMockObjectAction(initializationType: InitializationType, targetClass: SootClass): MockObjectAction {
-        return when (initializationType) {
-            InitializationType.MOCK -> {
-                val variableName = "${targetClass.shortName}_mock_obj"
-                val variable = Variable(variableName, targetClass.type)
-                MockObjectAction(variable, initializationType, targetClass, mutableListOf())
+    private fun generateMockObjectAction(testDoubleType: TestDoubleType, targetClass: SootClass): TestDoubleAction {
+        val variableName = when (testDoubleType) {
+            TestDoubleType.MOCKITO_MOCK -> {
+                "${targetClass.shortName}_mockito_mock_obj"
             }
-            InitializationType.SPY -> {
-                val variableName = "${targetClass.shortName}_spy_obj"
-                val variable = Variable(variableName, targetClass.type)
-                MockObjectAction(variable, initializationType, targetClass, mutableListOf())
+            TestDoubleType.MOCKITO_SPY -> {
+                "${targetClass.shortName}_mockito_spy_obj"
             }
-
-            InitializationType.CONSTRUCTOR -> {
-                log.error("Initialization type can not be CONSTRUCTOR")
-                throw IllegalArgumentException("Initialization type can not be CONSTRUCTOR")
+            TestDoubleType.JMOCKK_MOCK -> {
+                "${targetClass.shortName}_mockk_mock_obj"
+            }
+            TestDoubleType.JMOCKK_SPY -> {
+                "${targetClass.shortName}_mockk_spy_obj"
             }
         }
+
+        val variable = Variable(variableName, targetClass.type)
+        return TestDoubleAction(variable, testDoubleType, targetClass, mutableListOf())
     }
 
     /**
@@ -208,13 +210,20 @@ object RandomStrategy: Strategy() {
      * TODO
      * Get initialization type, strategy:
      *
-     * 1.
-     *
-     * @param sootClass
      * @return
      */
-    private fun getInitializationType(sootClass: SootClass): InitializationType {
-        return InitializationType.MOCK
+    private fun SootClass.getInitializationType(): InitializationType {
+        return InitializationType.TEST_DOUBLE
+    }
+
+    /**
+     * TODO
+     * Get test double type
+     *
+     * @return
+     */
+    private fun SootClass.getTestDoubleType(): TestDoubleType {
+        return TestDoubleType.MOCKITO_SPY
     }
 
     @Override

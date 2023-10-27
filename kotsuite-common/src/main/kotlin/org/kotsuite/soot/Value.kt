@@ -1,12 +1,13 @@
-package org.kotsuite.utils.soot
+package org.kotsuite.soot
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.utils.RandomUtils
 import soot.*
+import soot.Value
 import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.*
 
-object ValueUtils {
+object Value {
     private val log = LogManager.getLogger()
 
     fun PrimType.generateRandomValue(): Value {

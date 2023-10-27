@@ -1,12 +1,13 @@
 package org.kotsuite.ga.jimple
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.MockitoConstants
 import org.kotsuite.ga.chromosome.action.MockWhenAction
 import org.kotsuite.utils.IDUtils
-import org.kotsuite.utils.soot.MockType
-import org.kotsuite.utils.soot.MockUtils.generateMockLocal
-import org.kotsuite.utils.soot.SootUtils.getLocalByName
-import org.kotsuite.utils.soot.ValueUtils.generateRandomValue
+import org.kotsuite.soot.Mockito.generateTestDouble
+import org.kotsuite.soot.SootUtils.getLocalByName
+import org.kotsuite.soot.TestDoubleType
+import org.kotsuite.soot.Value.generateRandomValue
 import soot.*
 import soot.jimple.Jimple
 import java.lang.IllegalArgumentException
@@ -14,10 +15,15 @@ import java.lang.IllegalArgumentException
 object MockWhenActionJimpleGenerator {
     private val log = LogManager.getLogger()
     private val jimple = Jimple.v()
-    private val mockitoClass: SootClass? = Scene.v().getSootClass("org.mockito.Mockito")
-    private const val MOCK_WHEN_METHOD_SIG = "<org.mockito.Mockito: org.mockito.stubbing.OngoingStubbing when(java.lang.Object)>"
-    private const val THEN_RETURN_METHOD_SIG = "<org.mockito.stubbing.OngoingStubbing: java.lang.Object thenReturn(java.lang.Object)>"
+    private val mockitoClass: SootClass? = Scene.v().getSootClass(MockitoConstants.mockito_class_name)
 
+    /**
+     * Generate mock when statement
+     *
+     * TODO: 将 Soot 的具体逻辑抽象到 common 模块中
+     *
+     * @param body
+     */
     fun MockWhenAction.generateMockWhenStmt(body: Body) {
         if (mockitoClass == null) {
             log.error("Does not have Mockito dependency")
@@ -25,8 +31,8 @@ object MockWhenActionJimpleGenerator {
         }
 
         val targetMockMethodRef = this.mockMethod.makeRef()
-        val mockWhenMethodRef = Scene.v().getMethod(MOCK_WHEN_METHOD_SIG).makeRef()
-        val thenReturnMethodRef = Scene.v().getMethod(THEN_RETURN_METHOD_SIG).makeRef()
+        val mockWhenMethodRef = Scene.v().getMethod(MockitoConstants.when_method_sig).makeRef()
+        val thenReturnMethodRef = Scene.v().getMethod(MockitoConstants.thenReturn_method_sig).makeRef()
 
         val obj = body.getLocalByName(this.variable.localName) ?: return
 
@@ -40,7 +46,7 @@ object MockWhenActionJimpleGenerator {
         // invoke the `mock` or `spy` method
         val tempObj2 = jimple.newLocal(
             "tempMockObj${IDUtils.getId()}",
-            RefType.v("org.mockito.stubbing.OngoingStubbing")
+            RefType.v(MockitoConstants.onGoingStubbing_class_name)
         )
         val mockWhenInvokeStmt = jimple.newAssignStmt(
             tempObj2,
@@ -62,7 +68,11 @@ object MockWhenActionJimpleGenerator {
             is PrimType -> type.generateRandomValue()
             is RefType -> {
                 val mockReturnValueLocalName = "mockReturnValue${IDUtils.getId()}"
-                type.generateMockLocal(body, mockType = MockType.MOCK, localName = mockReturnValueLocalName)
+                type.generateTestDouble(
+                    body,
+                    mockType = TestDoubleType.MOCKITO_MOCK,
+                    localName = mockReturnValueLocalName
+                )
             }
             is ArrayType -> type.generateRandomValue()
             else -> {

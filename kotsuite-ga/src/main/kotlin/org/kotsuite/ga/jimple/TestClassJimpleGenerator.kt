@@ -2,8 +2,8 @@ package org.kotsuite.ga.jimple
 
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.jimple.TestCaseJimpleGenerator.generateJimpleTestMethod
-import org.kotsuite.utils.soot.AnnotationUtils
-import org.kotsuite.utils.soot.SootUtils.generateInitMethod
+import org.kotsuite.soot.Annotation
+import org.kotsuite.soot.SootUtils.generateInitMethod
 import soot.Modifier
 import soot.Scene
 import soot.SootClass
@@ -31,7 +31,7 @@ object TestClassJimpleGenerator {
         sootClass.superclass = Scene.v().getSootClass("java.lang.Object")
 
         // Create `@RunWith()` annotation
-        sootClass.addTag(AnnotationUtils.generateRunWithMockitoAnnotation())
+        sootClass.addTag(Annotation.generateRunWithMockitoAnnotation())
 
         Scene.v().addClass(sootClass)
 
