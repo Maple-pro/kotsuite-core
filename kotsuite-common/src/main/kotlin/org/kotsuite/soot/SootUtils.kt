@@ -3,12 +3,7 @@ package org.kotsuite.soot
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import soot.*
-import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.*
-import soot.tagkit.AnnotationClassElem
-import soot.tagkit.AnnotationConstants
-import soot.tagkit.AnnotationTag
-import soot.tagkit.VisibilityAnnotationTag
 import java.util.*
 
 object SootUtils {

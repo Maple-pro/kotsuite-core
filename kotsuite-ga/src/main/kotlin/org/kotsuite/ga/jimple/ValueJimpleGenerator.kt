@@ -9,7 +9,6 @@ import soot.*
 import soot.jimple.*
 
 object ValueJimpleGenerator {
-    private val log = LogManager.getLogger()
 
     fun generateJimpleValueFromChromosomeValue(body: Body, chromosomeValue: ChromosomeValue): soot.Value {
         return when (chromosomeValue) {

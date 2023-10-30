@@ -12,8 +12,6 @@ object ValueGenerator {
 
     private val log = LogManager.getLogger()
 
-    private val charPool = ('a'..'z') + ('A'..'Z') + ('0'..'9') + '-' + '+'
-
     @Throws(Exception::class)
     fun generatePrimValue(primType: PrimType): ChromosomeValue {
         return when (primType) {

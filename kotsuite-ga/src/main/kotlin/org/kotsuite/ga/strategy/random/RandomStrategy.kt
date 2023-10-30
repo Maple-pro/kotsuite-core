@@ -14,7 +14,6 @@ import soot.*
 import kotlin.collections.ArrayList
 
 object RandomStrategy: Strategy() {
-    private val log = LogManager.getLogger()
 
     override fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution {
         return MethodSolution(targetMethod, generateTestCasesForMethod(targetMethod))
