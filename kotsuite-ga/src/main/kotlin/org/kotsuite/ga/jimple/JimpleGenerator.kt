@@ -18,7 +18,7 @@ object JimpleGenerator {
     /**
      * Returns a soot class generated from the given test cases.
      *
-     * @return              the generated SootClasses
+     * @return the generated SootClasses
      */
     fun Population.generateJimpleTestClass(): SootClass {
         // generate a dummy test class, e.g., `TempExampleFooRound1ID0`

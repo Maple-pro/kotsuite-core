@@ -1,5 +1,14 @@
 package org.kotsuite
 
+import soot.BooleanType
+import soot.CharType
+import soot.DoubleType
+import soot.FloatType
+import soot.IntType
+import soot.LongType
+import soot.RefType
+import soot.Type
+
 object ObjectConstants {
     const val OBJECT_CLASS_NAME = "java.lang.Object"
 }
@@ -70,4 +79,37 @@ object PrimitiveConstants {
 
     const val string_class_name = "java.lang.String"
     const val string_constructor_method_sig = "<java.lang.String: void <init>(string)>"
+}
+
+object PrintConstants {
+    const val printStream_class_name = "java.io.PrintStream"
+    const val println_boolean_method_sig = "<java.io.PrintSteam: void println(boolean)>"
+    const val println_char_method_sig = "<java.io.PrintStream: void println(char)>"
+    const val println_int_method_sig = "<java.io.PrintStream: void println(int)>"
+    const val println_long_method_sig = "<java.io.PrintStream: void println(long)>"
+    const val println_float_method_sig = "<java.io.PrintStream: void println(float)>"
+    const val println_double_method_sig = "<java.io.PrintStream: void println(double)>"
+    const val println_string_method_sig = "<java.io.PrintStream: void println(java.lang.String)>"
+    const val println_object_method_sig = "<java.io.PrintStream: void println(java.lang.Object)>"
+
+    const val out_field_sig = "<java.lang.System: java.io.PrintStream out>"
+
+    fun getPrintlnSig(type: Type): String {
+        return when(type) {
+            is BooleanType -> println_boolean_method_sig
+            is CharType -> println_char_method_sig
+            is IntType -> println_int_method_sig
+            is LongType -> println_long_method_sig
+            is FloatType -> println_float_method_sig
+            is DoubleType -> println_double_method_sig
+            RefType.v("java.lang.String") -> println_string_method_sig
+            is RefType -> println_object_method_sig
+            else -> throw Exception("Unsupported println parameter type: $type")
+        }
+    }
+}
+
+object CommonClassConstants {
+    const val object_class_name = "java.lang.Object"
+    const val string_class_name = "java.lang.String"
 }

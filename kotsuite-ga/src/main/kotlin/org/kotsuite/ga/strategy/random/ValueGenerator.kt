@@ -1,6 +1,7 @@
 package org.kotsuite.ga.strategy.random
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.CommonClassConstants
 import org.kotsuite.ga.chromosome.value.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.utils.RandomUtils
@@ -40,7 +41,7 @@ object ValueGenerator {
             is PrimType -> {
                 ArrayChromosomeValue(generateRandomPrimArray(arrayType.baseType), arrayType)
             }
-            RefType.v("java.lang.String") -> {
+            RefType.v(CommonClassConstants.string_class_name) -> {
                 val stringArray = arrayOf("")
                 ArrayChromosomeValue(stringArray, arrayType)
             }

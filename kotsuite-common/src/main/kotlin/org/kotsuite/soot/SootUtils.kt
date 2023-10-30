@@ -1,6 +1,7 @@
 package org.kotsuite.soot
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.CommonClassConstants
 import soot.*
 import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.*
@@ -63,10 +64,10 @@ object SootUtils {
         val existMainClass = Scene.v().classes.any { it.name == mainClassName }
 
         if (!existMainClass){
-            Scene.v().loadClassAndSupport("java.lang.Object")
+            Scene.v().loadClassAndSupport(CommonClassConstants.object_class_name)
 
             val mainClass = SootClass(mainClassName, Modifier.PUBLIC)
-            mainClass.superclass = Scene.v().getSootClass("java.lang.Object")
+            mainClass.superclass = Scene.v().getSootClass(CommonClassConstants.object_class_name)
             Scene.v().addClass(mainClass)
 
             val mainMethod = createMainMethod(targetMethods)
@@ -104,7 +105,7 @@ object SootUtils {
         body.units.add(thisStmt)
 
         // Call the superclass constructor using `super()`
-        val objectClass = Scene.v().getSootClass("java.lang.Object")
+        val objectClass = Scene.v().getSootClass(CommonClassConstants.object_class_name)
         val objectConstructorRef = Scene.v().makeConstructorRef(objectClass, listOf())
         val superInvokeStmt = jimple.newInvokeStmt(jimple.newSpecialInvokeExpr(thisLocal, objectConstructorRef))
         body.units.add(superInvokeStmt)
@@ -124,7 +125,7 @@ object SootUtils {
     private fun createMainMethod(targetMethods: List<SootMethod>): SootMethod {
         val jimple = Jimple.v()
 
-        val argsParameterType = ArrayType.v(RefType.v("java.lang.String"), 1)
+        val argsParameterType = ArrayType.v(RefType.v(CommonClassConstants.string_class_name), 1)
         val mainMethod = SootMethod("main",
             listOf(argsParameterType),
             VoidType.v(),

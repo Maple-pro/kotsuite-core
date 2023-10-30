@@ -1,5 +1,6 @@
 package org.kotsuite.ga.jimple
 
+import org.kotsuite.CommonClassConstants
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.jimple.TestCaseJimpleGenerator.generateJimpleTestMethod
 import org.kotsuite.soot.Annotation
@@ -22,13 +23,13 @@ object TestClassJimpleGenerator {
         generateAssert: Boolean = false,
     ): SootClass {
         // Resolve dependencies
-        Scene.v().loadClassAndSupport("java.lang.Object")
+        Scene.v().loadClassAndSupport(CommonClassConstants.object_class_name)
 
         // Declare 'public class $element.testClassName'
         val sootClass = SootClass(this.getFullTestClassName(), Modifier.PUBLIC)
 
         // extends Object
-        sootClass.superclass = Scene.v().getSootClass("java.lang.Object")
+        sootClass.superclass = Scene.v().getSootClass(CommonClassConstants.object_class_name)
 
         // Create `@RunWith()` annotation
         sootClass.addTag(Annotation.generateRunWithMockitoAnnotation())

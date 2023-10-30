@@ -1,6 +1,7 @@
 package org.kotsuite.ga.jimple
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.CommonClassConstants
 import org.kotsuite.ga.chromosome.value.*
 import org.kotsuite.soot.Value
 import org.kotsuite.soot.Value.generatePrimTypeJimpleValue
@@ -50,7 +51,7 @@ object ValueJimpleGenerator {
                 }
 
                 is RefType -> {
-                    if (value.arrayType.baseType == RefType.v("java.lang.String")) {
+                    if (value.arrayType.baseType == RefType.v(CommonClassConstants.string_class_name)) {
                         val itemValue = Value.generateStringValue(item as String)
                         val itemAssignStmt = Jimple.v().newAssignStmt(arrayRef, itemValue)
                         body.units.add(itemAssignStmt)

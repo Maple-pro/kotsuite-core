@@ -1,5 +1,7 @@
 package org.kotsuite.ga.jimple
 
+import org.kotsuite.CommonClassConstants
+import org.kotsuite.PrintConstants
 import org.kotsuite.ga.chromosome.TestCase
 import org.kotsuite.ga.chromosome.action.MethodCallAction
 import org.kotsuite.ga.jimple.ActionJimpleGenerator.generateJimpleStmt
@@ -35,14 +37,14 @@ object TestCaseJimpleGenerator {
         createThisLocal(body, sootClass)
 
         // Add local: java.io.printStream tmpRef
-        val printStreamRefLocal = jimple.newLocal("printStream}", RefType.v("java.io.PrintStream"))
+        val printStreamRefLocal = jimple.newLocal("printStream", RefType.v(PrintConstants.printStream_class_name))
 
         // Add unit: `tmpRef = java.lang.System.out`,
         // note that System.out is an instance of java.io.printStream, and it is a static field of java.lang.System
         val printStreamRefAssignStmt = jimple.newAssignStmt(
             printStreamRefLocal,
             jimple.newStaticFieldRef(
-                Scene.v().getField("<java.lang.System: java.io.PrintStream out>").makeRef()
+                Scene.v().getField(PrintConstants.out_field_sig).makeRef()
             )
         )
 
@@ -92,7 +94,7 @@ object TestCaseJimpleGenerator {
 
     private fun createPrintStringStmt(body: Body, message: String, printStreamRefLocal: Local) {
         // Add local: message
-        val messageLocal = jimple.newLocal("message_${UUID.randomUUID()}", RefType.v("java.lang.String"))
+        val messageLocal = jimple.newLocal("message_${UUID.randomUUID()}", RefType.v(CommonClassConstants.string_class_name))
         val messageAssignStmt = jimple.newAssignStmt(messageLocal, StringConstant.v(message))
 
         body.locals.add(messageLocal)
@@ -105,34 +107,16 @@ object TestCaseJimpleGenerator {
         val locals = mutableListOf<Local>()
         val units = mutableListOf<Unit>()
 
-        if (messageLocal.type !is PrimType && messageLocal.type.toString() != "java.lang.String") {
+        if (messageLocal.type !is PrimType && messageLocal.type.toString() != CommonClassConstants.string_class_name) {
             return
         }
 
-        // invoke `toString()` method
-//        val objectClass = Scene.v().getSootClass("java.lang.Object")
-
-//        if (messageLocal.type.toString() != "java.lang.String") {
-//            val messageClass = Scene.v().getSootClass(messageLocal.type.toQuotedString())
-//            val toStringMethodRef = messageClass.getMethod("java.lang.String toString()").makeRef()
-//            val toStringInvokeExpr = jimple.newVirtualInvokeExpr(messageLocal, toStringMethodRef)
-//
-//            stringLocal = jimple.newLocal("messageString", RefType.v("java.lang.String"))
-//            val toStringAssignStmt = jimple.newAssignStmt(stringLocal, toStringInvokeExpr)
-//
-//            locals.add(stringLocal)
-//            units.add(toStringAssignStmt)
-//        }
-
         // Add unit: `tmpRef.println(message)`
-        val printStreamClass = Scene.v().getSootClass("java.io.PrintStream")
-        val messageLocalTypeString = messageLocal.type.toString()
-        val printlnMethod = printStreamClass.getMethod("void println($messageLocalTypeString)")
+        val printlnMethod = Scene.v().getMethod(PrintConstants.getPrintlnSig(messageLocal.type))
         val printlnInvokeStmt = jimple.newInvokeStmt(
             jimple.newVirtualInvokeExpr(printStreamRefLocal, printlnMethod.makeRef(), messageLocal)
         )
 
-//        locals.add(printStreamRefLocal)
         units.add(printlnInvokeStmt)
 
         body.locals.addAll(locals)

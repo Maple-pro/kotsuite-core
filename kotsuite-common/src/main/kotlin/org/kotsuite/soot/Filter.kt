@@ -1,5 +1,6 @@
 package org.kotsuite.soot
 
+import org.kotsuite.CommonClassConstants
 import org.kotsuite.soot.SootUtils.getConstructor
 import soot.RefType
 import soot.SootClass
@@ -56,7 +57,7 @@ object Filter {
 
     private fun SootClass.isAndroidRelatedClass(): Boolean {
         var curClass = this
-        while (curClass.name != "java.lang.Object" || curClass.hasSuperclass()) {
+        while (curClass.name != CommonClassConstants.object_class_name || curClass.hasSuperclass()) {
             if (curClass.name.startsWith("android")) return true
 
             curClass = curClass.superclass
@@ -157,7 +158,7 @@ object Filter {
                 !it.declaringClass.name.equals(sootClass.name)
             }.filter {
                 val className = it.declaringClass.name
-                className.startsWith("android") || className.equals("java.lang.Object")
+                className.startsWith("android") || className.equals(CommonClassConstants.object_class_name)
             }
 
         return ignoredSuperMethods.isNotEmpty()

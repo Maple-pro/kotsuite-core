@@ -1,6 +1,7 @@
 package org.kotsuite.ga.strategy.random
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.CommonClassConstants
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.action.*
@@ -174,7 +175,7 @@ object RandomStrategy: Strategy() {
                     parameter = PrimParameter(it, valueIndex)
                 }
                 is RefType -> {
-                    if (it == RefType.v("java.lang.String")) {
+                    if (it == RefType.v(CommonClassConstants.string_class_name)) {
                         value = ValueGenerator.generateStringValue()
                         parameter = StringParameter(valueIndex)
                     } else {
