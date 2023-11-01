@@ -1,7 +1,5 @@
 package org.kotsuite.utils
 
-import soot.SootClass
-
 object IDUtils {
     private var id = 0
 
