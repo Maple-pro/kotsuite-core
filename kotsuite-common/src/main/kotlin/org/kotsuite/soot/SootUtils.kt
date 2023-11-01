@@ -2,6 +2,7 @@ package org.kotsuite.soot
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
+import org.kotsuite.utils.IDUtils
 import soot.*
 import soot.jimple.*
 import java.util.*
@@ -45,6 +46,25 @@ object SootUtils {
                 return null
             }
             this.methods.first { it.name == "<init>" }
+        }
+    }
+
+    fun SootClass.getObjectName(): String {
+        val objName = this.shortName.replaceFirstChar { it.lowercaseChar() }
+        return "${objName}Obj${IDUtils.getId()}"
+    }
+
+    fun SootMethod.getVisibility(): Visibility {
+        val modifiers = this.modifiers
+
+        return if (Modifier.isPublic(modifiers)) {
+            Visibility.PUBLIC
+        } else if (Modifier.isProtected(modifiers)) {
+            Visibility.PROTECTED
+        } else if (Modifier.isPrivate(modifiers)) {
+            Visibility.PRIVATE
+        } else {
+            Visibility.PACKAGE
         }
     }
 

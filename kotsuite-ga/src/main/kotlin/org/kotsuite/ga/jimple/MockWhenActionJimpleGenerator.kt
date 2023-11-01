@@ -34,7 +34,7 @@ object MockWhenActionJimpleGenerator {
         val mockWhenMethodRef = Scene.v().getMethod(MockitoConstants.when_method_sig).makeRef()
         val thenReturnMethodRef = Scene.v().getMethod(MockitoConstants.thenReturn_method_sig).makeRef()
 
-        val obj = body.getLocalByName(this.variable.localName) ?: return
+        val obj = body.getLocalByName(this.mockObject.localName) ?: return
 
         // invoke the target method, e.g., $i0 = virtualinvoke r1.<org.example.Grammar: int foo()>();
         val tempObj1 = jimple.newLocal("tempMockObj${IDUtils.getId()}", targetMockMethodRef.returnType)

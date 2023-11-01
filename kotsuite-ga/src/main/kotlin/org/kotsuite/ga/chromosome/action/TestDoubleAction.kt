@@ -5,9 +5,9 @@ import org.kotsuite.ga.chromosome.parameter.Parameter
 import org.kotsuite.soot.TestDoubleType
 import soot.SootClass
 
-class TestDoubleAction(
+open class TestDoubleAction(
     val variable: Variable,
     val testDoubleType: TestDoubleType,
     val mockClass: SootClass,
-    parameters: MutableList<Parameter>,
+    parameters: List<Parameter>,
 ) : Action(parameters)

@@ -6,6 +6,12 @@ import soot.*
 
 object MockObjectActionJimpleGenerator {
 
+    /**
+     * TODO: Not implemented yet
+     * Generate mock object stmt
+     *
+     * @param body
+     */
     fun TestDoubleAction.generateMockObjectStmt(body: Body) {
         this.mockClass.type.generateTestDouble(
             body,

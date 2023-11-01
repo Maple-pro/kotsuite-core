@@ -34,11 +34,9 @@ object Filter {
     }
 
     /**
-     * 类继承自 Android 类，或构造函数参数包含 Android 类
-     *
-     * @return
+     * 类是否继承自 Android 类，或构造函数参数包含 Android 类
      */
-    private fun SootClass.isAndroidClass(): Boolean {
+    fun SootClass.isAndroidClass(): Boolean {
         // 类是否继承自 Android 内部类
         if (this.isAndroidRelatedClass()) {
             return true
@@ -55,6 +53,9 @@ object Filter {
         return false
     }
 
+    /**
+     * 类是否继承自 Android 类
+     */
     private fun SootClass.isAndroidRelatedClass(): Boolean {
         var curClass = this
         while (curClass.name != CommonClassConstants.object_class_name || curClass.hasSuperclass()) {
@@ -162,27 +163,6 @@ object Filter {
             }
 
         return ignoredSuperMethods.isNotEmpty()
-    }
-
-    private fun SootMethod.getAllSuperMethods(): List<SootMethod> {
-        var currentClass = this.declaringClass
-
-        val superMethods = mutableListOf<SootMethod>()
-        while (currentClass.hasSuperclass()) {
-            val superClass = currentClass.superclass
-            val candidates = superClass.getMethodsByNameAndParamCount(this.name, this.parameterCount)
-            superMethods.addAll(candidates)
-
-            val interfaces = currentClass.interfaces
-            interfaces.forEach { interfaceClass ->
-                val interfaceMethods = interfaceClass.getMethodsByNameAndParamCount(this.name, this.parameterCount)
-                superMethods.addAll(interfaceMethods)
-            }
-
-            currentClass = superClass
-        }
-
-        return superMethods
     }
 
     private fun SootMethod.getAllSuperMethods(sootClass: SootClass): List<SootMethod> {
