@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.parameter.ArrayParameter
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
-import org.kotsuite.ga.jimple.MockObjectActionJimpleGenerator.generateMockObjectStmt
+import org.kotsuite.ga.jimple.TestDoubleActionJimpleGenerator.generateMockObjectStmt
 import org.kotsuite.ga.jimple.MockWhenActionJimpleGenerator.generateMockWhenStmt
 import org.kotsuite.ga.jimple.ParameterJimpleGenerator.generateJimpleValue
 import org.kotsuite.soot.SootUtils.getLocalByName
@@ -29,18 +29,14 @@ object ActionJimpleGenerator {
     @Throws(Exception::class)
     fun Action.generateJimpleStmt(
         body: Body,
-        values: List<ChromosomeValue>, sootMethod: SootMethod,
-        collectReturnValue: Boolean = false
+        values: List<ChromosomeValue>,
+        sootMethod: SootMethod,
+        collectReturnValue: Boolean = false,
     ): Local? {
         var returnLocal: Local? = null
 
         val args = this.parameters.map {
-            val value = it.generateJimpleValue(values, sootMethod)
-            if (it is ArrayParameter) {
-                body.locals.add(value as Local)
-            }
-
-            value
+            it.generateJimpleValue(values, sootMethod)
         }
 
         when (this) {
@@ -51,7 +47,7 @@ object ActionJimpleGenerator {
                 this.generateMockObjectStmt(body)
             }
             is MockWhenAction -> {
-                this.generateMockWhenStmt(body)
+                this.generateMockWhenStmt(body, values, sootMethod)
             }
             is MethodCallAction -> {
                 returnLocal = generateMethodCallAction(body, this, args, sootMethod, collectReturnValue)

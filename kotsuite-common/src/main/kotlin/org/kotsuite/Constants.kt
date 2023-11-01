@@ -46,6 +46,8 @@ object JMockKConstants {
 
     const val ongoingStubbing_class_name = "io.github.maples.jmockk.stubbing.OngoingStubbing"
 
+    const val thenReturn_method_sig = "<io.github.maples.jmockk.stubbing.OngoingStubbing: void thenReturn(java.lang.Object)>"
+
     const val visibility_class_name = "io.github.maples.jmockk.Visibility"
 }
 

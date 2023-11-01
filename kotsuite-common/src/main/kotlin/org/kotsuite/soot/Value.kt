@@ -28,7 +28,7 @@ object Value {
     }
 
     fun ArrayType.generateRandomValue(): Value {
-        TODO()
+        TODO("生成随机的数组值")
     }
 
     fun PrimType.generatePrimTypeJimpleValue(concreteValue: Any): Value {
