@@ -8,9 +8,10 @@ class MainTest {
     fun testMyApplication() {
         val projectPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication"
         val modulePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app"
-        val moduleClassPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/build/tmp/kotlin-classes/debug"
+        val moduleClassPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/build/tmp/kotlin-classes/release"
         val sourcePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/src/main/java"
-        val includeRules = "com.example.myapplication.Example&com.example.myapplication.Callee"
+//        val includeRules = "com.example.myapplication.Example&com.example.myapplication.jmockk.Example"
+        val includeRules = "com.example.myapplication.jmockk.Example"
         val libsPath = "/home/yangfeng/Repos/kotsuite-project/kotsuite-core/libs"
         val strategy = "ga"  // ga or random
         val dependency = Data.myApplicationDependencies.joinToString(File.pathSeparator)

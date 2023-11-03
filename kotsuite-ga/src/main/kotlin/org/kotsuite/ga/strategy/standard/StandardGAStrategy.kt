@@ -81,7 +81,9 @@ object StandardGAStrategy: Strategy() {
 
             // Generate assertion for each testcase
             log.debug("Adding assertion to each testcase...")
-            AssertionGenerator.addAssertions(curPopulation, File(assertFilePath))
+            if (File(assertFilePath).exists()) {
+                AssertionGenerator.addAssertions(curPopulation, File(assertFilePath))
+            }
 
             // Meet the coverage criteria ? output : continue
             log.debug("Check whether the fitness of the population meets the requirements...")

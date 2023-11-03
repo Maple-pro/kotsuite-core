@@ -32,7 +32,7 @@ object TestClassJimpleGenerator {
         sootClass.superclass = Scene.v().getSootClass(CommonClassConstants.object_class_name)
 
         // Create `@RunWith()` annotation
-        sootClass.addTag(Annotation.generateRunWithMockitoAnnotation())
+//        sootClass.addTag(Annotation.generateRunWithMockitoAnnotation())
 
         Scene.v().addClass(sootClass)
 

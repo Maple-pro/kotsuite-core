@@ -33,11 +33,11 @@ object Mockito {
     }
 
     /**
-     * Generate mock local.
+     * Generate Mockito mock local.
      *
      * @param body the method body which needs to generate mock local
      * @param mockType mock or spy
-     * @param localName the name of the mock local variable, optional
+     * @param localName the name of the mock local variable
      * @return the mock local
      */
     fun RefType.generateMockitoTestDouble(
@@ -48,7 +48,7 @@ object Mockito {
 
         val allocateObj = jimple.newLocal(localName, this)
         val tempObj = jimple.newLocal(
-            "tempMockObj_${IDUtils.getId()}",
+            "tempMockObj${IDUtils.getId()}",
             RefType.v(ObjectConstants.OBJECT_CLASS_NAME)
         )
 

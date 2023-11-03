@@ -1,5 +1,6 @@
 package org.kotsuite
 
+import org.kotsuite.soot.Visibility
 import soot.BooleanType
 import soot.CharType
 import soot.DoubleType
@@ -40,7 +41,7 @@ object JMockKConstants {
 
     const val mockkObject_method_sig = "<io.github.maples.jmockk.JMockK: void mockkObject(java.lang.Class[])>"
 
-    const val when_method_sig = "<io.github.maples.jmockk.stubbing.OngoingStubbing when(java.lang.Object,io.github.maples.jmockk.Visibility,java.lang.String,java.lang.Object[])>"
+    const val when_method_sig = "<io.github.maples.jmockk.JMockK: io.github.maples.jmockk.stubbing.OngoingStubbing when(java.lang.Object,io.github.maples.jmockk.Visibility,java.lang.String,java.lang.Object[])>"
 
     const val whenStatic_method_sig = "<io.github.maples.jmockk.stubbing.OngoingStubbing whenStatic(java.lang.Class,java.lang.Boolean,io.github.maples.jmockk.Visibility,java.lang.String,java.lang.Object[])>"
 
@@ -49,6 +50,23 @@ object JMockKConstants {
     const val thenReturn_method_sig = "<io.github.maples.jmockk.stubbing.OngoingStubbing: void thenReturn(java.lang.Object)>"
 
     const val visibility_class_name = "io.github.maples.jmockk.Visibility"
+
+    fun Visibility.getVisibilityFieldSig(): String {
+        return when(this) {
+            Visibility.PUBLIC -> {
+                "<io.github.maples.jmockk.Visibility: io.github.maples.jmockk.Visibility PUBLIC>"
+            }
+            Visibility.PROTECTED -> {
+                "<io.github.maples.jmockk.Visibility: io.github.maples.jmockk.Visibility PROTECTED>"
+            }
+            Visibility.PACKAGE -> {
+                "<io.github.maples.jmockk.Visibility: io.github.maples.jmockk.Visibility PACKAGE>"
+            }
+            Visibility.PRIVATE -> {
+                "<io.github.maples.jmockk.Visibility: io.github.maples.jmockk.Visibility PRIVATE>"
+            }
+        }
+    }
 }
 
 object AssertionConstants {

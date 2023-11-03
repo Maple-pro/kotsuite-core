@@ -11,6 +11,7 @@ object Commands {
     private val jvmArgs = listOf(
         "-XX:+EnableDynamicAgentLoading",
         "-Xshare:off",
+        "-Dnet.bytebuddy.experimental=true",
     )
 
     private fun runCommand(command: Array<String>) {

@@ -9,7 +9,6 @@ import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.soot.MockWhenActionType
 import org.kotsuite.soot.SootUtils.getConstructor
-import org.kotsuite.soot.SootUtils.getVisibility
 import org.kotsuite.soot.TestDoubleType
 import org.kotsuite.soot.SootUtils.getObjectName
 import soot.*
@@ -72,10 +71,10 @@ object RandomStrategy: Strategy() {
                 initializeTargetObjectByTestDouble(testCase, targetObject, targetClass, testDoubleType)
 
                 // 模拟 spyk 对象的行为
-                val methodsToMock = getMockWhenMethods(targetClass, targetMethod)
-                methodsToMock.forEach {
-                    mockBehavior(testCase, targetObject, it)
-                }
+//                val methodsToMock = getMockWhenMethods(targetClass, targetMethod)
+//                methodsToMock.forEach {
+//                    mockBehavior(testCase, targetObject, it)
+//                }
             }
         }
 
@@ -216,22 +215,21 @@ object RandomStrategy: Strategy() {
     /**
      * Generate mock when action
      *
-     * @param objectToMock object to mock
+     * @param mockObject object to mock
      * @param methodToMock the method needs to be mocked
      * @param parameter the parameter of the method call
      * @param returnParameter the return value of the method call
      * @return [MockWhenAction]
      */
     private fun generateMockWhenAction(
-        objectToMock: Variable,
+        mockObject: Variable,
         methodToMock: SootMethod,
         parameter: List<Parameter>,
         returnParameter: Parameter,
     ): MockWhenAction {
         return MockWhenAction(
             MockWhenActionType.JMOCKK,
-            objectToMock,
-            methodToMock.getVisibility(),
+            mockObject,
             methodToMock,
             parameter,
             returnParameter,
