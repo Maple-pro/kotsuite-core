@@ -2,8 +2,10 @@ package org.kotsuite.soot
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
+import org.kotsuite.ValueOfConstants.getValueOfSig
 import org.kotsuite.utils.IDUtils
 import soot.*
+import soot.Value
 import soot.jimple.*
 import java.util.*
 
@@ -219,6 +221,30 @@ object SootUtils {
             )
 
         body.units.add(invokeStmt)
+    }
+
+    fun constantToObject(body: Body, value: Value): Value {
+        if (value is Constant && value.type is PrimType) {
+            val constantType = value.type as PrimType
+            val valueOfMethodSig = constantType.getValueOfSig()
+            val valueOfMethod = Scene.v().getMethod(valueOfMethodSig)
+
+            val local = Jimple.v().newLocal("valueOfLocal${IDUtils.getId()}", valueOfMethod.returnType)
+            val castStmt = Jimple.v().newAssignStmt(
+                local,
+                Jimple.v().newStaticInvokeExpr(
+                    valueOfMethod.makeRef(),
+                    value,
+                )
+            )
+
+            body.locals.add(local)
+            body.units.add(castStmt)
+
+            return local
+        }
+
+        return value
     }
 
 }

@@ -1,18 +1,7 @@
 package org.kotsuite
 
 import org.kotsuite.soot.Visibility
-import soot.BooleanType
-import soot.CharType
-import soot.DoubleType
-import soot.FloatType
-import soot.IntType
-import soot.LongType
-import soot.RefType
-import soot.Type
-
-object ObjectConstants {
-    const val OBJECT_CLASS_NAME = "java.lang.Object"
-}
+import soot.*
 
 object MockitoConstants {
     const val mockito_class_name = "org.mockito.Mockito"
@@ -132,4 +121,29 @@ object PrintConstants {
 object CommonClassConstants {
     const val object_class_name = "java.lang.Object"
     const val string_class_name = "java.lang.String"
+}
+
+object ValueOfConstants {
+    const val boolean_valueOf_method_sig = "<java.lang.Boolean: java.lang.Boolean valueOf(boolean)>"
+    const val byte_valueOf_method_sig = "<java.lang.Byte: java.lang.Byte valueOf(byte)>"
+    const val character_valueOf_method_sig = "<java.lang.Character: java.lang.Character valueOf(char)>"
+    const val double_valueOf_method_sig = "<java.lang.Double: java.lang.Double valueOf(double)>"
+    const val float_valueOf_method_sig = "<java.lang.Float: java.lang.Float valueOf(float)>"
+    const val integer_valueOf_method_sig = "<java.lang.Integer: java.lang.Integer valueOf(int)>"
+    const val long_valueOf_method_sig = "<java.lang.Long: java.lang.Long valueOf(long)>"
+    const val short_valueOf_method_sig = "<java.lang.Short: java.lang.Short valueOf(short)>"
+
+    fun PrimType.getValueOfSig(): String {
+        return when (this) {
+            is BooleanType -> boolean_valueOf_method_sig
+            is ByteType -> byte_valueOf_method_sig
+            is CharType -> character_valueOf_method_sig
+            is DoubleType -> double_valueOf_method_sig
+            is FloatType -> float_valueOf_method_sig
+            is IntType -> integer_valueOf_method_sig
+            is LongType -> long_valueOf_method_sig
+            is ShortType -> short_valueOf_method_sig
+            else -> throw Exception("Unsupported primitive type: $this")
+        }
+    }
 }

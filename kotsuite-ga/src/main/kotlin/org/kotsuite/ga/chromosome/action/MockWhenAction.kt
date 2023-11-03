@@ -4,7 +4,6 @@ import org.kotsuite.ga.chromosome.Variable
 import org.kotsuite.ga.chromosome.parameter.Parameter
 import org.kotsuite.soot.MockWhenActionType
 import org.kotsuite.soot.SootUtils.getVisibility
-import org.kotsuite.soot.Visibility
 import soot.SootMethod
 
 class MockWhenAction(

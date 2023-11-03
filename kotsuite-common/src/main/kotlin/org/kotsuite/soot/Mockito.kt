@@ -1,8 +1,8 @@
 package org.kotsuite.soot
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.CommonClassConstants
 import org.kotsuite.MockitoConstants
-import org.kotsuite.ObjectConstants
 import org.kotsuite.soot.SootUtils.getLocalByName
 import org.kotsuite.utils.ASMUtils.getClassDescriptor
 import org.kotsuite.utils.IDUtils
@@ -49,7 +49,7 @@ object Mockito {
         val allocateObj = jimple.newLocal(localName, this)
         val tempObj = jimple.newLocal(
             "tempMockObj${IDUtils.getId()}",
-            RefType.v(ObjectConstants.OBJECT_CLASS_NAME)
+            RefType.v(CommonClassConstants.object_class_name)
         )
 
         body.locals.addAll(listOf(allocateObj, tempObj))

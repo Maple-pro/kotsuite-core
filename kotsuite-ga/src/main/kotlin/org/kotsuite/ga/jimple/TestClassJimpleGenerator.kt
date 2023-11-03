@@ -3,7 +3,6 @@ package org.kotsuite.ga.jimple
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.jimple.TestCaseJimpleGenerator.generateJimpleTestMethod
-import org.kotsuite.soot.Annotation
 import org.kotsuite.soot.SootUtils.generateInitMethod
 import soot.Modifier
 import soot.Scene

@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.JMockKConstants
 import org.kotsuite.JMockKConstants.getVisibilityFieldSig
-import org.kotsuite.ObjectConstants
 import org.kotsuite.soot.SootUtils.getLocalByName
 import org.kotsuite.soot.SootUtils.getObjectName
 import org.kotsuite.soot.SootUtils.getVisibility
@@ -15,14 +14,14 @@ import soot.dava.internal.javaRep.DIntConstant
 import soot.jimple.ClassConstant
 import soot.jimple.IntConstant
 import soot.jimple.Jimple
-import soot.jimple.Ref
-import soot.jimple.StaticFieldRef
 import soot.jimple.StringConstant
 
 object JMockK {
     private val log = LogManager.getLogger()
 
     private val jimple = Jimple.v()
+
+    private val objectType = RefType.v(CommonClassConstants.object_class_name)
 
     private val jmockkClass = Scene.v().getSootClass(JMockKConstants.jmockk_class_name)
     private val jmockkMockkMethod = Scene.v().getMethod(JMockKConstants.mockk_method_sig)
@@ -31,6 +30,7 @@ object JMockK {
     private val jmockkWhenMethod = Scene.v().getMethod(JMockKConstants.when_method_sig)
     private val jmockkThenReturnMethod = Scene.v().getMethod(JMockKConstants.thenReturn_method_sig)
     private val jmockkOngoingStubbingClass = Scene.v().getSootClass(JMockKConstants.ongoingStubbing_class_name)
+    private val jmockkVisibilityClass = Scene.v().getSootClass(JMockKConstants.visibility_class_name)
 
     init {
         if (jmockkClass == null
@@ -63,7 +63,7 @@ object JMockK {
         val allocateObj = jimple.newLocal(localName, this)
         val tempObj = jimple.newLocal(
             "tempMockObj${IDUtils.getId()}",
-            RefType.v(ObjectConstants.OBJECT_CLASS_NAME)
+            objectType
         )
 
         val mockClassConstant = ClassConstant.v(this.sootClass.getClassDescriptor())
@@ -104,7 +104,7 @@ object JMockK {
         val allocateObj = jimple.newLocal(localName, this)
         val tempObj = jimple.newLocal(
             "tempSpyObj${IDUtils.getId()}",
-            RefType.v(ObjectConstants.OBJECT_CLASS_NAME)
+            objectType,
         )
 
         val spyLocal = body.getLocalByName(objectNameToSpy)
@@ -142,6 +142,7 @@ object JMockK {
         mockMethod: SootMethod,
         thenReturnValue: soot.Value,
     ) {
+        // Get mockObject
         val mockObject = body.getLocalByName(mockObjectName)
         if (mockObject == null) {
             val errorMsg = "Cannot find local variable: $mockObjectName"
@@ -149,14 +150,15 @@ object JMockK {
             throw Exception(errorMsg)
         }
 
+        // Get methodVisibility
         val visibility = mockMethod.getVisibility()
-        val visibilityFieldSig = visibility.getVisibilityFieldSig()
-        val visibilityField = Scene.v().getField(visibilityFieldSig).makeRef()
-        val visibilityFieldRef = jimple.newStaticFieldRef(visibilityField)
+        val visibilityFieldLocal = visibility.getVisibilityLocal(body)
 
+        // Get methodName
         val methodNameConstant = StringConstant.v(mockMethod.name)
 
-        val parameterArrayType = ArrayType.v(RefType.v(CommonClassConstants.object_class_name), 1)
+        // Get args
+        val parameterArrayType = ArrayType.v(objectType, 1)
         val parameterArrayLocal = jimple.newLocal(
             "parameterArray${IDUtils.getId()}",
             parameterArrayType
@@ -164,29 +166,55 @@ object JMockK {
         val parameterArrayAssignStmt = jimple.newAssignStmt(
             parameterArrayLocal,
             jimple.newNewArrayExpr(
-                parameterArrayType,
+                objectType,
                 IntConstant.v(0),
             )
         )
 
+        // Get ongoingSubbing
         val ongoingSubbingLocal = jimple.newLocal(jmockkOngoingStubbingClass.getObjectName(), jmockkOngoingStubbingClass.type)
 
+        // Create when statement
         val whenStmt = jimple.newAssignStmt(
             ongoingSubbingLocal,
             jimple.newStaticInvokeExpr(
-                jmockkWhenMethod!!.makeRef(), mockObject, visibilityFieldRef, methodNameConstant, parameterArrayLocal,
+                jmockkWhenMethod!!.makeRef(), mockObject, visibilityFieldLocal, methodNameConstant, parameterArrayLocal,
             )
         )
 
+        // Transform thenReturnValue to Object type
+        val thenReturnValueObject = SootUtils.constantToObject(body, thenReturnValue)
+
+        // Create thenReturn statement
         val thenReturnStmt = jimple.newInvokeStmt(
             jimple.newVirtualInvokeExpr(
                 ongoingSubbingLocal,
                 jmockkThenReturnMethod!!.makeRef(),
-                thenReturnValue
+                thenReturnValueObject,
             )
         )
 
         body.locals.addAll(listOf(parameterArrayLocal, ongoingSubbingLocal))
         body.units.addAll(listOf(parameterArrayAssignStmt, whenStmt, thenReturnStmt))
+    }
+
+    /**
+     * Transform [Visibility] to [Local] with `io.github.maples.jmockk.Visibility` type in soot.
+     */
+    private fun Visibility.getVisibilityLocal(body: Body): Local {
+        val visibilityFieldSig = this.getVisibilityFieldSig()
+        val visibilityFieldRef = Scene.v().getField(visibilityFieldSig).makeRef()
+        val visibilityStaticFieldRef = jimple.newStaticFieldRef(visibilityFieldRef)
+        val visibilityFieldLocal = jimple.newLocal(
+            jmockkVisibilityClass.getObjectName(),
+            RefType.v(jmockkVisibilityClass)
+        )
+
+        val visibilityFieldAssignStmt = jimple.newAssignStmt(visibilityFieldLocal, visibilityStaticFieldRef)
+
+        body.locals.add(visibilityFieldLocal)
+        body.units.add(visibilityFieldAssignStmt)
+
+        return visibilityFieldLocal
     }
 }

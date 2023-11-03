@@ -71,10 +71,10 @@ object RandomStrategy: Strategy() {
                 initializeTargetObjectByTestDouble(testCase, targetObject, targetClass, testDoubleType)
 
                 // 模拟 spyk 对象的行为
-//                val methodsToMock = getMockWhenMethods(targetClass, targetMethod)
-//                methodsToMock.forEach {
-//                    mockBehavior(testCase, targetObject, it)
-//                }
+                val methodsToMock = getMockWhenMethods(targetClass, targetMethod)
+                methodsToMock.forEach {
+                    mockBehavior(testCase, targetObject, it)
+                }
             }
         }
 
