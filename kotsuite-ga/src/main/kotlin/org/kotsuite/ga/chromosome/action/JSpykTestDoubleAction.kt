@@ -14,8 +14,6 @@ class JSpykTestDoubleAction(
         val objectName = variable.localName
         val spykObjectName = spykObject.localName
 
-        val stmt1 = "$className $spykObjectName = new $className()"
-        val stmt2 = "$className $objectName = spyk(new $className())"
-        return "$stmt1\n$stmt2"
+        return "$className $objectName = spyk($spykObjectName)"
     }
 }
