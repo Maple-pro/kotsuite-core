@@ -8,6 +8,9 @@ import org.kotsuite.Configs
 fun main(args: Array<String>) {
 
     val log = LogManager.getLogger()
+    Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+        log.error("Algorithm Crash", "Uncaught exception occurred: $throwable")
+    }
 
     // Deal with parameter options
     val options = Options()
