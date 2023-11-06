@@ -20,12 +20,7 @@ gradle-app.setting
 # Other resources file
 /kotsuite-analyzer/src/test/targets-resources/generated/
 
-/example-projects/MyApplication/final/
-/example-projects/MyApplication/kotsuite/
-/example-projects/MyApplication/sootOutput/
-/example-projects/MyApplication/app/final/
-/example-projects/MyApplication/app/kotsuite/
-/example-projects/MyApplication/app/sootOutput/
-
 docs/
 output/
+
+/kotsuite-client/src/test/kotlin/org/kotsuite/client/Data.kt
