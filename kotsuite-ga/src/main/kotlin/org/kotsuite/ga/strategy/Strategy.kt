@@ -30,7 +30,9 @@ abstract class Strategy {
 
         val methodMap = mutableMapOf<SootClass, List<SootMethod>>()
         filteredClasses.forEach { clazz ->
-            methodMap[clazz] = clazz.methods.filter { Filter.testSuiteGeneratorMethodFilter(it) }
+            methodMap[clazz] = clazz.methods.filter {
+                Filter.testSuiteGeneratorMethodFilter(it)
+            }
         }
 
         targetClasses = filteredClasses.filter {
