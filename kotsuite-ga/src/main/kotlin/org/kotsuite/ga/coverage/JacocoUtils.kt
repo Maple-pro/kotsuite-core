@@ -3,7 +3,8 @@ package org.kotsuite.ga.coverage
 import org.apache.logging.log4j.LogManager
 import org.jacoco.core.runtime.AgentOptions
 import org.kotsuite.Configs
-import org.kotsuite.ga.commands.Commands
+import org.kotsuite.analysis.Dependency
+import org.kotsuite.ga.commands.RunJVMCommands
 import org.kotsuite.ga.commands.KotMainCliOptions
 import org.kotsuite.ga.commands.KotSuiteAgentOptions
 import org.kotsuite.ga.solution.WholeSolution
@@ -62,10 +63,14 @@ object JacocoUtils {
             setMethod(testCaseName)
         }
 
-        val cp = listOf(classesPath, "${Configs.libsPath}/classpath/*",) + Configs.dependencyClassPaths
+        val cp = listOf(
+            classesPath,
+            "${Configs.libsPath}/classpath/*",
+        ) + Dependency.getTestFramework() + Dependency.getTestDependencies() + Configs.dependencyClassPaths
+
         val cpStr = cp.joinToString(File.pathSeparator)
 
-        Commands.runJVMWithKotSuiteAgentAndJacocoAgent(
+        RunJVMCommands.runJVMWithKotSuiteAgentAndJacocoAgent(
             File(Configs.jacocoAgentPath),
             File(Configs.kotsuiteAgentPath),
             jacocoAgentOptions,
@@ -107,7 +112,7 @@ object JacocoUtils {
 
         val cp = listOf(classesPath, "${Configs.libsPath}/classpath/*",) + Configs.dependencyClassPaths
         val cpStr = cp.joinToString(File.pathSeparator)
-        Commands.runJVMWithJacocoAgent(
+        RunJVMCommands.runJVMWithJacocoAgent(
             File(Configs.jacocoAgentPath),
             jacocoAgentOptions,
             kotMainCliOptions,

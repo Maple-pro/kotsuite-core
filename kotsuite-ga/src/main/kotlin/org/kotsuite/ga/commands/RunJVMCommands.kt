@@ -2,10 +2,12 @@ package org.kotsuite.ga.commands
 
 import org.apache.logging.log4j.LogManager
 import org.jacoco.core.runtime.AgentOptions
-import org.kotsuite.utils.LoggerUtils.logCommandOutput
+import org.kotsuite.utils.getError
+import org.kotsuite.utils.getOutput
+import org.kotsuite.utils.logCommandOutput
 import java.io.File
 
-object Commands {
+object RunJVMCommands {
     private val log = LogManager.getLogger()
 
     private val jvmArgs = listOf(
@@ -17,7 +19,9 @@ object Commands {
     private fun runCommand(command: Array<String>) {
         try {
             val ps = Runtime.getRuntime().exec(command)
-            log.logCommandOutput(ps)
+            val psOutput = ps.getOutput()
+            val psError = ps.getError()
+            log.logCommandOutput(psOutput, psError)
             ps.waitFor()
         } catch (e: Exception) {
             log.error(e.stackTraceToString())

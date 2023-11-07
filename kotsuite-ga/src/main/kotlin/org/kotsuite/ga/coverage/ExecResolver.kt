@@ -8,7 +8,9 @@ import org.jacoco.core.analysis.ICounter
 import org.jacoco.core.tools.ExecFileLoader
 import org.kotsuite.Configs
 import org.kotsuite.ga.coverage.fitness.Fitness
-import org.kotsuite.utils.LoggerUtils.logCommandOutput
+import org.kotsuite.utils.getError
+import org.kotsuite.utils.getOutput
+import org.kotsuite.utils.logCommandOutput
 import soot.SootMethod
 import java.io.File
 import java.nio.file.Files
@@ -90,7 +92,9 @@ class ExecResolver(
             }
 
         val ps = Runtime.getRuntime().exec(args)
-        log.logCommandOutput(ps)
+        val psOutput = ps.getOutput()
+        val psError = ps.getError()
+        log.logCommandOutput(psOutput, psError)
         ps.waitFor()
     }
 
@@ -116,7 +120,9 @@ class ExecResolver(
             }
 
         val ps = Runtime.getRuntime().exec(args)
-        log.logCommandOutput(ps)
+        val psOutput = ps.getOutput()
+        val psError = ps.getError()
+        log.logCommandOutput(psOutput, psError)
         ps.waitFor()
     }
 
