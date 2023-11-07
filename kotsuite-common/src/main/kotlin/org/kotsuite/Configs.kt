@@ -11,7 +11,7 @@ object Configs {
     // log related configs
     val sectionLevel: Level = Level.forName("SECTION", 350)
     val successLevel: Level = Level.forName("SUCCESS", 360)
-    const val LOG_COMMAND_OUTPUT = false
+    const val LOG_COMMAND_OUTPUT = true
 
     // project related configs
     lateinit var projectPath: String
@@ -54,6 +54,7 @@ object Configs {
     const val MAX_ATTEMPT = 1
     const val TARGET_LINE_COVERAGE = 0.6  // Line coverage
     const val TARGET_CC_COVERAGE = 0.9  // Cyclomatic complexity coverage
+    const val POPULATION_SIZE = 3
 
     /**
      * Get exec file path

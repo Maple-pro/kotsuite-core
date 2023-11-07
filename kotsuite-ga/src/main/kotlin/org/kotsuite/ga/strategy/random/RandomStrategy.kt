@@ -2,6 +2,7 @@ package org.kotsuite.ga.strategy.random
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
+import org.kotsuite.Configs
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.action.*
@@ -33,7 +34,7 @@ object RandomStrategy: Strategy() {
     fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase>{
         val testCases = ArrayList<TestCase>()
 
-        val testCaseNum = 10
+        val testCaseNum = Configs.POPULATION_SIZE
 
         for (i in 1..testCaseNum) {
             val testCaseName = "test_${targetMethod.name}_$i"
