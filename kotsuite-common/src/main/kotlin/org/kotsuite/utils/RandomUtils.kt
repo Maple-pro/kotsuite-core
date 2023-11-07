@@ -1,6 +1,5 @@
 package org.kotsuite.utils
 
-import soot.PrimType
 import kotlin.random.Random
 
 object RandomUtils {
