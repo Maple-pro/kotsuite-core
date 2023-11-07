@@ -26,7 +26,6 @@ object ActionJimpleGenerator {
      * @param collectReturnValue
      * @return if the action is the last action of the method, return the return value of the method
      */
-    @Throws(Exception::class)
     fun Action.generateJimpleStmt(
         body: Body,
         values: List<ChromosomeValue>,

@@ -12,7 +12,6 @@ object ValueGenerator {
 
     private val log = LogManager.getLogger()
 
-    @Throws(Exception::class)
     fun generatePrimValue(primType: PrimType): ChromosomeValue {
         return when (primType) {
             is BooleanType -> generateBooleanValue()

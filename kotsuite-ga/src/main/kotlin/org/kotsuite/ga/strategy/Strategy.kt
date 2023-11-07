@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.analysis.Analyzer
 import org.kotsuite.Configs
+import org.kotsuite.exception.ClassSolutionGenerationException
+import org.kotsuite.exception.MethodSolutionGenerationException
 import org.kotsuite.ga.chromosome.TestClass
 import org.kotsuite.ga.solution.ClassSolution
 import org.kotsuite.ga.solution.MethodSolution
@@ -48,8 +50,9 @@ abstract class Strategy {
         val classSolutions = targetClasses.map {
             try {
                 generateClassSolution(it)
-            } catch (e: Exception) {
+            } catch (e: ClassSolutionGenerationException) {
                 log.error("Failed to generate class solution for class: $it")
+                log.error(e.message)
                 ClassSolution(it, TestClass("${it.shortName}Test", it.packageName), listOf())
             }
         }
@@ -57,7 +60,6 @@ abstract class Strategy {
         return WholeSolution(classSolutions)
     }
 
-    @Throws(Exception::class)
     open fun generateClassSolution(targetClass: SootClass): ClassSolution {
         log.log(Configs.sectionLevel, "[Class: ${targetClass.name}]")
 
@@ -74,7 +76,7 @@ abstract class Strategy {
             .map {
                 try {
                     generateMethodSolution(it, targetClass)
-                } catch (e: Exception) {
+                } catch (e: MethodSolutionGenerationException) {
                     log.error("Failed to generate method solution for method: $it")
                     log.error("Exception: $e")
                     MethodSolution(it, listOf())
@@ -84,7 +86,6 @@ abstract class Strategy {
         return ClassSolution(targetClass, testClass, methodSolutions)
     }
 
-    @Throws(Exception::class)
     abstract fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution
 
     private fun prettyLogTargets() {

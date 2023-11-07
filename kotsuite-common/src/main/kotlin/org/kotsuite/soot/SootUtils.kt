@@ -19,7 +19,6 @@ object SootUtils {
      * @param localName
      * @return
      */
-    @Throws(Exception::class)
     fun SootMethod.getLocalByName(localName: String): Local? {
         val body = this.activeBody
         return body.getLocalByName(localName)
