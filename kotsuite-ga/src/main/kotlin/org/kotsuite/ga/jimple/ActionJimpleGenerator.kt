@@ -2,7 +2,6 @@ package org.kotsuite.ga.jimple
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.ga.chromosome.action.*
-import org.kotsuite.ga.chromosome.parameter.ArrayParameter
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.jimple.TestDoubleActionJimpleGenerator.generateMockObjectStmt
 import org.kotsuite.ga.jimple.MockWhenActionJimpleGenerator.generateMockWhenStmt
