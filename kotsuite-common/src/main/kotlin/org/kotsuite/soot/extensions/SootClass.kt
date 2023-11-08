@@ -5,6 +5,8 @@ import org.kotsuite.utils.IDUtils
 import soot.*
 import soot.jimple.Jimple
 
+private val jimple = Jimple.v()
+
 fun SootClass.getInstanceName(): String {
     val objName = this.shortName.replaceFirstChar { it.lowercaseChar() }
     return "${objName}Obj${IDUtils.getId()}"
@@ -25,13 +27,33 @@ fun SootClass.getConstructor(): SootMethod? {
 }
 
 /**
+ * Get the `INSTANCE` field of an object class
+ */
+fun SootClass.getInstanceLocal(body: Body, localName: String): Local? {
+    if (!this.isObject()) {
+        return null
+    }
+
+    val instanceLocal = jimple.newLocal(localName, this.type)
+    val instanceLocalAssignStmt = jimple.newAssignStmt(
+        instanceLocal,
+        jimple.newStaticFieldRef(
+            this.getField("INSTANCE", this.type).makeRef()
+        )
+    )
+
+    body.locals.add(instanceLocal)
+    body.units.add(instanceLocalAssignStmt)
+
+    return instanceLocal
+}
+
+/**
  * Create init method for a soot class
  *
  * @return init method
  */
 fun SootClass.generateInitMethod(): SootMethod {
-    val jimple = Jimple.v()
-
     // Create a constructor method
     val constructorMethod = SootMethod("<init>", null, VoidType.v(), Modifier.PUBLIC)
 

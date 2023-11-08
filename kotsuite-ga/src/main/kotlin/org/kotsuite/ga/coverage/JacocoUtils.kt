@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.jacoco.core.runtime.AgentOptions
 import org.kotsuite.Configs
 import org.kotsuite.analysis.Dependency
-import org.kotsuite.ga.commands.RunJVMCommands
+import org.kotsuite.ga.commands.TestRunner
 import org.kotsuite.ga.commands.KotMainCliOptions
 import org.kotsuite.ga.commands.KotSuiteAgentOptions
 import org.kotsuite.ga.solution.WholeSolution
@@ -27,6 +27,7 @@ object JacocoUtils {
      * @param execDataFile the generated exec file path
      * @param assertFile the generated assert file path
      * @param classesPath classes path where exists the classes
+     * @return test case running result
      */
     fun generateTestCaseExecFile(
         mainClassName: String,
@@ -38,7 +39,7 @@ object JacocoUtils {
         execDataFile: String,
         assertFile: String,
         classesPath: String,
-    ) {
+    ): Boolean {
         val jacocoAgentOptions = AgentOptions()
         with(jacocoAgentOptions) {
             includes = Configs.includeFiles
@@ -63,14 +64,15 @@ object JacocoUtils {
             setMethod(testCaseName)
         }
 
-        val cp = listOf(
-            classesPath,
-            "${Configs.libsPath}/classpath/*",
-        ) + Dependency.getTestFramework() + Dependency.getTestDependencies() + Configs.dependencyClassPaths
+        val cp = listOf(classesPath) + // the target class files path of the project, e.g., sootOutput/
+                Configs.dependencyClassPaths + // the dependency class paths of the project
+                Dependency.getClassPath() + // the classpath jars from libs/
+                Dependency.getTestFramework() + // the test framework jars from libs/
+                Dependency.getTestDependencies() // the test dependencies jars from libs/
 
         val cpStr = cp.joinToString(File.pathSeparator)
 
-        RunJVMCommands.runJVMWithKotSuiteAgentAndJacocoAgent(
+        return TestRunner.runTestCaseWithKotSuiteAgentAndJacocoAgent(
             File(Configs.jacocoAgentPath),
             File(Configs.kotsuiteAgentPath),
             jacocoAgentOptions,
@@ -79,7 +81,6 @@ object JacocoUtils {
             mainClassName,
             cpStr,
         )
-
     }
 
     /**
@@ -110,9 +111,15 @@ object JacocoUtils {
             setMethod("*")
         }
 
-        val cp = listOf(classesPath, "${Configs.libsPath}/classpath/*",) + Configs.dependencyClassPaths
+        val cp = listOf(classesPath) + // the target class files path of the project, e.g., sootOutput/
+                Configs.dependencyClassPaths + // the dependency class paths of the project
+                Dependency.getClassPath() + // the classpath jars from libs/
+                Dependency.getTestFramework() + // the test framework jars from libs/
+                Dependency.getTestDependencies() // the test dependencies jars from libs/
+
         val cpStr = cp.joinToString(File.pathSeparator)
-        RunJVMCommands.runJVMWithJacocoAgent(
+
+        TestRunner.runTestSuiteWithJacocoAgent(
             File(Configs.jacocoAgentPath),
             jacocoAgentOptions,
             kotMainCliOptions,

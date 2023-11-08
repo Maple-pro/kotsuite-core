@@ -87,7 +87,7 @@ object PrimitiveConstants {
     const val long_constructor_method_sig = "<java.lang.Long: void <init>(long)>"
 
     const val string_class_name = "java.lang.String"
-    const val string_constructor_method_sig = "<java.lang.String: void <init>(string)>"
+    const val string_constructor_method_sig = "<java.lang.String: void <init>()>"
 }
 
 object PrintConstants {

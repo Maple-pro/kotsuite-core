@@ -7,7 +7,7 @@ import org.kotsuite.utils.getOutput
 import org.kotsuite.utils.logCommandOutput
 import java.io.File
 
-object RunJVMCommands {
+object TestRunner {
     private val log = LogManager.getLogger()
 
     private val jvmArgs = listOf(
@@ -16,15 +16,25 @@ object RunJVMCommands {
         "-Dnet.bytebuddy.experimental=true",
     )
 
-    private fun runCommand(command: Array<String>) {
-        try {
+    /**
+     * Run test case or test suite
+     *
+     * @param command java command to run the test case or test suite
+     * @return the test result
+     */
+    private fun runCommand(command: Array<String>): Boolean {
+        return try {
             val ps = Runtime.getRuntime().exec(command)
+            ps.waitFor()
+
             val psOutput = ps.getOutput()
             val psError = ps.getError()
             log.logCommandOutput(psOutput, psError)
-            ps.waitFor()
+
+            TestRunnerUtils.getTestResult(psOutput)
         } catch (e: Exception) {
             log.error(e.stackTraceToString())
+            false
         }
     }
 
@@ -40,8 +50,9 @@ object RunJVMCommands {
      * @param kotsuiteAgentOptions
      * @param mainClassName
      * @param classPath
+     * @return the test result
      */
-    fun runJVMWithKotSuiteAgentAndJacocoAgent(
+    fun runTestCaseWithKotSuiteAgentAndJacocoAgent(
         jacocoAgentJarFile: File,
         kotsuiteAgentJarFile: File,
         jacocoAgentOptions: AgentOptions,
@@ -49,7 +60,7 @@ object RunJVMCommands {
         cliArguments: KotMainCliOptions,
         mainClassName: String,
         classPath: String,
-    ) {
+    ): Boolean {
         val jacocoOptionsStr = getJacocoVMArgument(jacocoAgentOptions, jacocoAgentJarFile)
         val kotsuiteOptionsStr = kotsuiteAgentOptions.getVMArgument(kotsuiteAgentJarFile)
         val cliArgumentsArr = cliArguments.getCliArguments()
@@ -60,7 +71,7 @@ object RunJVMCommands {
             "-cp", classPath,
         )
         val command = arrayOf("java") + jvmArgs + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
-        runCommand(command)
+        return runCommand(command)
     }
 
     /**
@@ -72,14 +83,15 @@ object RunJVMCommands {
      * @param jacocoAgentOptions
      * @param mainClassName
      * @param classPath
+     * @return the test result
      */
-    fun runJVMWithJacocoAgent(
+    fun runTestSuiteWithJacocoAgent(
         jacocoAgentJarFile: File,
         jacocoAgentOptions: AgentOptions,
         cliArguments: KotMainCliOptions,
         mainClassName: String,
         classPath: String,
-    ) {
+    ): Boolean {
         val jacocoOptionsStr = getJacocoVMArgument(jacocoAgentOptions, jacocoAgentJarFile)
         val vmArguments = listOf(
             jacocoOptionsStr,
@@ -88,7 +100,7 @@ object RunJVMCommands {
         val cliArgumentsArr = cliArguments.getCliArguments()
 
         val command = arrayOf("java") + jvmArgs + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
-        runCommand(command)
+        return runCommand(command)
     }
 
     private fun getJacocoVMArgument(jacocoAgentOptions: AgentOptions, jacocoAgentJarFile: File): String {

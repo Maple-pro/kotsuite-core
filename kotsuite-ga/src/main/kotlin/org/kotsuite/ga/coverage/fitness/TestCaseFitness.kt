@@ -26,7 +26,7 @@ class TestCaseFitness(
         val targetMethod = testCase.targetMethod
         val targetClass = targetMethod.declaringClass
         val targetMethodDesc = testCase.targetMethod.getMethodDescription() // Util: create method desc for a soot method
-        JacocoUtils.generateTestCaseExecFile(
+        val testCaseResult = JacocoUtils.generateTestCaseExecFile(
             Configs.mainClass,
             jimpleTestClass.name,
             testCase.testCaseName,
@@ -37,6 +37,7 @@ class TestCaseFitness(
             assertFilePath,
             Configs.sootOutputPath,
         )
+        testCase.testResult = testCaseResult // Get the running result of the test case
         generateFitness()
 
         return execDataFile

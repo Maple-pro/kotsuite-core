@@ -6,6 +6,7 @@ import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.jimple.TestDoubleActionJimpleGenerator.generateMockObjectStmt
 import org.kotsuite.ga.jimple.MockWhenActionJimpleGenerator.generateMockWhenStmt
 import org.kotsuite.ga.jimple.ParameterJimpleGenerator.generateJimpleValue
+import org.kotsuite.soot.extensions.getInstanceLocal
 import org.kotsuite.soot.extensions.getLocalByName
 import soot.*
 import soot.Unit
@@ -41,6 +42,9 @@ object ActionJimpleGenerator {
             is ConstructorAction -> {
                 generateConstructorAction(body, this, args)
             }
+            is GetInstanceAction -> {
+                generateGetInstanceAction(body, this)
+            }
             is TestDoubleAction -> {
                 this.generateMockObjectStmt(body)
             }
@@ -69,6 +73,11 @@ object ActionJimpleGenerator {
 
         body.locals.add(allocateObj)
         body.units.addAll(listOf(allocateObjAssignStmt, invokeStmt))
+    }
+
+    private fun generateGetInstanceAction(body: Body, action: GetInstanceAction) {
+        val sootClass = action.targetClass
+        sootClass.getInstanceLocal(body, action.variable.localName)
     }
 
     private fun generateMethodCallAction(

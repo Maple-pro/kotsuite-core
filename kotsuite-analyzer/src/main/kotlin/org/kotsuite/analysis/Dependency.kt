@@ -5,6 +5,14 @@ import java.io.File
 
 object Dependency {
     /**
+     * Get jars from the `libs/classpath/` directory
+     */
+    fun getClassPath(): List<String> {
+        val classPathLibs = File("${Configs.libsPath}/classpath")
+        return getAllJarFilePaths(classPathLibs)
+    }
+
+    /**
      * Get test framework jars from the `libs/test-framework/` directory,
      * which is used to generate statements in the test suite.
      */

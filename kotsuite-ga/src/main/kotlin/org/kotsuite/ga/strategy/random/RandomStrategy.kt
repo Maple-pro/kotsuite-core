@@ -12,6 +12,7 @@ import org.kotsuite.soot.MockWhenActionType
 import org.kotsuite.soot.extensions.getConstructor
 import org.kotsuite.soot.TestDoubleType
 import org.kotsuite.soot.extensions.getInstanceName
+import org.kotsuite.soot.extensions.isObject
 import soot.*
 import kotlin.collections.ArrayList
 
@@ -77,6 +78,11 @@ object RandomStrategy: Strategy() {
                     mockBehavior(testCase, targetObject, it)
                 }
             }
+            InitializationType.INSTANCE -> {
+                initializeTargetObjectByInstance(testCase, targetObject, targetClass)
+
+                // TODO: mockObject?
+            }
         }
 
         val methodCallParameters = createMethodParameters(testCase, targetMethod)
@@ -116,6 +122,15 @@ object RandomStrategy: Strategy() {
         // Generate constructor action
         val constructorAction = generateConstructorAction(targetObject, targetClass, constructor, constructorParameters)
         testCase.actions.add(constructorAction)
+    }
+
+    private fun initializeTargetObjectByInstance(
+        testCase: TestCase,
+        targetObject: Variable,
+        targetClass: SootClass,
+    ) {
+        val getInstanceAction = GetInstanceAction(targetObject, targetClass)
+        testCase.actions.add(getInstanceAction)
     }
 
     /**
@@ -312,7 +327,11 @@ object RandomStrategy: Strategy() {
      * Get initialization type, constructor or test double?
      */
     private fun SootClass.getInitializationType(): InitializationType {
-        return InitializationType.TEST_DOUBLE
+        return if (this.isObject()) {
+            InitializationType.INSTANCE
+        } else {
+            InitializationType.TEST_DOUBLE
+        }
     }
 
     /**

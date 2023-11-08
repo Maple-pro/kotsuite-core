@@ -13,4 +13,5 @@ class TestCase(
     val values = mutableListOf<ChromosomeValue>()
     var assertion: Assertion? = null
     var fitness: Fitness? = null
+    var testResult = true
 }

@@ -111,7 +111,8 @@ class MainTest {
         val sourcePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar/app/src/main/kotlin"
         val dependency = Data.simpleCalendarDependencies.joinToString(File.pathSeparator)
 
-        val includeRules = "com.simplemobiletools.calendar.pro.helpers.EventsHelper"
+//        val includeRules = "com.simplemobiletools.calendar.pro.helpers.EventsHelper"
+        val includeRules = "com.simplemobiletools.calendar.pro.helpers.Formatter"
 
         val args = arrayOf(
             "--project", projectPath,

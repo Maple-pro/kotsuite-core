@@ -21,7 +21,6 @@ object PrimitiveAssertionJimpleGenerator {
             || assertion.assertType.isEmpty()
             || assertion.assertValue.isEmpty()
         ) {
-            log.warn("Cannot add assertion statement")
             return
         }
 
@@ -72,7 +71,11 @@ object PrimitiveAssertionJimpleGenerator {
             }
         }
 
-        val expectedObject = createExpectedObject(body, expectedValue, className, constructorMethodSig)
+        val expectedObject = if (assertTypeJavaClass == "java.lang.String") {
+            StringConstant.v(assertValue)
+        } else {
+            createExpectedObject(body, expectedValue, className, constructorMethodSig)
+        }
         createAssertionStatement(body, expectedObject, actualValue)
     }
 
@@ -131,7 +134,7 @@ object PrimitiveAssertionJimpleGenerator {
         return expectedObject
     }
 
-    private fun createAssertionStatement(body: Body, expectedObject: Local, actualValue: Local) {
+    private fun createAssertionStatement(body: Body, expectedObject: Value, actualValue: Local) {
         val invokeStmt = jimple.newInvokeStmt(
             jimple.newStaticInvokeExpr(assertEqualsMethodRef, expectedObject, actualValue)
         )
