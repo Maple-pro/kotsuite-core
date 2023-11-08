@@ -9,9 +9,9 @@ import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.parameter.*
 import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.soot.MockWhenActionType
-import org.kotsuite.soot.SootUtils.getConstructor
+import org.kotsuite.soot.extensions.getConstructor
 import org.kotsuite.soot.TestDoubleType
-import org.kotsuite.soot.SootUtils.getObjectName
+import org.kotsuite.soot.extensions.getInstanceName
 import soot.*
 import kotlin.collections.ArrayList
 
@@ -57,7 +57,7 @@ object RandomStrategy: Strategy() {
     private fun generateTestCaseForMethod(targetMethod: SootMethod, testCaseName: String): TestCase {
         val testCase = TestCase(testCaseName, targetMethod)
         val targetClass = targetMethod.declaringClass
-        val targetObjectName = targetClass.getObjectName()
+        val targetObjectName = targetClass.getInstanceName()
         val targetObject = Variable(targetObjectName, targetClass.type)
 
         // 初始化实例对象
@@ -144,7 +144,7 @@ object RandomStrategy: Strategy() {
                 testCase.actions.add(testDoubleAction)
             }
             TestDoubleType.JMOCKK_SPY -> {
-                val objectToSpyk = Variable(targetClass.getObjectName(), targetClass.type)
+                val objectToSpyk = Variable(targetClass.getInstanceName(), targetClass.type)
                 initializeTargetObjectByConstructor(testCase, objectToSpyk, targetClass)
 
                 val testDoubleAction = generateJSpykTestDoubleAction(targetObject, objectToSpyk, targetClass)
@@ -290,7 +290,7 @@ object RandomStrategy: Strategy() {
                     testCase.values.add(value)
                     StringParameter(testCase.values.size - 1)
                 } else {
-                    val parameterVariable = Variable(type.sootClass.getObjectName(), type)
+                    val parameterVariable = Variable(type.sootClass.getInstanceName(), type)
                     initializeTargetObjectByTestDouble(testCase, parameterVariable, type.sootClass, TestDoubleType.JMOCKK_MOCK)
                     RefTypeParameter(parameterVariable)
                 }

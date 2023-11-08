@@ -4,9 +4,9 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.JMockKConstants
 import org.kotsuite.JMockKConstants.getVisibilityFieldSig
-import org.kotsuite.soot.SootUtils.getLocalByName
-import org.kotsuite.soot.SootUtils.getObjectName
-import org.kotsuite.soot.SootUtils.getVisibility
+import org.kotsuite.soot.extensions.getLocalByName
+import org.kotsuite.soot.extensions.getInstanceName
+import org.kotsuite.soot.extensions.getVisibility
 import org.kotsuite.utils.ASMUtils.getClassDescriptor
 import org.kotsuite.utils.IDUtils
 import soot.*
@@ -172,7 +172,7 @@ object JMockK {
         )
 
         // Get ongoingSubbing
-        val ongoingSubbingLocal = jimple.newLocal(jmockkOngoingStubbingClass.getObjectName(), jmockkOngoingStubbingClass.type)
+        val ongoingSubbingLocal = jimple.newLocal(jmockkOngoingStubbingClass.getInstanceName(), jmockkOngoingStubbingClass.type)
 
         // Create when statement
         val whenStmt = jimple.newAssignStmt(
@@ -206,7 +206,7 @@ object JMockK {
         val visibilityFieldRef = Scene.v().getField(visibilityFieldSig).makeRef()
         val visibilityStaticFieldRef = jimple.newStaticFieldRef(visibilityFieldRef)
         val visibilityFieldLocal = jimple.newLocal(
-            jmockkVisibilityClass.getObjectName(),
+            jmockkVisibilityClass.getInstanceName(),
             RefType.v(jmockkVisibilityClass)
         )
 

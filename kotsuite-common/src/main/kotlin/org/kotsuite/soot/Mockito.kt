@@ -3,7 +3,7 @@ package org.kotsuite.soot
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.MockitoConstants
-import org.kotsuite.soot.SootUtils.getLocalByName
+import org.kotsuite.soot.extensions.getLocalByName
 import org.kotsuite.utils.ASMUtils.getClassDescriptor
 import org.kotsuite.utils.IDUtils
 import soot.*

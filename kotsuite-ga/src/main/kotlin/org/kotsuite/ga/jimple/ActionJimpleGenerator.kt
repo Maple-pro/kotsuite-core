@@ -6,7 +6,7 @@ import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.jimple.TestDoubleActionJimpleGenerator.generateMockObjectStmt
 import org.kotsuite.ga.jimple.MockWhenActionJimpleGenerator.generateMockWhenStmt
 import org.kotsuite.ga.jimple.ParameterJimpleGenerator.generateJimpleValue
-import org.kotsuite.soot.SootUtils.getLocalByName
+import org.kotsuite.soot.extensions.getLocalByName
 import soot.*
 import soot.Unit
 import soot.jimple.Jimple
