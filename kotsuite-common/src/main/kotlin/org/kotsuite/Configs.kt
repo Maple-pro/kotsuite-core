@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object Configs {
-    const val KOTSUITE_CORE_VERSION = "1.1.2"
+    const val KOTSUITE_CORE_VERSION = "1.1.3"
 
     const val ONLY_SUCCESS = false // Only output successful test cases
 
