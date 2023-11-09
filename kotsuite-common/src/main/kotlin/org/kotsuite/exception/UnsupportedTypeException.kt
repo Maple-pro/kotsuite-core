@@ -1,11 +1,6 @@
 package org.kotsuite.exception
 
-/**
- * Class solution generation exception.
- *
- * When this exception occurred, it should end the process of the current class solution generation.
- */
-open class ClassSolutionGenerationException : KotSuiteException {
+class UnsupportedTypeException : MethodSolutionGenerationException {
     constructor() : super()
     constructor(message: String) : super(message)
     constructor(message: String, cause: Throwable) : super(message, cause)

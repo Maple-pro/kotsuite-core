@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.JMockKConstants
 import org.kotsuite.JMockKConstants.getVisibilityFieldSig
+import org.kotsuite.exception.LocalNotFoundException
+import org.kotsuite.exception.MissingDependencyException
 import org.kotsuite.soot.extensions.getLocalByName
 import org.kotsuite.soot.extensions.getInstanceName
 import org.kotsuite.soot.extensions.getVisibility
@@ -41,7 +43,7 @@ object JMockK {
             || jmockkThenReturnMethod == null
         ) {
             log.error("Does not have JMockK dependency")
-            throw Exception("Does not have JMockK dependency")
+            throw MissingDependencyException("Does not have JMockK dependency")
         }
     }
 
@@ -111,7 +113,7 @@ object JMockK {
         if (spyLocal == null){
             val errorMsg = "Cannot find local variable: $objectNameToSpy"
             log.error(errorMsg)
-            throw Exception(errorMsg)
+            throw LocalNotFoundException(errorMsg)
         }
 
         val spyStmt = jimple.newAssignStmt(
@@ -147,7 +149,7 @@ object JMockK {
         if (mockObject == null) {
             val errorMsg = "Cannot find local variable: $mockObjectName"
             log.error(errorMsg)
-            throw Exception(errorMsg)
+            throw LocalNotFoundException(errorMsg)
         }
 
         // Get methodVisibility

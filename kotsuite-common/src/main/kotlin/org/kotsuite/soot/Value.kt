@@ -1,6 +1,8 @@
 package org.kotsuite.soot
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.exception.UnsupportedTypeException
+import org.kotsuite.exception.WrongTypeException
 import org.kotsuite.utils.RandomUtils
 import soot.*
 import soot.Value
@@ -22,7 +24,7 @@ object Value {
             is ShortType -> generateShortValue(RandomUtils.generateShort())
             else -> {
                 log.error("Unsupported PrimType: $this")
-                throw Exception("Unsupported PrimType: $this")
+                throw UnsupportedTypeException("Unsupported PrimType: $this")
             }
         }
     }
@@ -37,62 +39,62 @@ object Value {
             is BooleanType -> {
                 if (concreteValue !is Boolean) {
                     log.error("Wrong concrete value type: $concreteValue")
-                    throw Exception("Wrong concrete value type: $concreteValue")
+                    throw WrongTypeException("Wrong concrete value type: $concreteValue")
                 }
                 generateBooleanValue(concreteValue)
             }
             is ByteType -> {
                 if (concreteValue !is Byte) {
                     log.error("Wrong concrete value type: $concreteValue")
-                    throw Exception("Wrong concrete value type: $concreteValue")
+                    throw WrongTypeException("Wrong concrete value type: $concreteValue")
                 }
                 generateByteValue(concreteValue)
             }
             is CharType -> {
                 if (concreteValue !is Char) {
                     log.error("Wrong concrete value type: $concreteValue")
-                    throw Exception("Wrong concrete value type: $concreteValue")
+                    throw WrongTypeException("Wrong concrete value type: $concreteValue")
                 }
                 generateCharValue(concreteValue)
             }
             is DoubleType -> {
                 if (concreteValue !is Double) {
                     log.error("Wrong concrete value type: $concreteValue")
-                    throw Exception("Wrong concrete value type: $concreteValue")
+                    throw WrongTypeException("Wrong concrete value type: $concreteValue")
                 }
                 generateDoubleValue(concreteValue)
             }
             is FloatType -> {
                 if (concreteValue !is Float) {
                     log.error("Wrong concrete value type: $concreteValue")
-                    throw Exception("Wrong concrete value type: $concreteValue")
+                    throw WrongTypeException("Wrong concrete value type: $concreteValue")
                 }
                 generateFloatValue(concreteValue)
             }
             is IntType -> {
                 if (concreteValue !is Int) {
                     log.error("Wrong concrete value type: $concreteValue")
-                    throw Exception("Wrong concrete value type: $concreteValue")
+                    throw WrongTypeException("Wrong concrete value type: $concreteValue")
                 }
                 generateIntValue(concreteValue)
             }
             is LongType -> {
                 if (concreteValue !is Long) {
                     log.error("Wrong concrete value type: $concreteValue")
-                    throw Exception("Wrong concrete value type: $concreteValue")
+                    throw WrongTypeException("Wrong concrete value type: $concreteValue")
                 }
                 generateLongValue(concreteValue)
             }
             is ShortType -> {
                 if (concreteValue !is Short) {
                     log.error("Wrong concrete value type: $concreteValue")
-                    throw Exception("Wrong concrete value type: $concreteValue")
+                    throw WrongTypeException("Wrong concrete value type: $concreteValue")
                 }
                 generateShortValue(concreteValue)
             }
             else -> {
                 log.error("Unsupported PrimType: $this")
-                throw Exception("Unsupported PrimType: $this")
+                throw UnsupportedTypeException("Unsupported PrimType: $this")
             }
         }
     }

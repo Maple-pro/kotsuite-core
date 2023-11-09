@@ -3,6 +3,8 @@ package org.kotsuite.ga.strategy.random
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.Configs
+import org.kotsuite.exception.ConstructorNotFoundException
+import org.kotsuite.exception.UnsupportedTypeException
 import org.kotsuite.ga.strategy.Strategy
 import org.kotsuite.ga.chromosome.*
 import org.kotsuite.ga.chromosome.action.*
@@ -113,7 +115,7 @@ object RandomStrategy: Strategy() {
         if (constructor == null) {
             val errorMsg = "There is no constructor for class ${targetClass.name}"
             log.error(errorMsg)
-            throw Exception(errorMsg)
+            throw ConstructorNotFoundException(errorMsg)
         }
 
         // Create parameters of the constructor method
@@ -318,7 +320,7 @@ object RandomStrategy: Strategy() {
             else -> {
                 val errorMsg = "Unsupported parameter type: $type"
                 log.error(errorMsg)
-                throw Exception(errorMsg)
+                throw UnsupportedTypeException(errorMsg)
             }
         }
     }

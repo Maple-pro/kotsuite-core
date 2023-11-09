@@ -2,6 +2,7 @@ package org.kotsuite.ga.strategy.random
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
+import org.kotsuite.exception.UnsupportedTypeException
 import org.kotsuite.ga.chromosome.value.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.utils.RandomUtils
@@ -24,7 +25,7 @@ object ValueGenerator {
             is ShortType -> generateShortValue()
             else -> {
                 log.error("Unsupported value type: $primType")
-                throw Exception("Unsupported value type: $primType")
+                throw UnsupportedTypeException("Unsupported value type: $primType")
             }
         }
     }
@@ -112,7 +113,7 @@ object ValueGenerator {
             }
             else -> {
                 log.error("Unsupported value type: $type")
-                throw Exception("Unsupported value type: $type")
+                throw UnsupportedTypeException("Unsupported value type: $type")
             }
         }
     }

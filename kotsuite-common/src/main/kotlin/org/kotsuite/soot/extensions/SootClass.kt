@@ -16,14 +16,11 @@ fun SootClass.getInstanceName(): String {
  * Get constructor of a soot class
  */
 fun SootClass.getConstructor(): SootMethod? {
-    return try {
-        this.getMethodByName("<init>")
-    } catch (ex: RuntimeException) {
-        if (this.methods.none { it.name == "<init>" }) {
-            return null
-        }
-        this.methods.first { it.name == "<init>" }
+    if (this.methods.none { it.name == "<init>" && it.isPublic }) {
+        return null
     }
+
+    return this.methods.first { it.name == "<init>" && it.isPublic }
 }
 
 /**

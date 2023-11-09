@@ -3,6 +3,7 @@ package org.kotsuite.soot
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.ValueOfConstants.getValueOfSig
+import org.kotsuite.exception.AnalyzerException
 import org.kotsuite.soot.extensions.getConstructor
 import org.kotsuite.utils.IDUtils
 import soot.*
@@ -103,13 +104,19 @@ object SootUtils {
      * @param targetClass
      * @return instance local
      */
+    @Throws(AnalyzerException::class)
     private fun generateInstance(body: Body, targetClass: SootClass): Local? {
         val jimple = Jimple.v()
         val instanceName = "dummy${targetClass.shortName}Obj"  // instance obj name, e.g., dummyExampleObj
         val allocatedTargetObj = jimple.newLocal(instanceName, targetClass.type)
         val assignStmt = jimple.newAssignStmt(allocatedTargetObj, jimple.newNewExpr(targetClass.type))
 
-        val constructorMethod = targetClass.getConstructor() ?: return null
+        val constructorMethod = targetClass.getConstructor()
+        if (constructorMethod == null) {
+            val errorMsg = "Cannot find constructor of class ${targetClass.name}"
+            log.error(errorMsg)
+            throw AnalyzerException(errorMsg)
+        }
 
         val constructorArgs = Collections.nCopies(constructorMethod.parameterCount, NullConstant.v())
         val constructorInvokeStmt = jimple.newInvokeStmt(

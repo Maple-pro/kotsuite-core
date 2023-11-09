@@ -53,6 +53,7 @@ abstract class Strategy {
             } catch (e: ClassSolutionGenerationException) {
                 log.error("Failed to generate class solution for class: $it")
                 log.error(e.message)
+                log.error(e.stackTraceToString())
                 ClassSolution(it, TestClass("${it.shortName}Test", it.packageName), listOf())
             }
         }
@@ -78,7 +79,8 @@ abstract class Strategy {
                     generateMethodSolution(it, targetClass)
                 } catch (e: MethodSolutionGenerationException) {
                     log.error("Failed to generate method solution for method: $it")
-                    log.error("Exception: $e")
+                    log.error(e.message)
+                    log.error(e.stackTraceToString())
                     MethodSolution(it, listOf())
                 }
             }

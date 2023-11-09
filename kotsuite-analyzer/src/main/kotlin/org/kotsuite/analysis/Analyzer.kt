@@ -3,6 +3,7 @@ package org.kotsuite.analysis
 import com.google.gson.GsonBuilder
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
+import org.kotsuite.exception.AnalyzerException
 import org.kotsuite.soot.SootUtils
 import soot.*
 import soot.options.Options
@@ -110,14 +111,22 @@ object Analyzer {
      * @param methodSig method signature of the target method
      * @return the soot method of the target method
      */
-    private fun createTestTarget(methodSig: MethodSignature): SootMethod {
+    private fun createTestTarget(methodSig: MethodSignature): SootMethod? {
         val sootTestMethod = getMethodForSig(methodSig)
-        val targetClass = makeDummyClass(sootTestMethod)
-        Scene.v().addClass(targetClass)
-        targetClass.setApplicationClass()
-        Scene.v().entryPoints = listOf(targetClass.getMethodByName("main"))
+        return try {
+            val targetClass = makeDummyClass(sootTestMethod)
+            Scene.v().addClass(targetClass)
+            targetClass.setApplicationClass()
+            Scene.v().entryPoints = listOf(targetClass.getMethodByName("main"))
 
-        return sootTestMethod
+            sootTestMethod
+        } catch (e: AnalyzerException) {
+            log.error("Cannot make dummy class")
+            log.error(e.message)
+            log.error(e.stackTraceToString())
+
+            null
+        }
     }
 
     /**

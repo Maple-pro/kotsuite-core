@@ -1,6 +1,7 @@
 package org.kotsuite.ga.jimple
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.exception.UnsupportedTypeException
 import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
 import org.kotsuite.ga.jimple.TestDoubleActionJimpleGenerator.generateMockObjectStmt
@@ -56,7 +57,7 @@ object ActionJimpleGenerator {
             }
             else -> {
                 log.error("Unimplemented action type: $this")
-                throw Exception("Unimplemented action type: $this")
+                throw UnsupportedTypeException("Unimplemented action type: $this")
             }
         }
 

@@ -3,6 +3,8 @@ package org.kotsuite.soot
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.MockitoConstants
+import org.kotsuite.exception.MissingDependencyException
+import org.kotsuite.exception.UnsupportedTypeException
 import org.kotsuite.soot.extensions.getLocalByName
 import org.kotsuite.utils.ASMUtils.getClassDescriptor
 import org.kotsuite.utils.IDUtils
@@ -28,7 +30,7 @@ object Mockito {
             || mockitoThenReturnMethod == null
         ) {
             log.error("Does not have Mockito dependency")
-            throw Exception("Does not have Mockito dependency")
+            throw MissingDependencyException("Does not have Mockito dependency")
         }
     }
 
@@ -59,7 +61,7 @@ object Mockito {
             TestDoubleType.MOCKITO_SPY -> mockitoSpyMethod!!.makeRef()
             else -> {
                 log.error("Unsupported test double type: $mockType")
-                throw Exception("Unsupported test double type: $mockType")
+                throw UnsupportedTypeException("Unsupported test double type: $mockType")
             }
         }
 

@@ -2,9 +2,11 @@ package org.kotsuite.ga.decompile
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
+import org.kotsuite.exception.DecompileException
 import org.kotsuite.utils.getError
 import org.kotsuite.utils.getOutput
 import org.kotsuite.utils.logCommandOutput
+import java.io.IOException
 
 /**
  * Decompile .class file to java file and kotlin file
@@ -34,9 +36,9 @@ object Decompiler {
             val psError = ps.getError()
             log.logCommandOutput(psOutput, psError)
             ps.waitFor()
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             log.error("Failed to decompile jasmin to java")
-            log.error(e.stackTraceToString())
+            throw DecompileException("Failed to decompile jasmin to java", e)
         }
     }
 }

@@ -3,6 +3,7 @@ package org.kotsuite.ga.jimple
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.AssertionConstants
 import org.kotsuite.PrimitiveConstants
+import org.kotsuite.exception.UnsupportedTypeException
 import org.kotsuite.ga.chromosome.TestCase
 import soot.*
 import soot.dava.internal.javaRep.DIntConstant
@@ -67,7 +68,7 @@ object PrimitiveAssertionJimpleGenerator {
                 constructorMethodSig = PrimitiveConstants.string_constructor_method_sig
             }
             else -> {
-                throw Exception("Unsupported assert type: $assertTypeJavaClass")
+                throw UnsupportedTypeException("Unsupported assert type: $assertTypeJavaClass")
             }
         }
 
@@ -103,7 +104,7 @@ object PrimitiveAssertionJimpleGenerator {
             "java.lang.Long" -> LongConstant.v(assertValue.toLong())
             "java.lang.String" -> StringConstant.v(assertValue)
             else -> {
-                throw Exception("Unsupported assert type: $assertTypeJavaClass")
+                throw UnsupportedTypeException("Unsupported assert type: $assertTypeJavaClass")
             }
         }
     }

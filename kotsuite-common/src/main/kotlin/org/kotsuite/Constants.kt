@@ -1,5 +1,6 @@
 package org.kotsuite
 
+import org.kotsuite.exception.UnsupportedTypeException
 import org.kotsuite.soot.Visibility
 import soot.*
 
@@ -113,7 +114,7 @@ object PrintConstants {
             is DoubleType -> println_double_method_sig
             RefType.v("java.lang.String") -> println_string_method_sig
             is RefType -> println_object_method_sig
-            else -> throw Exception("Unsupported println parameter type: $type")
+            else -> throw UnsupportedTypeException("Unsupported println parameter type: $type")
         }
     }
 }
@@ -143,7 +144,7 @@ object ValueOfConstants {
             is IntType -> integer_valueOf_method_sig
             is LongType -> long_valueOf_method_sig
             is ShortType -> short_valueOf_method_sig
-            else -> throw Exception("Unsupported primitive type: $this")
+            else -> throw UnsupportedTypeException("Unsupported primitive type: $this")
         }
     }
 }
