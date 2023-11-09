@@ -32,6 +32,10 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         // generate whole solution using the given strategy
         wholeSolution = gaStrategy.generateWholeSolution()
 
+        if (Configs.ONLY_SUCCESS) {
+            wholeSolution = wholeSolution.getSuccessfulWholeSolution()
+        }
+
         jimpleClasses = wholeSolution.generateJimpleTestClasses(false)
         jimpleClassesWithAssertion = wholeSolution.generateJimpleTestClasses(true)
 

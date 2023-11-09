@@ -86,7 +86,7 @@ object StandardGAStrategy: Strategy() {
             }
 
             // Meet the coverage criteria ? output : continue
-            log.debug("Check whether the fitness of the population meets the requirements...")
+            log.debug("Checking whether the fitness of the population meets the requirements...")
             val fitness = curPopulation.fitness ?: Fitness(0.0, 0.0)
             log.log(Level.INFO, "Fitness: $fitness")
             val isCoverTargets = isCoverTargets(fitness)

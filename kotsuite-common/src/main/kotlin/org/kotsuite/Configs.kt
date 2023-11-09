@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object Configs {
+    const val ONLY_SUCCESS = true // Only output successful test cases
 
     // log related configs
     val sectionLevel: Level = Level.forName("SECTION", 350)

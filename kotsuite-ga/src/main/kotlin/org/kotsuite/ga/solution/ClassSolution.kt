@@ -6,9 +6,14 @@ import soot.SootClass
 class ClassSolution(
     val targetClass: SootClass,
     val testClass: TestClass,
-    methodSolutions: List<MethodSolution>,
+    val methodSolutions: List<MethodSolution>,
 ) {
     init {
         testClass.testCases = methodSolutions.flatMap { it.testCases }.toMutableList()
+    }
+
+    fun getSuccessfulClassSolution(): ClassSolution {
+        val successfulMethodSolutions = methodSolutions.map { it.getSuccessfulMethodSolution() }
+        return ClassSolution(targetClass, testClass, successfulMethodSolutions)
     }
 }
