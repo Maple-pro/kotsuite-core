@@ -6,8 +6,10 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
 
 fun main(args: Array<String>) {
-
     val log = LogManager.getLogger()
+
+    log.info("KotSuite Core Version: ${Configs.KOTSUITE_CORE_VERSION}")
+
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
         log.error("Algorithm Crash", "Uncaught exception occurred: $throwable")
     }

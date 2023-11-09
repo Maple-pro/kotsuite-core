@@ -1,7 +1,7 @@
 package org.kotsuite.ga.jimple
 
-import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
+import org.kotsuite.exception.UnsupportedTypeException
 import org.kotsuite.ga.chromosome.value.*
 import org.kotsuite.soot.Value
 import org.kotsuite.soot.Value.generatePrimTypeJimpleValue
@@ -23,11 +23,16 @@ object ValueJimpleGenerator {
             is StringChromosomeValue -> Value.generateStringValue(chromosomeValue.stringValue)
             is ArrayChromosomeValue<*> -> generateArrayValue(body, chromosomeValue)
             else -> {
-                throw Exception("Unsupported value type: $chromosomeValue")
+                throw UnsupportedTypeException("Unsupported value type: $chromosomeValue")
             }
         }
     }
 
+    /**
+     * Generate array value
+     *
+     * TODO: need to validate
+     */
     private fun <T : Any> generateArrayValue(body: Body, value: ArrayChromosomeValue<T>): Local {
         val randomValue = (0..999999).random()
         val localName = "arr_$randomValue"
