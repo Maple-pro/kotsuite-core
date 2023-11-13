@@ -118,7 +118,7 @@ data class NoNeedToTestMethodsInfo(
         fun fromMethodInfos(methodInfos: List<MethodInfo>): NoNeedToTestMethodsInfo {
             val filteredMethodInfos = methodInfos.filter { it.methodType == MethodType.NO_NEED_TO_TEST }
 
-            val counts = methodInfos.groupingBy { it.methodReason }.eachCount()
+            val counts = filteredMethodInfos.groupingBy { it.methodReason }.eachCount()
 
             return NoNeedToTestMethodsInfo(
                 counts[MethodReason.NON_PUBLIC_METHOD] ?: 0,
