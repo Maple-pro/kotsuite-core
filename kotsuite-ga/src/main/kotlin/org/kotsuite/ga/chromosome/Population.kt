@@ -107,7 +107,26 @@ class Population(
         }
     }
 
-    fun minimizer() {
-        TODO("Not implemented yet")
+    /**
+     * 测试用例约简，获取达到最大覆盖率的最小测试用例集
+     */
+    fun minimizer(): Population {
+        val testCaseCoverageHashCodes = testCases.map { it.coverageHashCodes }
+
+        val distinctIndices = mutableListOf<Int>()
+        val distinctItems = mutableSetOf<List<Int>>()
+
+        for (i in testCaseCoverageHashCodes.indices) {
+            val currentItem = testCaseCoverageHashCodes[i]
+            if (distinctItems.add(currentItem)) {
+                distinctIndices.add(i)
+            }
+        }
+
+        val minimizedTestCases = distinctIndices.map { testCases[it] }
+
+        log.info("Minimization: ${testCases.size} -> ${minimizedTestCases.size}")
+
+        return Population(targetMethod, round, minimizedTestCases)
     }
 }

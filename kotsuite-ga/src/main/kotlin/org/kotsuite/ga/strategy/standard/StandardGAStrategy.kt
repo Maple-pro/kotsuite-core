@@ -103,9 +103,10 @@ object StandardGAStrategy: Strategy() {
         }
 
         // Remove duplicated test cases
-//        curPopulation.minimizer()
+        log.log(Configs.sectionLevel, "[Remove duplicated test cases]")
+        val minimizedPopulation = curPopulation.minimizer()
 
-        return MethodSolution(targetMethod, curPopulation.testCases)
+        return MethodSolution(targetMethod, minimizedPopulation.testCases)
     }
 
     private fun isCoverTargets(fitness: Fitness): Boolean {

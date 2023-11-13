@@ -5,6 +5,9 @@ import org.jacoco.core.analysis.Analyzer
 import org.jacoco.core.analysis.CoverageBuilder
 import org.jacoco.core.analysis.IBundleCoverage
 import org.jacoco.core.analysis.ICounter
+import org.jacoco.core.internal.analysis.ClassCoverageImpl
+import org.jacoco.core.internal.analysis.CounterImpl
+import org.jacoco.core.internal.analysis.LineImpl
 import org.jacoco.core.tools.ExecFileLoader
 import org.kotsuite.Configs
 import org.kotsuite.ga.coverage.fitness.Fitness
@@ -37,6 +40,9 @@ class ExecResolver(
         analyzeStructure()
     }
 
+    /**
+     * Get simple coverage information
+     */
     fun getSimpleInfo() {
         coverageBuilder.classes.forEach {
             log.info("Coverage of class: ${it.name}-----------------")
@@ -47,17 +53,35 @@ class ExecResolver(
         }
     }
 
+    /**
+     * Get target class fitness
+     *
+     * @param targetClass
+     * @return fitness of target class
+     */
     fun getTargetClassFitness(targetClass: SootClass): Fitness {
         return getFitnessByClassName(targetClass.name)
     }
 
+    /**
+     * Get target method fitness
+     *
+     * @param targetMethod
+     * @return fitness of target method
+     */
     fun getTargetMethodFitness(targetMethod: SootMethod): Fitness {
         return getFitnessByMethodSig(targetMethod.signature)
     }
 
+    /**
+     * Get class fitness by class name
+     *
+     * @param className target class name
+     * @return fitness of target class
+     */
     fun getFitnessByClassName(className: String): Fitness {
         val targetClassCoverage = coverageBuilder.classes.firstOrNull {
-            it.name == className.replace('.', File.separatorChar)
+            it.name == className.replace('.', '/')
         }
 
         if (targetClassCoverage == null) {
@@ -69,18 +93,24 @@ class ExecResolver(
         val targetClassCCCounter = targetClassCoverage.complexityCounter
 
         return Fitness(
-            counter2Percent(targetClassLineCounter),
-            counter2Percent(targetClassCCCounter),
+            getCoveredRatio(targetClassLineCounter),
+            getCoveredRatio(targetClassCCCounter),
         )
     }
 
+    /**
+     * Get method fitness by method signature
+     *
+     * @param methodSig target method signature
+     * @return fitness of target method
+     */
     fun getFitnessByMethodSig(methodSig: String): Fitness {
         val classNameAndMethodName = SootUtils.getClassNameAndMethodNameFromMethodSig(methodSig)
         val className = classNameAndMethodName.first
         val methodName = classNameAndMethodName.second
 
         val targetMethodCoverage = coverageBuilder.classes.firstOrNull {
-            it.name == className.replace('.', File.separatorChar)
+            it.name == className.replace('.', '/')
         }?.methods?.firstOrNull {
             it.name == methodName
         }
@@ -94,11 +124,34 @@ class ExecResolver(
         val targetMethodCCCounter = targetMethodCoverage.complexityCounter
 
         return Fitness(
-            counter2Percent(targetMethodLineCounter),
-            counter2Percent(targetMethodCCCounter),
+            getCoveredRatio(targetMethodLineCounter),
+            getCoveredRatio(targetMethodCCCounter),
         )
     }
 
+    /**
+     * Get coverage hash code of target class by class name
+     *
+     * @param className target class name
+     * @return coverage hash code of target class
+     */
+    fun getCoverageHashCodeByClassName(className: String): List<Int> {
+        val targetClassCoverage = coverageBuilder.classes.firstOrNull {
+            it.name == className.replace('.', '/')
+        }
+
+        return if (targetClassCoverage == null) {
+            emptyList()
+        } else {
+            (targetClassCoverage as ClassCoverageImpl).getHashCodes()
+        }
+    }
+
+    /**
+     * Generate HTML coverage report
+     *
+     * @param coverageHTMLReportPath path to store HTML report
+     */
     fun generateHTMLReport(coverageHTMLReportPath: String) {
         log.info("Generating HTML report: $coverageHTMLReportPath")
 
@@ -129,6 +182,11 @@ class ExecResolver(
         ps.waitFor()
     }
 
+    /**
+     * Generate XML report
+     *
+     * @param coverageXMLReportPath path to store XML report
+     */
     fun generateXMLReport(coverageXMLReportPath: String) {
         log.info("Generating XML report: $coverageXMLReportPath")
 
@@ -157,6 +215,13 @@ class ExecResolver(
         ps.waitFor()
     }
 
+    /**
+     * Log information of given counter
+     *
+     * @param unit counter description, e.g., instruction, branch, line
+     * @param counter counter to be logged
+     * @return coverage percent of given counter
+     */
     private fun printCounter(unit: String, counter: ICounter): Double {
         val coveragePercent = if (counter.totalCount != 0) {
             counter.coveredCount.toDouble()/counter.totalCount.toDouble()
@@ -169,12 +234,46 @@ class ExecResolver(
         return coveragePercent
     }
 
-    private fun counter2Percent(counter: ICounter): Double {
+    /**
+     * Calculates the ratio of covered to total count items. If the total count is zero, the ratio is zero.
+     *
+     * @param counter counter to be calculated
+     * @return ratio of covered to total count items
+     */
+    private fun getCoveredRatio(counter: ICounter): Double {
         return if (counter.totalCount != 0) {
             counter.coveredCount.toDouble()/counter.totalCount.toDouble()
         } else {
             0.0
         }
+    }
+
+    /**
+     * Get hash code of the [ClassCoverageImpl]
+     */
+    private fun ClassCoverageImpl.getHashCodes(): List<Int> {
+        val lines = this.getLines()
+        return lines.map { it.getHashCode() }
+    }
+
+    private fun LineImpl.getHashCode(): Int {
+        return (this.instructionCounter as CounterImpl).getHashCode() + 31 * (this.branchCounter as CounterImpl).getHashCode()
+    }
+
+    private fun CounterImpl.getHashCode(): Int {
+        return this.coveredCount + 31 * this.missedCount
+    }
+
+    private fun ClassCoverageImpl.getLines(): List<LineImpl> {
+        val lines = mutableListOf<LineImpl>()
+        for (i in this.firstLine..this.lastLine) {
+            val line = this.getLine(i)
+            if (line != LineImpl.EMPTY) {
+                lines.add(line)
+            }
+        }
+
+        return lines
     }
 
     private fun loadExecutionData() {
