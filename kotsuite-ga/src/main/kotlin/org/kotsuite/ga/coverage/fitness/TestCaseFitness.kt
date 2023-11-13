@@ -44,7 +44,6 @@ class TestCaseFitness(
     }
 
     private fun generateFitness() {
-
         val execResolver = ExecResolver(
             "MyApplication",
             execDataFile,

@@ -12,11 +12,17 @@ import org.kotsuite.ga.strategy.Strategy
 import soot.SootClass
 import java.time.LocalDateTime
 import org.kotsuite.Configs
+import org.kotsuite.analysis.Analyzer
 import org.kotsuite.ga.jimple.JimpleGenerator.generateJimpleTestClasses
+import org.kotsuite.ga.report.Report
+import org.kotsuite.ga.statistic.Statistic
+import java.io.File
 
 class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
     private val log = LogManager.getLogger()
+
+    private val dateTime = LocalDateTime.now()  // use dateTime to identify the same exec file and report
 
     private lateinit var wholeSolution: WholeSolution
     private lateinit var testClasses: List<TestClass>
@@ -42,6 +48,18 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         // generate whole solution coverage report
         generateFinalCoverageReport()
 
+        // Generate the generation report (json)
+        val report = Report.fromWholeSolution(wholeSolution, Analyzer.classes)
+        val statistic = Statistic.fromReport(report)
+
+        // save `Report` to file
+        val finalReportPath = Configs.getReportFilePath(dateTime)
+        saveReportToFile(report, finalReportPath)
+
+        // save `Statistic` to file
+        val finalStatisticPath = Configs.getStatisticFilePath(dateTime)
+        saveStatisticToFile(statistic, finalStatisticPath)
+
         // decompile class file to java file
         printTestClassJasminFiles(Configs.finalTestOutputPath)
         decompileJUnitClasses()
@@ -61,7 +79,6 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
         printJasminFiles(Configs.finalClassesOutputPath)
 
-        val dateTime = LocalDateTime.now()  // use dateTime to identify the same exec file and report
         val execDataFile = Configs.getFinalExecFilePath(dateTime)
         JacocoUtils.generateFinalWholeSolutionExecFile(
             wholeSolution,
@@ -80,6 +97,9 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         val finalXMLReportPath = Configs.getFinalXMLReportPath(dateTime)
         execResolver.generateHTMLReport(finalHTMLReportPath)
         execResolver.generateXMLReport(finalXMLReportPath)
+
+        // Update coverage info to `WholeSolution`: class and method
+        wholeSolution.updateCoverageInfo(execResolver)
     }
 
     private fun decompileJUnitClasses() {
@@ -108,5 +128,13 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         jimpleClassesWithAssertion.forEach {
             JasminPrinter.printJasminFile(it, outputPath)
         }
+    }
+
+    private fun saveReportToFile(report: Report, filePath: String) {
+        File(filePath).writeText(report.toString())
+    }
+
+    private fun saveStatisticToFile(statistic: Statistic, filePath: String) {
+        File(filePath).writeText(statistic.toString())
     }
 }

@@ -26,9 +26,9 @@ abstract class Strategy {
         log.log(Configs.sectionLevel, "[Whole Solution]")
 
         // Output the classes that we can analyze
-        val filteredClasses = Analyzer.classes
-            .filter { Filter.testSuiteGeneratorClassFilter(it) }
-            .filter { !it.name.equals("com.simplemobiletools.gallery.pro.helpers.Config") } // [debug only]
+        val filteredClasses = Analyzer.classes.filter {
+            Filter.testSuiteGeneratorClassFilter(it)
+        }
 
         val methodMap = mutableMapOf<SootClass, List<SootMethod>>()
         filteredClasses.forEach { clazz ->

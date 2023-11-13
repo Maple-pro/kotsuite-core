@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.kotsuite.CommonClassConstants
 import org.kotsuite.ValueOfConstants.getValueOfSig
 import org.kotsuite.exception.AnalyzerException
+import org.kotsuite.exception.WrongTypeException
 import org.kotsuite.soot.extensions.getConstructor
 import org.kotsuite.utils.IDUtils
 import soot.*
@@ -166,4 +167,17 @@ object SootUtils {
         return value
     }
 
+    fun getClassNameAndMethodNameFromMethodSig(methodSig: String): Pair<String, String> {
+        val parts = methodSig.split(' ')
+        if (parts.size != 3) {
+            val errorMsg = "Invalid method signature: $methodSig"
+            log.error(errorMsg)
+            throw WrongTypeException(errorMsg)
+        }
+
+        val className = parts[0].substringAfter('<').substringBefore(':')
+        val methodName = parts[2].substringBefore('(')
+
+        return Pair(className, methodName)
+    }
 }

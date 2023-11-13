@@ -8,9 +8,11 @@ import org.jacoco.core.analysis.ICounter
 import org.jacoco.core.tools.ExecFileLoader
 import org.kotsuite.Configs
 import org.kotsuite.ga.coverage.fitness.Fitness
+import org.kotsuite.soot.SootUtils
 import org.kotsuite.utils.getError
 import org.kotsuite.utils.getOutput
 import org.kotsuite.utils.logCommandOutput
+import soot.SootClass
 import soot.SootMethod
 import java.io.File
 import java.nio.file.Files
@@ -45,17 +47,46 @@ class ExecResolver(
         }
     }
 
+    fun getTargetClassFitness(targetClass: SootClass): Fitness {
+        return getFitnessByClassName(targetClass.name)
+    }
+
     fun getTargetMethodFitness(targetMethod: SootMethod): Fitness {
-        val targetClass = targetMethod.declaringClass
+        return getFitnessByMethodSig(targetMethod.signature)
+    }
+
+    fun getFitnessByClassName(className: String): Fitness {
+        val targetClassCoverage = coverageBuilder.classes.firstOrNull {
+            it.name == className.replace('.', File.separatorChar)
+        }
+
+        if (targetClassCoverage == null) {
+            log.error("Target class coverage not found: $className")
+            return Fitness(0.0, 0.0)
+        }
+
+        val targetClassLineCounter = targetClassCoverage.lineCounter
+        val targetClassCCCounter = targetClassCoverage.complexityCounter
+
+        return Fitness(
+            counter2Percent(targetClassLineCounter),
+            counter2Percent(targetClassCCCounter),
+        )
+    }
+
+    fun getFitnessByMethodSig(methodSig: String): Fitness {
+        val classNameAndMethodName = SootUtils.getClassNameAndMethodNameFromMethodSig(methodSig)
+        val className = classNameAndMethodName.first
+        val methodName = classNameAndMethodName.second
 
         val targetMethodCoverage = coverageBuilder.classes.firstOrNull {
-            it.name == targetClass.name.replace('.', File.separatorChar)
+            it.name == className.replace('.', File.separatorChar)
         }?.methods?.firstOrNull {
-            it.name == targetMethod.name
+            it.name == methodName
         }
 
         if (targetMethodCoverage == null) {
-            log.error("Target method coverage not found: ${targetMethod.name}")
+            log.error("Target method coverage not found: $methodSig")
             return Fitness(0.0, 0.0)
         }
 

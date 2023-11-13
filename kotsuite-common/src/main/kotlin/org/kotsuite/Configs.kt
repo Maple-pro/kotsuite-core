@@ -93,6 +93,16 @@ object Configs {
         return "$finalReportOutputPath/coverage_xml_$timestamp.xml"
     }
 
+    fun getReportFilePath(dateTime: LocalDateTime): String {
+        val timestamp = dateTime.format(timeFormatter)
+        return "$finalReportOutputPath/report_$timestamp.json"
+    }
+
+    fun getStatisticFilePath(dateTime: LocalDateTime): String {
+        val timestamp = dateTime.format(timeFormatter)
+        return "$finalReportOutputPath/statistic_$timestamp.json"
+    }
+
     @Override
     override fun toString(): String {
         return "{ project_path: $projectPath, module_path: $modulePath }"

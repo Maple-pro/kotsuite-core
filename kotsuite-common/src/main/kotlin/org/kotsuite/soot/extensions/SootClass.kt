@@ -154,3 +154,15 @@ fun SootClass.isDataClass(): Boolean {
 
     return isDataClass
 }
+
+fun SootClass.isUnsupportedClass(): Boolean {
+    val constructorMethod = this.getConstructor()
+    return if (constructorMethod == null) {
+        false
+    } else {
+        val parameters = constructorMethod.parameterTypes
+        parameters.filterIsInstance<RefType>().any {
+            it.className.startsWith("kotlin.jvm.functions")
+        }
+    }
+}

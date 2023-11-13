@@ -112,8 +112,9 @@ class MainTest {
         val dependency = Data.simpleCalendarDependencies.joinToString(File.pathSeparator)
 
 //        val includeRules = "com.simplemobiletools.calendar.pro.helpers.EventsHelper"
-//        val includeRules = "com.simplemobiletools.calendar.pro.helpers.Formatter"
-        val includeRules = "com.simplemobiletools.calendar.pro.adapters.EventListAdapter"
+        val includeRules = "com.simplemobiletools.calendar.pro.helpers.Formatter"
+//        val includeRules = "com.simplemobiletools.calendar.pro.adapters.EventListAdapter"
+//        val includeRules = "com.simplemobiletools.calendar.pro"
 
         val args = arrayOf(
             "--project", projectPath,

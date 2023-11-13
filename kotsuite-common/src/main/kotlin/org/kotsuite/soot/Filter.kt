@@ -10,9 +10,10 @@ object Filter {
                 && sootClass.isPublicClass()                // 该类是否是公共类
                 && !sootClass.isAbstractClass()             // 该类是否是抽象类
                 && !sootClass.isInterfaceClass()            // 该类是否是接口
-                && !sootClass.isPackageLevel()                    // 该类是否是 Object
+                && !sootClass.isPackageLevel()              // 该类是否是 Object
                 && !sootClass.isDataClass()                 // 该类是否是数据类
 //                && !sootClass.isAndroidClass()
+                && !sootClass.isUnsupportedClass()
     }
 
     fun testSuiteGeneratorMethodFilter(sootMethod: SootMethod): Boolean {
