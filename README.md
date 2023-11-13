@@ -1,5 +1,8 @@
 # KotSuite
 
+> **Note**
+> This is a test suite generation tool for Kotlin Android projects.
+
 ## How to run the program?
 
 1. Build `kotsuite-agent` module: it will generate the `kotsuite-agent-shadow-1.x-all.jar` and put it in `libs/cli`
