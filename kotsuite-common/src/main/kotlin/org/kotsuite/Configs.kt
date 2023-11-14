@@ -5,9 +5,14 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.random.Random
 
 object Configs {
     const val KOTSUITE_CORE_VERSION = "1.1.3"
+
+    private val dateTime = LocalDateTime.now()
+    private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+    private val timestamp = dateTime.format(timeFormatter)
 
     const val ONLY_SUCCESS = false // Only output successful test cases
 
@@ -28,20 +33,21 @@ object Configs {
     lateinit var dependencyClassPaths: List<String>
 
     // genetic algorithm output paths
-    val sootOutputPath: String get() = "$modulePath/sootOutput"
-    val kotSuiteOutputPath: String get() = "$modulePath/kotsuite"
-    val execOutputPath: String get() = "$kotSuiteOutputPath/exec"
-    val jarOutputPath: String get() = "$kotSuiteOutputPath/jar"
-    val reportOutputPath: String get() = "$kotSuiteOutputPath/report"
-    val assertOutputPath: String get() = "$kotSuiteOutputPath/assert"
+    val kotsuiteRootOutputPath: String get() = "$modulePath/kotsuite"
+    val kotsuiteOutputPath: String get() = "$kotsuiteRootOutputPath/$timestamp"
+    val sootOutputPath: String get() = "$kotsuiteOutputPath/sootOutput"
+    val finalOutputPath: String get() = "$kotsuiteOutputPath/final"
 
     // final output paths
-    val finalOutputPath: String get() = "$modulePath/final"
     val finalClassesOutputPath: String get() = "$finalOutputPath/classes" // have source and test
     val finalTestOutputPath: String get() = "$finalOutputPath/test" // only have test classes
     val finalDecompiledOutputPath: String get() = "$finalOutputPath/decompiled"
     val finalExecOutputPath: String get() = "$finalOutputPath/exec"
     val finalReportOutputPath: String get() = "$finalOutputPath/report"
+    
+    val execOutputPath: String get() = "$finalOutputPath/exec"
+    val assertOutputPath: String get() = "$finalOutputPath/assert"
+    val commandOutputPath: String get() = "$finalOutputPath/command"
 
     // cli jar paths
     val kotsuiteAgentPath: String get() = "$libsPath/cli/kotsuite-agent-shadow-1.2-all.jar"
@@ -73,7 +79,6 @@ object Configs {
         return "$execOutputPath/$fileName"
     }
 
-    private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
 
     fun getFinalExecFilePath(dateTime: LocalDateTime): String {
         val timestamp = dateTime.format(timeFormatter)
@@ -101,6 +106,11 @@ object Configs {
     fun getStatisticFilePath(dateTime: LocalDateTime): String {
         val timestamp = dateTime.format(timeFormatter)
         return "$finalReportOutputPath/statistic_$timestamp.json"
+    }
+
+    fun getCommandFilePath(prefix: String, dateTime: LocalDateTime): String {
+        val timestamp = dateTime.format(timeFormatter)
+        return "$commandOutputPath/${prefix}_arguments_${timestamp}_${Random.nextInt()}.txt"
     }
 
     @Override

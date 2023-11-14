@@ -2,10 +2,12 @@ package org.kotsuite.ga.commands
 
 import org.apache.logging.log4j.LogManager
 import org.jacoco.core.runtime.AgentOptions
+import org.kotsuite.Configs
 import org.kotsuite.utils.getError
 import org.kotsuite.utils.getOutput
 import org.kotsuite.utils.logCommandOutput
 import java.io.File
+import java.time.LocalDateTime
 
 object TestRunner {
     private val log = LogManager.getLogger()
@@ -70,7 +72,10 @@ object TestRunner {
             kotsuiteOptionsStr,
             "-cp", classPath,
         )
-        val command = arrayOf("java") + jvmArgs + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
+        val javaArguments = vmArguments + arrayOf(mainClassName) + cliArgumentsArr
+        val argumentFile = saveArgumentToFile(javaArguments)
+
+        val command = arrayOf("java") + jvmArgs + listOf("@${argumentFile.absolutePath}")
         return runCommand(command)
     }
 
@@ -99,11 +104,22 @@ object TestRunner {
         )
         val cliArgumentsArr = cliArguments.getCliArguments()
 
-        val command = arrayOf("java") + jvmArgs + vmArguments + arrayOf(mainClassName) + cliArgumentsArr
+        val javaArguments = vmArguments + arrayOf(mainClassName) + cliArgumentsArr
+        val argumentFile = saveArgumentToFile(javaArguments)
+
+        val command = arrayOf("java") + jvmArgs + listOf("@${argumentFile.absolutePath}")
         return runCommand(command)
     }
 
     private fun getJacocoVMArgument(jacocoAgentOptions: AgentOptions, jacocoAgentJarFile: File): String {
         return String.format("-javaagent:%s=%s", jacocoAgentJarFile, jacocoAgentOptions)
+    }
+
+    private fun saveArgumentToFile(arguments: List<String>): File {
+        val dateTime = LocalDateTime.now()
+        val argumentFile = File(Configs.getCommandFilePath("TestRunner", dateTime))
+        argumentFile.writeText(arguments.joinToString(" ").replace("""\""", """\\"""))
+
+        return argumentFile
     }
 }

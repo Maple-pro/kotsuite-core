@@ -77,8 +77,10 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
 
         testClasses = wholeSolution.classSolutions.map { it.testClass }
 
+        log.debug("a. Output .class files to ${Configs.finalClassesOutputPath}")
         printJasminFiles(Configs.finalClassesOutputPath)
 
+        log.debug("b. Generate final exec file")
         val execDataFile = Configs.getFinalExecFilePath(dateTime)
         JacocoUtils.generateFinalWholeSolutionExecFile(
             wholeSolution,
@@ -87,6 +89,7 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
             Configs.finalClassesOutputPath,
         )
 
+        log.debug("c. Generate coverage, report and statistic")
         val execResolver = ExecResolver(
             "MyApplication",
             execDataFile,

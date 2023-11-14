@@ -26,10 +26,13 @@ object CoverageGenerator {
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
     private val timestamp = LocalDateTime.now().format(timeFormatter)
 
-    private val jarPath = "${Configs.jarOutputPath}/MyApplication.jar"
+//    private val jarPath = "${Configs.jarOutputPath}/MyApplication.jar"
+    private val jarPath = ""
     private val executionDataPath = "${Configs.execOutputPath}/jacoco-MyApplication.exec"
-    private val coverageHTMLReportPath = "${Configs.reportOutputPath}/coverage_report_$timestamp/"
-    private val coverageXMLFilePath = "${Configs.reportOutputPath}/coverage_xml_$timestamp.xml"
+//    private val coverageHTMLReportPath = "${Configs.reportOutputPath}/coverage_report_$timestamp/"
+    private val coverageHTMLReportPath = ""
+//    private val coverageXMLFilePath = "${Configs.reportOutputPath}/coverage_xml_$timestamp.xml"
+    private val coverageXMLFilePath = ""
 
     @Deprecated("Should not use")
     fun generate() {

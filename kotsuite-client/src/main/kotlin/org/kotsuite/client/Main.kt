@@ -4,16 +4,9 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
+import java.io.File
 
 fun main(args: Array<String>) {
-    val log = LogManager.getLogger()
-
-    log.info("KotSuite Core Version: ${Configs.KOTSUITE_CORE_VERSION}")
-
-    Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-        log.error("Algorithm Crash", "Uncaught exception occurred: $throwable")
-    }
-
     // Deal with parameter options
     val options = Options()
     with(options) {
@@ -32,8 +25,6 @@ fun main(args: Array<String>) {
     val parser = DefaultParser()
     val cmd = parser.parse(options, args)
 
-    log.log(Configs.sectionLevel, "[Start main function]")
-
     val projectPath = cmd.getOptionValue("project")
     val modulePath = cmd.getOptionValue("module")
     val moduleClassPath = cmd.getOptionValue("classpath")
@@ -42,6 +33,18 @@ fun main(args: Array<String>) {
     val libsPath = cmd.getOptionValue("libs")
     val gaStrategy = cmd.getOptionValue("strategy")
     val dependencyClassPaths = cmd.getOptionValue("dependency")
+
+    val logFilePath = cmd.getOptionValue("module") + File.separator + "kotsuite.log"
+    System.setProperty("logFilePath", logFilePath)
+
+    val log = LogManager.getLogger()
+
+    log.log(Configs.sectionLevel, "[Start main function]")
+    log.info("KotSuite Core Version: ${Configs.KOTSUITE_CORE_VERSION}")
+
+    Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+        log.error("Algorithm Crash", "Uncaught exception occurred: $throwable")
+    }
 
     val client = Client(
         projectPath,
