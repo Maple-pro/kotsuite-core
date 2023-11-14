@@ -92,6 +92,19 @@ java \
 --libs "./libs/"
 ```
 
+## Data Structure of the `Report` and `Statistic` files
+
+[Origin Graph](https://mx92qe1qgl.feishu.cn/docx/Jwy9dCYQyoCdvkxqLPucTuYbnPb)
+
+Report
+
+![](https://maples31-blog.oss-cn-beijing.aliyuncs.com/img/whiteboard_exported_image.png)
+
+Statistic
+
+![](https://maples31-blog.oss-cn-beijing.aliyuncs.com/img/whiteboard_exported_image%20(1).png)
+
+
 ## Changelog
 
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
