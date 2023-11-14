@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
 object Configs {
-    const val KOTSUITE_CORE_VERSION = "1.1.3"
+    const val KOTSUITE_CORE_VERSION = "1.1.4"
 
     private val dateTime = LocalDateTime.now()
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")

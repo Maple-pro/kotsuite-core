@@ -1,3 +1,5 @@
+import org.jetbrains.changelog.ChangelogSectionUrlBuilder
+import org.jetbrains.changelog.date
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val mergedJar by configurations.creating<Configuration> {
@@ -15,10 +17,12 @@ plugins {
     kotlin("jvm") version "1.8.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     `maven-publish`
+    // Gradle Changelog Plugin
+    id("org.jetbrains.changelog") version "2.0.0"
 }
 
 group = "org.kotsuite"
-version = "1.1.3"
+version = "1.1.4"
 
 repositories {
     mavenCentral()
@@ -26,6 +30,33 @@ repositories {
 
 configurations.all {
     exclude("org.slf4j")
+}
+
+changelog {
+    version.set("1.1.4")
+    path.set(file("CHANGELOG.md").canonicalPath)
+    header.set(provider { "[${version.get()}] - ${date()}" })
+    headerParserRegex.set("""(\d+\.\d+\.\d+)""".toRegex())
+    introduction.set(
+        """
+        My awesome project that provides a lot of useful features, like:
+        
+        - Feature 1
+        - Feature 2
+        - and Feature 3
+        """.trimIndent()
+    )
+    itemPrefix.set("-")
+    keepUnreleasedSection.set(true)
+    unreleasedTerm.set("[Unreleased]")
+    groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"))
+    lineSeparator.set("\n")
+    combinePreReleases.set(true)
+    sectionUrlBuilder.set(
+        ChangelogSectionUrlBuilder { repositoryUrl, currentVersion, previousVersion, isUnreleased ->
+            "foo"
+        }
+    )
 }
 
 dependencies {

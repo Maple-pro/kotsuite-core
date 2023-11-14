@@ -91,3 +91,21 @@ java \
 --strategy "random" \
 --libs "./libs/"
 ```
+
+## Changelog
+
+<!-- Keep a Changelog guide -> https://keepachangelog.com -->
+
+### [1.1.3] - 2023.11.14
+
+1. 新增：输出测试生成的结果统计 
+   1. 测试报告：`$MODULE_ROOT/kotsuite/$TIMESTAMP/final/report/report_xxx.json`
+   2. 测试数据统计`$MODULE_ROOT/kotsuite/$TIMESTAMP/final/report/statistic_xxx.json`
+2. 新增：测试生成时的日志文件
+   1. 日志文件：`$MODULE_ROOT/kotsuite.log`
+3. 变更：测试生成时生成的中间文件和最终文件的路径
+   1. 修改为 `$MODULE_ROOT/kotsuite/$TIMESTAMP/`
+4. 变更：最终输出的测试用例的筛选逻辑
+   1. 由「根据覆盖率高低筛选」变为「选择覆盖信息不同的测试用例，去除覆盖信息完全相同的测试用例」
+5. 修复：classpath 过长导致无法创建 Java 进程的问题
+
