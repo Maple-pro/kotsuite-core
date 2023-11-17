@@ -63,27 +63,29 @@ object RandomStrategy: Strategy() {
         val targetObjectName = targetClass.getInstanceName()
         val targetObject = Variable(targetObjectName, targetClass.type)
 
-        // 初始化实例对象
-        when (targetClass.getInitializationType()) {
-            // 使用构造函数初始化
-            InitializationType.CONSTRUCTOR -> {
-                initializeTargetObjectByConstructor(testCase, targetObject, targetClass)
-            }
-            // 使用 mock 或 spy 初始化对象，并随机 mock 对象的行为
-            InitializationType.TEST_DOUBLE -> {
-                val testDoubleType = targetClass.getTestDoubleType(true)
-                initializeTargetObjectByTestDouble(testCase, targetObject, targetClass, testDoubleType)
-
-                // 模拟 spyk 对象的行为
-                val methodsToMock = getMockWhenMethods(targetClass, targetMethod)
-                methodsToMock.forEach {
-                    mockBehavior(testCase, targetObject, it)
+        if (!targetMethod.isStatic) {
+            // 初始化实例对象
+            when (targetClass.getInitializationType()) {
+                // 使用构造函数初始化
+                InitializationType.CONSTRUCTOR -> {
+                    initializeTargetObjectByConstructor(testCase, targetObject, targetClass)
                 }
-            }
-            InitializationType.INSTANCE -> {
-                initializeTargetObjectByInstance(testCase, targetObject, targetClass)
+                // 使用 mock 或 spy 初始化对象，并随机 mock 对象的行为
+                InitializationType.TEST_DOUBLE -> {
+                    val testDoubleType = targetClass.getTestDoubleType(true)
+                    initializeTargetObjectByTestDouble(testCase, targetObject, targetClass, testDoubleType)
 
-                // TODO: mockObject?
+                    // 模拟 spyk 对象的行为
+                    val methodsToMock = getMockWhenMethods(targetClass, targetMethod)
+                    methodsToMock.forEach {
+                        mockBehavior(testCase, targetObject, it)
+                    }
+                }
+                InitializationType.INSTANCE -> {
+                    initializeTargetObjectByInstance(testCase, targetObject, targetClass)
+
+                    // TODO: mockObject?
+                }
             }
         }
 
