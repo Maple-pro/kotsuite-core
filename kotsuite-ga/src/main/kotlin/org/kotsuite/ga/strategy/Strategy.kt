@@ -55,6 +55,10 @@ abstract class Strategy {
                 log.error(e.message)
                 log.error(e.stackTraceToString())
                 ClassSolution(it, TestClass("${it.shortName}Test", it.packageName), listOf())
+            } catch (e: Exception) {
+                log.error("Uncaught Exception: $e")
+                log.error(e.stackTraceToString())
+                ClassSolution(it, TestClass("${it.shortName}Test", it.packageName), listOf())
             }
         }
 

@@ -15,6 +15,7 @@ import org.kotsuite.soot.extensions.getConstructor
 import org.kotsuite.soot.TestDoubleType
 import org.kotsuite.soot.extensions.getInstanceName
 import org.kotsuite.soot.extensions.isObject
+import org.kotsuite.utils.IDUtils
 import soot.*
 import kotlin.collections.ArrayList
 
@@ -39,8 +40,15 @@ object RandomStrategy: Strategy() {
 
         val testCaseNum = Configs.POPULATION_SIZE
 
+        val paramString = targetMethod.parameterTypes.joinToString("_") {
+            it.toString().substringAfterLast('.')
+        }
         for (i in 1..testCaseNum) {
-            val testCaseName = "test_${targetMethod.name}_$i"
+            val testCaseName = if (paramString != "") {
+                "test_${targetMethod.name}_${paramString}_${i}_${IDUtils.getId()}"
+            } else {
+                "test_${targetMethod.name}_${i}_${IDUtils.getId()}"
+            }
 
             testCases.add(generateTestCaseForMethod(targetMethod, testCaseName))
         }
