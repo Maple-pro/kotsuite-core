@@ -1,5 +1,6 @@
 package org.kotsuite.ga.printer
 
+import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
 import soot.SootClass
 import soot.SourceLocator
@@ -15,6 +16,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 object JasminPrinter {
+    private val log = LogManager.getLogger()
 
     private val outputFileDir = Configs.sootOutputPath
 
@@ -39,26 +41,35 @@ object JasminPrinter {
             fileName = fileName.removePrefix("sootOutput/")
         }
 
-        val finalDir = "$outputFileDir/$fileName"
+        if (fileName.startsWith("sootOutput\\")) {
+            fileName = fileName.removePrefix("sootOutput\\")
+        }
+
+        val finalDir = "$outputFileDir${File.separator}$fileName"
 
         val lastIndex = finalDir.lastIndexOf(File.separatorChar)
         val directoryPath = finalDir.substring(0, lastIndex + 1)
         Files.createDirectories(Paths.get(directoryPath))
 
-        if (!asmBackend) {
-            // use outdated backend
-            val streamOut = JasminOutputStream(FileOutputStream(finalDir))
-            val writeOut = PrintWriter(OutputStreamWriter(streamOut))
-            val jasminClass = JasminClass(sootClass)
-            jasminClass.print(writeOut)
-            writeOut.flush()
-            streamOut.close()
-        } else {
-            // use asm backend
-            val streamOut = FileOutputStream(finalDir)
-            val backend = BafASMBackend(sootClass, javaVersion)
-            backend.generateClassFile(streamOut)
-            streamOut.close()
+        try {
+            if (!asmBackend) {
+                // use outdated backend
+                val streamOut = JasminOutputStream(FileOutputStream(finalDir))
+                val writeOut = PrintWriter(OutputStreamWriter(streamOut))
+                val jasminClass = JasminClass(sootClass)
+                jasminClass.print(writeOut)
+                writeOut.flush()
+                streamOut.close()
+            } else {
+                // use asm backend
+                val streamOut = FileOutputStream(finalDir)
+                val backend = BafASMBackend(sootClass, javaVersion)
+                backend.generateClassFile(streamOut)
+                streamOut.close()
+            }
+        } catch (e: Exception) {
+            log.error("Cannot generate the class files")
+            log.error(e)
         }
     }
 

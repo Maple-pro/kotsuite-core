@@ -13,9 +13,9 @@ object TestClassJimpleGenerator {
     /**
      * Generate jimple class for the given TestClass
      *
-     * @param printTestCaseName
-     * @param generateAssert
-     * @return
+     * @param printTestCaseName whether to print the test case name in the test method
+     * @param generateAssert whether to generate assert statement in the test method
+     * @return the generated SootClass
      */
     fun TestClass.generateJimpleTestClass(
         printTestCaseName: Boolean = false,

@@ -15,18 +15,18 @@ object PopulationFitness {
 
     fun generatePopulationFitness(population: Population, assertFilePath: String) {
         // Generate jimple test class
-        log.debug("a. Generating Jimple test classes...")
+        log.info("a. Generating Jimple test classes...")
         val jimpleTestClass = population.generateJimpleTestClass()
 
         // Print main class and test classes into file using jasmin format
-        log.debug("b. Printing Jasmin files...")
+        log.info("b. Printing Jasmin files...")
         JasminPrinter.printJasminFile(jimpleTestClass)
 
         // Generate fitness for each test cases
         population.testCases.forEach { testCase ->
             // Run application with jacoco agent and kotsuite agent, which will generate the .exec file
             // Analyze the .exec file to generate the coverage information
-            log.debug("c. Generating fitness for test case: ${testCase.testCaseName}")
+            log.info("c. Generating fitness for test case: ${testCase.testCaseName}")
             TestCaseFitness(
                 jimpleTestClass,
                 testCase,
@@ -36,7 +36,7 @@ object PopulationFitness {
         }
 
         // Generate fitness value for whole population
-        log.debug("d. Generating fitness for whole population")
+        log.info("d. Generating fitness for whole population")
         val execDataFile = Configs.getExecFilePath(jimpleTestClass.name, "*")
         generateTotalPopulationExec(
             execDataFile,

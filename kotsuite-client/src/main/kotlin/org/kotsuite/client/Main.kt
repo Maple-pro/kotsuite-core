@@ -43,7 +43,9 @@ fun main(args: Array<String>) {
     log.info("KotSuite Core Version: ${Configs.KOTSUITE_CORE_VERSION}")
 
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-        log.error("Algorithm Crash", "Uncaught exception occurred: $throwable")
+        log.error("Algorithm Crash")
+        log.error("Uncaught exception occurred: $throwable")
+        log.error(throwable.stackTraceToString())
     }
 
     val client = Client(

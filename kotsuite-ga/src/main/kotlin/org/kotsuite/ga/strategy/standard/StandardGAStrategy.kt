@@ -74,19 +74,19 @@ object StandardGAStrategy: Strategy() {
             log.log(Configs.sectionLevel, "[Round $round]")
 
             // Get test suite coverage info
-            log.debug("Generating population coverage info...")
+            log.info("Generating population coverage info...")
             val assertFileName = curPopulation.getPopulationAssertionName() + ".txt"
             val assertFilePath = Configs.assertOutputPath + File.separatorChar + assertFileName
             PopulationFitness.generatePopulationFitness(curPopulation, assertFilePath)
 
             // Generate assertion for each testcase
-            log.debug("Adding assertion to each testcase...")
+            log.info("Adding assertion to each testcase...")
             if (File(assertFilePath).exists()) {
                 AssertionGenerator.addAssertions(curPopulation, File(assertFilePath))
             }
 
             // Meet the coverage criteria ? output : continue
-            log.debug("Checking whether the fitness of the population meets the requirements...")
+            log.info("Checking whether the fitness of the population meets the requirements...")
             val fitness = curPopulation.fitness ?: Fitness(0.0, 0.0)
             log.log(Level.INFO, "Fitness: $fitness")
             val isCoverTargets = isCoverTargets(fitness)

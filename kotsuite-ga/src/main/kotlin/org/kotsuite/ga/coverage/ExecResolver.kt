@@ -5,6 +5,7 @@ import org.jacoco.core.analysis.Analyzer
 import org.jacoco.core.analysis.CoverageBuilder
 import org.jacoco.core.analysis.IBundleCoverage
 import org.jacoco.core.analysis.ICounter
+import org.jacoco.core.analysis.IMethodCoverage
 import org.jacoco.core.internal.analysis.ClassCoverageImpl
 import org.jacoco.core.internal.analysis.CounterImpl
 import org.jacoco.core.internal.analysis.LineImpl
@@ -109,11 +110,16 @@ class ExecResolver(
         val className = classNameAndMethodName.first
         val methodName = classNameAndMethodName.second
 
-        val targetMethodCoverage = coverageBuilder.classes.firstOrNull {
-            it.name == className.replace('.', '/')
-        }?.methods?.firstOrNull {
-            it.name == methodName
-        }
+        val targetMethodCoverage = coverageBuilder.classes
+            .filter {
+                it.name.startsWith(className.replace('.', '/'))
+            }
+            .fold(listOf<IMethodCoverage>()) { sum, item ->
+                sum + item.methods
+            }
+            .firstOrNull {
+                it.name == methodName
+            }
 
         if (targetMethodCoverage == null) {
             log.error("Target method coverage not found: $methodSig")

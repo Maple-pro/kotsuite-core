@@ -1,6 +1,7 @@
 package org.kotsuite.ga.jimple
 
 import org.apache.logging.log4j.LogManager
+import org.kotsuite.exception.ActionJimpleGenerationException
 import org.kotsuite.exception.UnsupportedTypeException
 import org.kotsuite.ga.chromosome.action.*
 import org.kotsuite.ga.chromosome.value.ChromosomeValue
@@ -53,7 +54,7 @@ object ActionJimpleGenerator {
                 this.generateMockWhenStmt(body, values, sootMethod)
             }
             is MethodCallAction -> {
-                returnLocal = generateMethodCallAction(body, this, args, sootMethod, collectReturnValue)
+                returnLocal = generateMethodCallAction(body, this, args, collectReturnValue)
             }
             else -> {
                 log.error("Unimplemented action type: $this")
@@ -83,36 +84,51 @@ object ActionJimpleGenerator {
 
     private fun generateMethodCallAction(
         body: Body,
-        action: MethodCallAction, args: List<Value>, sootMethod: SootMethod,
+        action: MethodCallAction, args: List<Value>,
         collectReturnValue: Boolean = false
     ): Local? {
         var returnLocal: Local? = null
 
+        val targetMethod = action.method
         val locals = mutableListOf<Local>()
         val units = mutableListOf<Unit>()
 
-        val obj = sootMethod.getLocalByName(action.variable.localName) ?: return null
-        val invokeExpr = jimple.newVirtualInvokeExpr(obj, action.method.makeRef(), args)
+        try {
+            val invokeExpr = if (targetMethod.isStatic) { // 是静态方法
+                jimple.newStaticInvokeExpr(targetMethod.makeRef(), args)
+            } else { // 是成员方法
+                val obj = body.getLocalByName(action.variable.localName)
+                if (obj == null) {
+                    log.error("Cannot get local: ${action.variable.localName}")
+                    throw ActionJimpleGenerationException("Cannot get local: ${action.variable.localName}")
+                }
 
-        // assign the return value to a variable if exist
-        if (collectReturnValue && action.method.returnType !is VoidType) {
-            val capitalizedMethodName = action.method.name.replaceFirstChar { it.uppercase() }
-            val returnValue = jimple.newLocal("returnValue$capitalizedMethodName", action.method.returnType)
-            val assignStmt = jimple.newAssignStmt(returnValue, invokeExpr)
+                jimple.newVirtualInvokeExpr(obj, targetMethod.makeRef(), args)
+            }
 
-            locals.add(returnValue)
-            units.add(assignStmt)
+            // assign the return value to a variable if exist
+            if (collectReturnValue && targetMethod.returnType !is VoidType) {
+                val capitalizedMethodName = targetMethod.name.replaceFirstChar { it.uppercase() }
+                val returnValue = jimple.newLocal("returnValue$capitalizedMethodName", targetMethod.returnType)
+                val assignStmt = jimple.newAssignStmt(returnValue, invokeExpr)
 
-            returnLocal = returnValue
-        } else {
-            val invokeStmt = jimple.newInvokeStmt(invokeExpr)
-            units.add(invokeStmt)
+                locals.add(returnValue)
+                units.add(assignStmt)
+
+                returnLocal = returnValue
+            } else {
+                val invokeStmt = jimple.newInvokeStmt(invokeExpr)
+                units.add(invokeStmt)
+            }
+
+            body.locals.addAll(locals)
+            body.units.addAll(units)
+
+            return returnLocal
+
+        } catch (e: Exception) {
+            log.error("Cannot generate method call statement")
+            throw ActionJimpleGenerationException(e)
         }
-
-        body.locals.addAll(locals)
-        body.units.addAll(units)
-
-        return returnLocal
     }
-
 }
