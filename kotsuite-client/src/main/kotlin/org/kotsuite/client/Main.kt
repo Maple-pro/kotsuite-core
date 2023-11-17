@@ -35,6 +35,10 @@ fun main(args: Array<String>) {
     val dependencyClassPaths = cmd.getOptionValue("dependency")
 
     val logFilePath = cmd.getOptionValue("module") + File.separator + "kotsuite.log"
+    val logFile = File(logFilePath)
+    if (logFile.exists()) {
+        logFile.delete() // Clear the previous log file
+    }
     System.setProperty("logFilePath", logFilePath)
 
     val log = LogManager.getLogger()
@@ -60,5 +64,30 @@ fun main(args: Array<String>) {
     )
     client.analyze()
     client.generateTestSuite()
+
+    // Copy the log file to the output directory
+    val currentLogFile = File(logFilePath)
+    if (currentLogFile.exists()) {
+        val targetLogFile = File(Configs.getLogFilePath())
+        currentLogFile.copyTo(targetLogFile, true)
+    }
+
+    val kotsuiteArgumentsFile = File("$modulePath/kotsuite-arguments.txt")
+    if (kotsuiteArgumentsFile.exists()) {
+        val targetKotSuiteArgumentsFile = File(Configs.getKotSuiteArgumentsFilePath())
+        kotsuiteArgumentsFile.copyTo(targetKotSuiteArgumentsFile, true)
+    }
+
+    val kotsuiteDependencyClassPathFile = File("$modulePath/kotsuite-dependency-classpath.txt")
+    if (kotsuiteDependencyClassPathFile.exists()) {
+        val targetKotSuiteDependencyClassPathFile = File(Configs.getKotSuiteDependencyClassPathFilePath())
+        kotsuiteDependencyClassPathFile.copyTo(targetKotSuiteDependencyClassPathFile)
+    }
+
+    val kotsuiteModuleInformationFile = File("$modulePath/kotsuite-module-information.txt")
+    if (kotsuiteModuleInformationFile.exists()) {
+        val targetKotSuiteModuleInformationFile = File(Configs.getKotSuiteModuleInformationFilePath())
+        kotsuiteModuleInformationFile.copyTo(targetKotSuiteModuleInformationFile)
+    }
 }
 

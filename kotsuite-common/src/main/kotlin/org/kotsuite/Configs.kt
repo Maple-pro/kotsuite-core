@@ -113,6 +113,22 @@ object Configs {
         return "$commandOutputPath/${prefix}_arguments_${timestamp}_${Random.nextInt()}.txt"
     }
 
+    fun getLogFilePath(): String {
+        return "$kotsuiteOutputPath/kotsuite.log"
+    }
+
+    fun getKotSuiteArgumentsFilePath(): String {
+        return "$kotsuiteOutputPath/kotsuite-arguments.txt"
+    }
+
+    fun getKotSuiteDependencyClassPathFilePath(): String {
+        return "$kotsuiteOutputPath/kotsuite-dependency-classpath.txt"
+    }
+
+    fun getKotSuiteModuleInformationFilePath(): String {
+        return "$kotsuiteOutputPath/kotsuite-module-information.txt"
+    }
+
     @Override
     override fun toString(): String {
         return "{ project_path: $projectPath, module_path: $modulePath }"
