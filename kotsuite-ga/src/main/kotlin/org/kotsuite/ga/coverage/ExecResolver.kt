@@ -11,16 +11,16 @@ import org.jacoco.core.internal.analysis.CounterImpl
 import org.jacoco.core.internal.analysis.LineImpl
 import org.jacoco.core.tools.ExecFileLoader
 import org.kotsuite.Configs
+import org.kotsuite.ga.commands.TestRunner
 import org.kotsuite.ga.coverage.fitness.Fitness
 import org.kotsuite.soot.SootUtils
-import org.kotsuite.utils.getError
-import org.kotsuite.utils.getOutput
-import org.kotsuite.utils.logCommandOutput
+import org.kotsuite.utils.*
 import soot.SootClass
 import soot.SootMethod
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.concurrent.TimeUnit
 
 class ExecResolver(
     private val title: String,
@@ -181,11 +181,11 @@ class ExecResolver(
                 )
             }
 
-        val ps = Runtime.getRuntime().exec(args)
-        val psOutput = ps.getOutput()
-        val psError = ps.getError()
-        log.logCommandOutput(psOutput, psError)
-        ps.waitFor()
+        val res = execCommand(args)
+        val psInput = res.first
+        val psError = res.second
+
+        log.logCommandOutput(psInput, psError)
     }
 
     /**
@@ -214,11 +214,11 @@ class ExecResolver(
                 )
             }
 
-        val ps = Runtime.getRuntime().exec(args)
-        val psOutput = ps.getOutput()
-        val psError = ps.getError()
-        log.logCommandOutput(psOutput, psError)
-        ps.waitFor()
+        val res = execCommand(args)
+        val psInput = res.first
+        val psError = res.second
+
+        log.logCommandOutput(psInput, psError)
     }
 
     /**

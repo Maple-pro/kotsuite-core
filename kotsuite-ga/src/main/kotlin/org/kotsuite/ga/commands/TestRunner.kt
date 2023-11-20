@@ -3,11 +3,10 @@ package org.kotsuite.ga.commands
 import org.apache.logging.log4j.LogManager
 import org.jacoco.core.runtime.AgentOptions
 import org.kotsuite.Configs
-import org.kotsuite.utils.getError
-import org.kotsuite.utils.getOutput
-import org.kotsuite.utils.logCommandOutput
+import org.kotsuite.utils.*
 import java.io.File
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 
 object TestRunner {
     private val log = LogManager.getLogger()
@@ -26,14 +25,12 @@ object TestRunner {
      */
     private fun runCommand(command: Array<String>): Boolean {
         return try {
-            val ps = Runtime.getRuntime().exec(command)
-            ps.waitFor()
+            val res = execCommand(command)
+            val psInput = res.first
+            val psError = res.second
 
-            val psOutput = ps.getOutput()
-            val psError = ps.getError()
-            log.logCommandOutput(psOutput, psError)
-
-            TestRunnerUtils.getTestResult(psOutput)
+            log.logCommandOutput(psInput, psError)
+            TestRunnerUtils.getTestResult(psInput)
         } catch (e: Exception) {
             log.error(e.stackTraceToString())
             false

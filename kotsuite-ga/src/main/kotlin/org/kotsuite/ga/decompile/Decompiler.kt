@@ -3,6 +3,7 @@ package org.kotsuite.ga.decompile
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
 import org.kotsuite.exception.DecompileException
+import org.kotsuite.utils.execCommand
 import org.kotsuite.utils.getError
 import org.kotsuite.utils.getOutput
 import org.kotsuite.utils.logCommandOutput
@@ -31,11 +32,10 @@ object Decompiler {
         )
 
         try {
-            val ps = Runtime.getRuntime().exec(command)
-            val psOutput = ps.getOutput()
-            val psError = ps.getError()
-            log.logCommandOutput(psOutput, psError)
-            ps.waitFor()
+            val res = execCommand(command)
+            val psInput = res.first
+            val psError = res.second
+            log.logCommandOutput(psInput, psError)
         } catch (e: IOException) {
             log.error("Failed to decompile jasmin to java")
             throw DecompileException("Failed to decompile jasmin to java", e)

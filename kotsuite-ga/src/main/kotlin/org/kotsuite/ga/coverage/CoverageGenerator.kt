@@ -2,12 +2,12 @@ package org.kotsuite.ga.coverage
 
 import org.apache.logging.log4j.LogManager
 import org.kotsuite.Configs
+import org.kotsuite.ga.commands.TestRunner
+import org.kotsuite.utils.*
 import org.kotsuite.utils.FileUtils.isLinux
-import org.kotsuite.utils.getError
-import org.kotsuite.utils.getOutput
-import org.kotsuite.utils.logCommandOutput
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 @Deprecated("No longer used")
 object CoverageGenerator {
@@ -72,11 +72,12 @@ object CoverageGenerator {
         val args = arrayOf("java", vmOption, "-cp", runtimeJars, mainClass)
         try {
             log.info("Run command: ${args.joinToString(" ")}")
-            val ps = Runtime.getRuntime().exec(args)
-            val psOut = ps.getOutput()
-            val psError = ps.getError()
-            log.logCommandOutput(psOut, psError)
-            ps.waitFor()
+
+            val res = execCommand(args)
+            val psInput = res.first
+            val psError = res.second
+
+            log.logCommandOutput(psInput, psError)
         } catch (e: Exception) {
             log.error(e.stackTraceToString())
         }
