@@ -6,11 +6,16 @@ data class WholeSolution(
     val classSolutions: List<ClassSolution>,
 ) {
     /**
-     * Remove all failure test cases
+     * Get all successful test cases
      */
     fun getSuccessfulWholeSolution(): WholeSolution {
         val newClassSolutions = classSolutions.map { it.getSuccessfulClassSolution() }
         return WholeSolution(newClassSolutions)
+    }
+
+    fun exceptCrashedWholeSolution(): WholeSolution {
+        val newClassSolution = classSolutions.map { it.exceptCrashedClassSolution() }
+        return WholeSolution(newClassSolution)
     }
 
     fun updateCoverageInfo(execResolver: ExecResolver) {

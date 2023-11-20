@@ -38,6 +38,9 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         // generate whole solution using the given strategy
         wholeSolution = gaStrategy.generateWholeSolution()
 
+        // except crashed test cases
+        wholeSolution = wholeSolution.exceptCrashedWholeSolution()
+
         if (Configs.ONLY_SUCCESS) {
             wholeSolution = wholeSolution.getSuccessfulWholeSolution()
         }

@@ -18,4 +18,9 @@ class ClassSolution(
         val successfulMethodSolutions = methodSolutions.map { it.getSuccessfulMethodSolution() }
         return ClassSolution(targetClass, testClass, successfulMethodSolutions)
     }
+
+    fun exceptCrashedClassSolution(): ClassSolution {
+        val exceptCrashedMethodSolutions = methodSolutions.map { it.exceptCrashedMethodSolution() }
+        return ClassSolution(targetClass, testClass, exceptCrashedMethodSolutions)
+    }
 }

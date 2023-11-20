@@ -7,6 +7,7 @@ import org.kotsuite.analysis.Dependency
 import org.kotsuite.ga.commands.TestRunner
 import org.kotsuite.ga.commands.KotMainCliOptions
 import org.kotsuite.ga.commands.KotSuiteAgentOptions
+import org.kotsuite.ga.commands.TestResult
 import org.kotsuite.ga.solution.WholeSolution
 import java.io.File
 
@@ -39,7 +40,7 @@ object JacocoUtils {
         execDataFile: String,
         assertFile: String,
         classesPath: String,
-    ): Boolean {
+    ): TestResult {
         val jacocoAgentOptions = AgentOptions()
         with(jacocoAgentOptions) {
             includes = Configs.includeFiles

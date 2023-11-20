@@ -1,6 +1,7 @@
 package org.kotsuite.ga.statistic
 
 import com.google.gson.annotations.SerializedName
+import org.kotsuite.ga.commands.TestResult
 import org.kotsuite.ga.report.MethodInfo
 
 data class MethodStatistic(
@@ -24,7 +25,7 @@ data class MethodStatistic(
             val methodSig = methodInfo.methodSig
             val coverage = CoverageStatistic.fromCoverageInfo(methodInfo.coverageInfo)
             val allTestCaseNumber = methodInfo.testCaseInfos.size
-            val successTestCaseNumber = methodInfo.testCaseInfos.count { it.testResult }
+            val successTestCaseNumber = methodInfo.testCaseInfos.count { it.testResult == TestResult.SUCCESSFUL }
             val failTestCaseNumber = allTestCaseNumber - successTestCaseNumber
 
             return MethodStatistic(

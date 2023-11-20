@@ -23,7 +23,7 @@ object TestRunner {
      * @param command java command to run the test case or test suite
      * @return the test result
      */
-    private fun runCommand(command: Array<String>): Boolean {
+    private fun runCommand(command: Array<String>): TestResult {
         return try {
             val res = execCommand(command)
             val psInput = res.first
@@ -33,7 +33,7 @@ object TestRunner {
             TestRunnerUtils.getTestResult(psInput)
         } catch (e: Exception) {
             log.error(e.stackTraceToString())
-            false
+            TestResult.CRASHED
         }
     }
 
@@ -59,7 +59,7 @@ object TestRunner {
         cliArguments: KotMainCliOptions,
         mainClassName: String,
         classPath: String,
-    ): Boolean {
+    ): TestResult {
         val jacocoOptionsStr = getJacocoVMArgument(jacocoAgentOptions, jacocoAgentJarFile)
         val kotsuiteOptionsStr = kotsuiteAgentOptions.getVMArgument(kotsuiteAgentJarFile)
         val cliArgumentsArr = cliArguments.getCliArguments()
@@ -93,7 +93,7 @@ object TestRunner {
         cliArguments: KotMainCliOptions,
         mainClassName: String,
         classPath: String,
-    ): Boolean {
+    ): TestResult {
         val jacocoOptionsStr = getJacocoVMArgument(jacocoAgentOptions, jacocoAgentJarFile)
         val vmArguments = listOf(
             jacocoOptionsStr,
