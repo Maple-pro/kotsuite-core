@@ -80,6 +80,11 @@ fun SootMethod.isComponentNMethod(): Boolean {
 }
 
 fun SootMethod.isOverrideMethod(): Boolean {
+    val lifeCycleMethods = listOf("onCreate", "onStart", "onResume", "onPause", "onStop", "onDestroy")
+    if (lifeCycleMethods.contains(this.name)) {
+        return true
+    }
+
     val sootClass = this.declaringClass
 
     val allSuperMethods = this.getAllSuperMethods(sootClass)
