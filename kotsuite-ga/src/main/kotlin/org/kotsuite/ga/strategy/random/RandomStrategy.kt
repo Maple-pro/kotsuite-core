@@ -19,7 +19,7 @@ import org.kotsuite.utils.IDUtils
 import soot.*
 import kotlin.collections.ArrayList
 
-object RandomStrategy: Strategy() {
+object RandomStrategy : Strategy() {
     private val log = LogManager.getLogger()
 
     override fun generateMethodSolution(targetMethod: SootMethod, targetClass: SootClass): MethodSolution {
@@ -35,14 +35,19 @@ object RandomStrategy: Strategy() {
      *
      * @param targetMethod the target method needs to be generated
      */
-    fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase>{
+    fun generateTestCasesForMethod(targetMethod: SootMethod): List<TestCase> {
         val testCases = ArrayList<TestCase>()
 
         val testCaseNum = Configs.POPULATION_SIZE
 
-        val paramString = targetMethod.parameterTypes.joinToString("_") {
-            it.toString().substringAfterLast('.')
-        }
+        val paramString = targetMethod.parameterTypes
+            .joinToString("_") {
+                it.toString().substringAfterLast('.')
+            }
+            .filter {
+                it.isLetterOrDigit() || it == '_'
+            }
+
         for (i in 1..testCaseNum) {
             val testCaseName = if (paramString != "") {
                 "test_${targetMethod.name}_${paramString}_${i}_${IDUtils.getId()}"
@@ -89,6 +94,7 @@ object RandomStrategy: Strategy() {
                         mockBehavior(testCase, targetObject, it)
                     }
                 }
+
                 InitializationType.INSTANCE -> {
                     initializeTargetObjectByInstance(testCase, targetObject, targetClass)
 
@@ -165,11 +171,12 @@ object RandomStrategy: Strategy() {
         targetClass: SootClass,
         testDoubleType: TestDoubleType,
     ) {
-        when(testDoubleType) {
+        when (testDoubleType) {
             TestDoubleType.JMOCKK_MOCK -> {
                 val testDoubleAction = generateJMockkTestDoubleAction(targetObject, targetClass)
                 testCase.actions.add(testDoubleAction)
             }
+
             TestDoubleType.JMOCKK_SPY -> {
                 val objectToSpyk = Variable(targetClass.getInstanceName(), targetClass.type)
                 initializeTargetObjectByConstructor(testCase, objectToSpyk, targetClass)
@@ -177,6 +184,7 @@ object RandomStrategy: Strategy() {
                 val testDoubleAction = generateJSpykTestDoubleAction(targetObject, objectToSpyk, targetClass)
                 testCase.actions.add(testDoubleAction)
             }
+
             else -> {
                 TODO("这里需要实现Mockito的mock和spy,但暂时用不到")
             }
@@ -305,12 +313,13 @@ object RandomStrategy: Strategy() {
      * @return the [Parameter] with random value
      */
     private fun createParameter(testCase: TestCase, type: Type): Parameter {
-        return when(type) {
+        return when (type) {
             is PrimType -> {
                 val value = ValueGenerator.generatePrimValue(type)
                 testCase.values.add(value)
                 PrimParameter(type, testCase.values.size - 1)
             }
+
             is RefType -> {
                 if (type == RefType.v(CommonClassConstants.string_class_name)) {
                     val value = ValueGenerator.generateStringValue()
@@ -318,15 +327,22 @@ object RandomStrategy: Strategy() {
                     StringParameter(testCase.values.size - 1)
                 } else {
                     val parameterVariable = Variable(type.sootClass.getInstanceName(), type)
-                    initializeTargetObjectByTestDouble(testCase, parameterVariable, type.sootClass, TestDoubleType.JMOCKK_MOCK)
+                    initializeTargetObjectByTestDouble(
+                        testCase,
+                        parameterVariable,
+                        type.sootClass,
+                        TestDoubleType.JMOCKK_MOCK
+                    )
                     RefTypeParameter(parameterVariable)
                 }
             }
+
             is ArrayType -> {
                 val value = ValueGenerator.generateArrayValue(type)
                 testCase.values.add(value)
                 ArrayParameter(type, testCase.values.size - 1)
             }
+
             else -> {
                 val errorMsg = "Unsupported parameter type: $type"
                 log.error(errorMsg)
