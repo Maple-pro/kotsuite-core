@@ -8,12 +8,20 @@ import org.kotsuite.Configs
 import org.kotsuite.exception.ClassSolutionGenerationException
 import org.kotsuite.exception.MethodSolutionGenerationException
 import org.kotsuite.ga.chromosome.TestClass
+import org.kotsuite.ga.overall.OverallStatistic
+import org.kotsuite.ga.overall.SimpleClassStatistic
+import org.kotsuite.ga.overall.SimpleMethodStatistic
+import org.kotsuite.ga.report.getClassReason
+import org.kotsuite.ga.report.getClassType
+import org.kotsuite.ga.report.getMethodReason
+import org.kotsuite.ga.report.getMethodType
 import org.kotsuite.ga.solution.ClassSolution
 import org.kotsuite.ga.solution.MethodSolution
 import org.kotsuite.ga.solution.WholeSolution
 import org.kotsuite.soot.Filter
 import soot.SootClass
 import soot.SootMethod
+import java.io.File
 
 abstract class Strategy {
     private val log = LogManager.getLogger()
@@ -24,6 +32,9 @@ abstract class Strategy {
 
     open fun generateWholeSolution(): WholeSolution {
         log.log(Configs.sectionLevel, "[Whole Solution]")
+
+        // Log overall statistic and save to file
+        logOverallStatistic()
 
         // Output the classes that we can analyze
         val filteredClasses = Analyzer.classes.filter {
@@ -111,4 +122,32 @@ abstract class Strategy {
         log.debug("\n" + gson.toJson(printTargetClassMethodMap))
     }
 
+    /**
+     * Log overall statistic and save to file
+     *
+     */
+    private fun logOverallStatistic() {
+        val overallStatisticFile = File(Configs.getOverallStatisticFilePath())
+
+        log.log(Configs.sectionLevel, "Collecting overall statistic to ${overallStatisticFile.path}")
+
+        val simpleClassStatistics = Analyzer.classes.map {
+            val className = it.name
+            val classType = it.getClassType()
+            val classReason = it.getClassReason()
+            val methodInfos = it.methods.map { method ->
+                val methodSig = method.signature
+                val methodType = method.getMethodType()
+                val methodReason = method.getMethodReason()
+                SimpleMethodStatistic(methodSig, methodType, methodReason)
+            }
+            SimpleClassStatistic(className, classType, classReason, methodInfos)
+        }
+
+        val overallStatistic = OverallStatistic(Configs.modulePath, simpleClassStatistics)
+
+        overallStatisticFile.writeText(overallStatistic.toString())
+
+        log.info("Collecting complete!")
+    }
 }

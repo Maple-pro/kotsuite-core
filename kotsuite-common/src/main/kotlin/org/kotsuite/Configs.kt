@@ -108,6 +108,10 @@ object Configs {
         return "$finalReportOutputPath/statistic_$timestamp.json"
     }
 
+    fun getOverallStatisticFilePath(): String {
+        return "$finalReportOutputPath/overall_statistic.json"
+    }
+
     fun getCommandFilePath(prefix: String, dateTime: LocalDateTime): String {
         val timestamp = dateTime.format(timeFormatter)
         return "$commandOutputPath/${prefix}_arguments_${timestamp}_${Random.nextInt()}.txt"
