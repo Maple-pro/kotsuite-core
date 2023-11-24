@@ -123,6 +123,6 @@ fun SootMethod.isUnsupportedMethod(): Boolean {
     val parameters = this.parameterTypes
     return parameters
         .filterIsInstance<RefType>().any {
-            it.className.startsWith("kotlin.jvm.functions")
+            it.className.startsWith("kotlin.jvm.functions") || it.className.startsWith("java.util.function.Function")
         }
 }
