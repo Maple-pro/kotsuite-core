@@ -66,10 +66,10 @@ object JacocoUtils {
         }
 
         val cp = listOf(classesPath) + // the target class files path of the project, e.g., sootOutput/
-                Configs.dependencyClassPaths + // the dependency class paths of the project
                 Dependency.getClassPath() + // the classpath jars from libs/
                 Dependency.getTestFramework() + // the test framework jars from libs/
-                Dependency.getTestDependencies() // the test dependencies jars from libs/
+                Dependency.getTestDependencies() + // the test dependencies jars from libs/
+                Configs.dependencyClassPaths // the dependency class paths of the project
 
         val cpStr = cp.joinToString(File.pathSeparator)
 
@@ -113,10 +113,10 @@ object JacocoUtils {
         }
 
         val cp = listOf(classesPath) + // the target class files path of the project, e.g., sootOutput/
-                Configs.dependencyClassPaths + // the dependency class paths of the project
                 Dependency.getClassPath() + // the classpath jars from libs/
                 Dependency.getTestFramework() + // the test framework jars from libs/
-                Dependency.getTestDependencies() // the test dependencies jars from libs/
+                Dependency.getTestDependencies() + // the test dependencies jars from libs/
+                Configs.dependencyClassPaths // the dependency class paths of the project
 
         val cpStr = cp.joinToString(File.pathSeparator)
 

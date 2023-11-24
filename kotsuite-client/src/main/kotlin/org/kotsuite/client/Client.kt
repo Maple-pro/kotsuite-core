@@ -36,6 +36,24 @@ class Client(
     }
 
     private fun setConfigs() {
+        val dealtDependencyClassPaths = dependencyClassPaths
+            .split(File.pathSeparator)
+            .map {
+                if (it.endsWith("!/")) {
+                    it.removeSuffix("!/")
+                } else {
+                    it
+                }
+            }
+            .filter {
+                it.endsWith(".jar")
+            }.toMutableList()
+
+        // Move all android platform jars to the end of the list
+        val androidDependencies = dealtDependencyClassPaths.filter { it.contains("android.jar") }
+        dealtDependencyClassPaths.removeAll(androidDependencies)
+        dealtDependencyClassPaths.addAll(androidDependencies)
+
         Configs.projectPath = projectPath
         Configs.modulePath = modulePath
         Configs.sourceCodePath = moduleSourcePath.split(File.pathSeparator)
@@ -44,13 +62,7 @@ class Client(
         Configs.includeRules = includeRules
         Configs.includeFiles = "*"
         Configs.libsPath = libsPath
-        Configs.dependencyClassPaths = dependencyClassPaths.split(File.pathSeparator).map {
-            if (it.endsWith("!/")) {
-                it.removeSuffix("!/")
-            } else {
-                it
-            }
-        }.filter { it.endsWith(".jar") }
+        Configs.dependencyClassPaths = dealtDependencyClassPaths
 
         log.log(Level.INFO, "Set configs: $Configs")
     }
@@ -61,7 +73,7 @@ class Client(
             Files.createDirectories(Paths.get(kotsuiteOutputPath))
             Files.createDirectories(Paths.get(sootOutputPath))
             Files.createDirectories(Paths.get(finalOutputPath))
-            
+
             Files.createDirectories(Paths.get(execOutputPath))
             Files.createDirectories(Paths.get(assertOutputPath))
             Files.createDirectories(Paths.get(commandOutputPath))
