@@ -61,8 +61,8 @@ object Analyzer {
         val testFrameworks = Dependency.getTestFramework() // 测试框架依赖 jar 包路径
         val testDependencies = Dependency.getTestDependencies() // 测试框架依赖
 
-        val sootProcessDir = inputClassPaths + testFrameworks
-        val sootClasspath = (dependencyClassPaths + testDependencies).joinToString(File.pathSeparator)
+        val sootProcessDir = inputClassPaths + testFrameworks + dependencyClassPaths
+        val sootClasspath = testDependencies.joinToString(File.pathSeparator)
 
         val gson = GsonBuilder().setPrettyPrinting().create()
         log.debug("Test frameworks: \n${gson.toJson(testFrameworks)}")
