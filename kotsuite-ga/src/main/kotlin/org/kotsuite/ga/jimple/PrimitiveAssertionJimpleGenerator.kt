@@ -30,7 +30,7 @@ object PrimitiveAssertionJimpleGenerator {
 
     private fun createAssertStatement(body: Body, assertType: String, assertValue: String, actualValue: Local) {
         val assertTypeJavaClass = getJavaClass(assertType)
-        val expectedValue = string2Value(assertValue, assertTypeJavaClass)
+        val expectedValue = string2Value(assertValue, assertTypeJavaClass) ?: return
         val className: String
         val constructorMethodSig: String
 
@@ -68,7 +68,9 @@ object PrimitiveAssertionJimpleGenerator {
                 constructorMethodSig = PrimitiveConstants.string_constructor_method_sig
             }
             else -> {
-                throw UnsupportedTypeException("Unsupported assert type: $assertTypeJavaClass")
+//                throw UnsupportedTypeException("Unsupported assert type: $assertTypeJavaClass")
+                log.error("Unsupported assert type: $assertTypeJavaClass")
+                return
             }
         }
 
@@ -87,7 +89,7 @@ object PrimitiveAssertionJimpleGenerator {
      * @param assertTypeJavaClass the type of the expected value
      * @return the expected value in assert statement (`soot.Value`)
      */
-    private fun string2Value(assertValue: String, assertTypeJavaClass: String): Value {
+    private fun string2Value(assertValue: String, assertTypeJavaClass: String): Value? {
         return when (assertTypeJavaClass) {
             "java.lang.Boolean" -> {
                 if (assertValue == "true") {
@@ -104,7 +106,9 @@ object PrimitiveAssertionJimpleGenerator {
             "java.lang.Long" -> LongConstant.v(assertValue.toLong())
             "java.lang.String" -> StringConstant.v(assertValue)
             else -> {
-                throw UnsupportedTypeException("Unsupported assert type: $assertTypeJavaClass")
+//                throw UnsupportedTypeException("Unsupported assert type: $assertTypeJavaClass")
+                log.error("Unsupported assert type: $assertTypeJavaClass")
+                null
             }
         }
     }
