@@ -8,13 +8,13 @@ import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
 object Configs {
-    const val KOTSUITE_CORE_VERSION = "1.2.0"
+    const val KOTSUITE_CORE_VERSION = "1.2.1"
 
     private val dateTime = LocalDateTime.now()
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
     private val timestamp = dateTime.format(timeFormatter)
 
-    const val ONLY_SUCCESS = false // Only output successful test cases
+    const val ONLY_SUCCESS = true // Only output successful test cases
 
     // log related configs
     val sectionLevel: Level = Level.forName("SECTION", 350)
@@ -40,8 +40,15 @@ object Configs {
 
     // final output paths
     val finalClassesOutputPath: String get() = "$finalOutputPath/classes" // have source and test
+
     val finalTestOutputPath: String get() = "$finalOutputPath/test" // only have test classes
+    val finalSuccessTestOutputPath: String get() = "$finalTestOutputPath/success"
+    val finalFailedTestOutputPath: String get() = "$finalTestOutputPath/failed"
+
     val finalDecompiledOutputPath: String get() = "$finalOutputPath/decompiled"
+    val finalSuccessDecompiledOutputPath: String get() = "$finalDecompiledOutputPath/success"
+    val finalFailedDecompiledOutputPath: String get() = "$finalDecompiledOutputPath/failed"
+
     val finalExecOutputPath: String get() = "$finalOutputPath/exec"
     val finalReportOutputPath: String get() = "$finalOutputPath/report"
     
@@ -63,7 +70,7 @@ object Configs {
     const val MAX_ATTEMPT = 1
     const val TARGET_LINE_COVERAGE = 0.6  // Line coverage
     const val TARGET_CC_COVERAGE = 0.9  // Cyclomatic complexity coverage
-    const val POPULATION_SIZE = 3
+    const val POPULATION_SIZE = 2
 
     /**
      * Get exec file path

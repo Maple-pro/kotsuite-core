@@ -19,7 +19,16 @@ My awesome project that provides a lot of useful features, like:
 
 ### Security
 
-## [1.2.0] - 2023-11-24
+## [1.2.1] - 2023-11-29
+
+### Changed
+- 优化：将成功和失败的测试用例分开输出
+- 优化：将 dependency classpath 不再放入 soot 的 process dir
+- 优化：过滤策略，但还未完成「待完成」
+- 修改：测试用例数量从 3 变为 2
+- 待完成：`when().thenReturn()` 方法的支持
+
+## 1.2.0 - 2023-11-24
 
 ### Added
 - 已能正常使用，用于结项

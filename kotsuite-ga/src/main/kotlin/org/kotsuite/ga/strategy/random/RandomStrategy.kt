@@ -88,11 +88,11 @@ object RandomStrategy : Strategy() {
                     val testDoubleType = targetClass.getTestDoubleType(true)
                     initializeTargetObjectByTestDouble(testCase, targetObject, targetClass, testDoubleType)
 
-                    // 模拟 spyk 对象的行为
-                    val methodsToMock = getMockWhenMethods(targetClass, targetMethod)
-                    methodsToMock.forEach {
-                        mockBehavior(testCase, targetObject, it)
-                    }
+                    // TODO: 模拟 spyk 对象的行为
+//                    val methodsToMock = getMockWhenMethods(targetClass, targetMethod)
+//                    methodsToMock.forEach {
+//                        mockBehavior(testCase, targetObject, it)
+//                    }
                 }
 
                 InitializationType.INSTANCE -> {

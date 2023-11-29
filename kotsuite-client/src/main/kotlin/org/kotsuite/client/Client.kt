@@ -80,7 +80,11 @@ class Client(
 
             Files.createDirectories(Paths.get(finalClassesOutputPath))
             Files.createDirectories(Paths.get(finalTestOutputPath))
+            Files.createDirectories(Paths.get(finalSuccessTestOutputPath))
+            Files.createDirectories(Paths.get(finalFailedTestOutputPath))
             Files.createDirectories(Paths.get(finalDecompiledOutputPath))
+            Files.createDirectories(Paths.get(finalSuccessDecompiledOutputPath))
+            Files.createDirectories(Paths.get(finalFailedDecompiledOutputPath))
             Files.createDirectories(Paths.get(finalExecOutputPath))
             Files.createDirectories(Paths.get(finalReportOutputPath))
 

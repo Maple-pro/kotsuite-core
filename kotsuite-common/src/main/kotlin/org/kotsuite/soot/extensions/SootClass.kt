@@ -89,22 +89,30 @@ fun SootClass.isObject(): Boolean {
 }
 
 /**
+ * TODO: 该类是否应该由 Android Test 进行测试
  * 类是否继承自 Android 类，或构造函数参数包含 Android 类
  */
-fun SootClass.isAndroidClass(): Boolean {
+fun SootClass.isAndroidTestClass(): Boolean {
     // 类是否继承自 Android 内部类
-    if (this.isAndroidRelatedClass()) {
-        return true
-    }
+//    if (this.isAndroidRelatedClass()) {
+//        return true
+//    }
 
     // 构造函数参数是否包含 Android 内部类
-    val constructorMethod = this.getConstructor() ?: return true
-    for (type in constructorMethod.parameterTypes) {
-        if (type is RefType && type.sootClass.isAndroidRelatedClass()) {
-            return true
-        }
-    }
+//    val constructorMethod = this.getConstructor() ?: return true
+//    for (type in constructorMethod.parameterTypes) {
+//        if (type is RefType && type.sootClass.isAndroidRelatedClass()) {
+//            return true
+//        }
+//    }
 
+    return false
+}
+
+/**
+ * TODO: 该类是否是 Android 框架自动生成的类
+ */
+fun SootClass.isGeneratedClass(): Boolean {
     return false
 }
 

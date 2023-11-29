@@ -12,7 +12,8 @@ object Filter {
                 && !sootClass.isInterfaceClass()            // 该类是否是接口
                 && !sootClass.isPackageLevel()              // 该类是否是 Object
                 && !sootClass.isDataClass()                 // 该类是否是数据类
-//                && !sootClass.isAndroidClass()
+                && !sootClass.isAndroidTestClass()
+                && !sootClass.isGeneratedClass()
                 && !sootClass.isUnsupportedClass()
     }
 
@@ -21,7 +22,7 @@ object Filter {
                 && !sootMethod.isConstructorMethod()        // 该函数是否是构造函数
                 && !sootMethod.isAnonymousMethod()          // 该函数是否是匿名函数
                 && !sootMethod.isAbstractMethod()           // 该函数是否是抽象函数
-//                && !sootMethod.isAndroidParameterMethod()
+                && !sootMethod.isAndroidTestMethod()
                 && !sootMethod.isGetSetMethod()             // 该函数是否是 Get/Set 函数
 //                && !sootMethod.isObjectMethod()
                 && !sootMethod.isComponentNMethod()         // 该函数是否是 componentN 函数

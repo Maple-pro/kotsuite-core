@@ -42,11 +42,15 @@ fun SootMethod.isAbstractMethod(): Boolean {
     return this.isAbstract
 }
 
-fun SootMethod.isAndroidParameterMethod(): Boolean {
-    val parameterTypes = this.parameterTypes
-    parameterTypes.forEach {
-        if (it.toString().startsWith("android")) return true
-    }
+/**
+ * TODO: 该方法是否应该由 Android Test 进行测试
+ * Is android parameter method
+ */
+fun SootMethod.isAndroidTestMethod(): Boolean {
+//    val parameterTypes = this.parameterTypes
+//    parameterTypes.forEach {
+//        if (it.toString().startsWith("android")) return true
+//    }
     return false
 }
 

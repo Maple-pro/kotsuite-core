@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "org.kotsuite"
-version = "1.2.0"
+version = "1.2.1"
 
 repositories {
     mavenCentral()
@@ -33,7 +33,7 @@ configurations.all {
 }
 
 changelog {
-    version.set("1.2.0")
+    version.set("1.2.1")
     path.set(file("CHANGELOG.md").canonicalPath)
     header.set(provider { "[${version.get()}] - ${date()}" })
     headerParserRegex.set("""(\d+\.\d+\.\d+)""".toRegex())

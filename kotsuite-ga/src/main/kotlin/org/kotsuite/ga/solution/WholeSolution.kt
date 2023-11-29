@@ -9,12 +9,17 @@ data class WholeSolution(
      * Get all successful test cases
      */
     fun getSuccessfulWholeSolution(): WholeSolution {
-        val newClassSolutions = classSolutions.map { it.getSuccessfulClassSolution() }
+        val newClassSolutions = classSolutions.mapNotNull { it.getSuccessfulClassSolution() }
+        return WholeSolution(newClassSolutions)
+    }
+
+    fun getFailedWholeSolution(): WholeSolution {
+        val newClassSolutions = classSolutions.mapNotNull { it.getFailedClassSolution() }
         return WholeSolution(newClassSolutions)
     }
 
     fun exceptCrashedWholeSolution(): WholeSolution {
-        val newClassSolution = classSolutions.map { it.exceptCrashedClassSolution() }
+        val newClassSolution = classSolutions.mapNotNull { it.exceptCrashedClassSolution() }
         return WholeSolution(newClassSolution)
     }
 

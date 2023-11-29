@@ -10,13 +10,30 @@ data class MethodSolution(
     val testCases: List<TestCase>,
     var fitness: Fitness? = null
 ) {
-    fun getSuccessfulMethodSolution(): MethodSolution {
+    fun getSuccessfulMethodSolution(): MethodSolution? {
         val successfulTestCases = testCases.filter { it.testResult == TestResult.SUCCESSFUL }
+
+        if (successfulTestCases.isEmpty()) {
+            return null
+        }
         return MethodSolution(targetMethod, successfulTestCases)
     }
 
-    fun exceptCrashedMethodSolution(): MethodSolution {
+    fun getFailedMethodSolution(): MethodSolution? {
+        val failedTestCases = testCases.filter { it.testResult == TestResult.FAILED }
+
+        if (failedTestCases.isEmpty()) {
+            return null
+        }
+        return MethodSolution(targetMethod, failedTestCases)
+    }
+
+    fun exceptCrashedMethodSolution(): MethodSolution? {
         val exceptCrashedTestCases = testCases.filter { it.testResult != TestResult.CRASHED }
+
+        if (exceptCrashedTestCases.isEmpty()) {
+            return null
+        }
         return MethodSolution(targetMethod, exceptCrashedTestCases)
     }
 }

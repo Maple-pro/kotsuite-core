@@ -14,13 +14,34 @@ class ClassSolution(
         testClass.testCases = methodSolutions.flatMap { it.testCases }.toMutableList()
     }
 
-    fun getSuccessfulClassSolution(): ClassSolution {
-        val successfulMethodSolutions = methodSolutions.map { it.getSuccessfulMethodSolution() }
-        return ClassSolution(targetClass, testClass, successfulMethodSolutions)
+    fun getSuccessfulClassSolution(): ClassSolution? {
+        val successfulMethodSolutions = methodSolutions.mapNotNull { it.getSuccessfulMethodSolution() }
+
+        if (successfulMethodSolutions.isEmpty()) {
+            return null
+        }
+
+        val newTestClass = TestClass(testClass.testClassName + "Success", testClass.packageName, testClass.round)
+        return ClassSolution(targetClass, newTestClass, successfulMethodSolutions)
     }
 
-    fun exceptCrashedClassSolution(): ClassSolution {
-        val exceptCrashedMethodSolutions = methodSolutions.map { it.exceptCrashedMethodSolution() }
+    fun getFailedClassSolution(): ClassSolution? {
+        val failedMethodSolutions = methodSolutions.mapNotNull { it.getFailedMethodSolution() }
+
+        if (failedMethodSolutions.isEmpty()) {
+            return null
+        }
+
+        val newTestClass = TestClass(testClass.testClassName + "Failed", testClass.packageName,testClass.round)
+        return ClassSolution(targetClass, newTestClass, failedMethodSolutions)
+    }
+
+    fun exceptCrashedClassSolution(): ClassSolution? {
+        val exceptCrashedMethodSolutions = methodSolutions.mapNotNull { it.exceptCrashedMethodSolution() }
+
+        if (exceptCrashedMethodSolutions.isEmpty()) {
+            return null
+        }
         return ClassSolution(targetClass, testClass, exceptCrashedMethodSolutions)
     }
 }

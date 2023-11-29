@@ -25,9 +25,13 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     private val dateTime = LocalDateTime.now()  // use dateTime to identify the same exec file and report
 
     private lateinit var wholeSolution: WholeSolution
+    private lateinit var successWholeSolution: WholeSolution
+    private lateinit var failedWholeSolution: WholeSolution
     private lateinit var testClasses: List<TestClass>
     private lateinit var jimpleClasses: List<SootClass>
     private lateinit var jimpleClassesWithAssertion: List<SootClass>
+    private lateinit var successJimpleClassesWithAssertion: List<SootClass>
+    private lateinit var failedJimpleClassesWithAssertion: List<SootClass>
 
     /**
      * Generate test cases using given strategy
@@ -41,12 +45,13 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         // except crashed test cases
         wholeSolution = wholeSolution.exceptCrashedWholeSolution()
 
-        if (Configs.ONLY_SUCCESS) {
-            wholeSolution = wholeSolution.getSuccessfulWholeSolution()
-        }
+        successWholeSolution = wholeSolution.getSuccessfulWholeSolution()
+        failedWholeSolution = wholeSolution.getFailedWholeSolution()
 
         jimpleClasses = wholeSolution.generateJimpleTestClasses(false)
         jimpleClassesWithAssertion = wholeSolution.generateJimpleTestClasses(true)
+        successJimpleClassesWithAssertion = successWholeSolution.generateJimpleTestClasses(true)
+        failedJimpleClassesWithAssertion = failedWholeSolution.generateJimpleTestClasses(true)
 
         // generate whole solution coverage report
         generateFinalCoverageReport()
@@ -64,7 +69,9 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         saveStatisticToFile(statistic, finalStatisticPath)
 
         // decompile class file to java file
-        printTestClassJasminFiles(Configs.finalTestOutputPath)
+//        printTestClassJasminFiles(Configs.finalTestOutputPath)
+        printJasminFiles(successJimpleClassesWithAssertion, Configs.finalSuccessTestOutputPath)
+        printJasminFiles(failedJimpleClassesWithAssertion, Configs.finalFailedTestOutputPath)
         decompileJUnitClasses()
 
         return wholeSolution
@@ -81,7 +88,8 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
         testClasses = wholeSolution.classSolutions.map { it.testClass }
 
         log.debug("a. Output .class files to ${Configs.finalClassesOutputPath}")
-        printJasminFiles(Configs.finalClassesOutputPath)
+//        printJasminFiles(Configs.finalClassesOutputPath)
+        printJasminFiles(jimpleClasses, Configs.finalClassesOutputPath)
 
         log.debug("b. Generate final exec file")
         val execDataFile = Configs.getFinalExecFilePath(dateTime)
@@ -111,7 +119,8 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
     private fun decompileJUnitClasses() {
         log.log(Configs.sectionLevel, "[Decompile class files to java files]")
 
-        Decompiler.decompileJasminToJava(Configs.finalTestOutputPath, Configs.finalDecompiledOutputPath)
+        Decompiler.decompileJasminToJava(Configs.finalSuccessTestOutputPath, Configs.finalSuccessDecompiledOutputPath)
+        Decompiler.decompileJasminToJava(Configs.finalFailedTestOutputPath, Configs.finalFailedDecompiledOutputPath)
     }
 
     /**
@@ -132,6 +141,12 @@ class TestSuiteGenerator(private val gaStrategy: Strategy) {
      */
     private fun printTestClassJasminFiles(outputPath: String) {
         jimpleClassesWithAssertion.forEach {
+            JasminPrinter.printJasminFile(it, outputPath)
+        }
+    }
+
+    private fun printJasminFiles(sootClasses: List<SootClass>, outputPath: String) {
+        sootClasses.forEach {
             JasminPrinter.printJasminFile(it, outputPath)
         }
     }
