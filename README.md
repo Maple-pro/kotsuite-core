@@ -3,6 +3,10 @@
 > **Note**
 > This is a test suite generation tool for Kotlin Android projects.
 
+## 项目构建
+
+运行根模块下的 `fatJar` 任务，`build/libs/kotsuite-core-fat-xxx.jar` 即为我们需要的 KotSuite Core Jar 包。
+
 ## How to run the program?
 
 1. Build `kotsuite-agent` module: it will generate the `kotsuite-agent-shadow-1.x-all.jar` and put it in `libs/cli`
