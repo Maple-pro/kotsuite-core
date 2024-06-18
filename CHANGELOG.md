@@ -19,7 +19,12 @@ My awesome project that provides a lot of useful features, like:
 
 ### Security
 
-## [1.2.1] - 2023-11-29
+## [1.3.0] - 2024-06-19
+
+### Added
+- Kotlin 升级到 2.0.0
+
+## 1.2.1 - 2023-11-29
 
 ### Changed
 - 优化：将成功和失败的测试用例分开输出

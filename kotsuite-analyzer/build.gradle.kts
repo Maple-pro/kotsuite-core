@@ -4,9 +4,6 @@ plugins {
     kotlin("jvm")
 }
 
-group = "org.kotsuite"
-version = "1.2.2"
-
 repositories {
     mavenCentral()
 }

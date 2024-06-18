@@ -2,9 +2,6 @@ plugins {
     id("java")
 }
 
-group = "org.kotsuite"
-version = "1.2.2"
-
 repositories {
     mavenCentral()
 }

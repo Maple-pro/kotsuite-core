@@ -1,6 +1,8 @@
 import org.jetbrains.changelog.ChangelogSectionUrlBuilder
 import org.jetbrains.changelog.date
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
+fun properties(key: String) = project.findProperty(key).toString()
 
 val mergedJar by configurations.creating<Configuration> {
     // We're going to resolve this config here, in this project
@@ -14,15 +16,17 @@ val mergedJar by configurations.creating<Configuration> {
 }
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "2.0.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     `maven-publish`
     // Gradle Changelog Plugin
     id("org.jetbrains.changelog") version "2.0.0"
 }
 
-group = "org.kotsuite"
-version = "1.2.2"
+allprojects {
+    group = "org.kotsuite"
+    version = properties("version")
+}
 
 repositories {
     mavenCentral()
@@ -33,7 +37,7 @@ configurations.all {
 }
 
 changelog {
-    version.set("1.2.2")
+    version.set(properties("version"))
     path.set(file("CHANGELOG.md").canonicalPath)
     header.set(provider { "[${version.get()}] - ${date()}" })
     headerParserRegex.set("""(\d+\.\d+\.\d+)""".toRegex())
@@ -70,101 +74,108 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
-tasks.jar {
-    dependsOn(mergedJar)
+kotlin {
+    compilerOptions {
+        apiVersion.set(KotlinVersion.KOTLIN_2_0)
+    }
+}
 
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+tasks {
+    wrapper {
+        gradleVersion = "7.4.2"
+    }
 
-    manifest {
-        attributes["Manifest-Version"] = "1.0"
-        attributes["Main-Class"] = "org.kotsuite.client.MainKt"
+    jar {
+        dependsOn(mergedJar)
+
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        manifest {
+            attributes["Manifest-Version"] = "1.0"
+            attributes["Main-Class"] = "org.kotsuite.client.MainKt"
 //        attributes["Class-Path"] = "libs/"
+        }
+
+        from({
+            mergedJar.filter {
+                it.name.endsWith("jar") && it.path.contains(rootDir.path)
+            }.map {
+                logger.lifecycle("depending on $it")
+                zipTree(it)
+            }
+        })
     }
 
-    from({
-        mergedJar.filter {
-            it.name.endsWith("jar") && it.path.contains(rootDir.path)
-        }.map {
-            logger.lifecycle("depending on $it")
-            zipTree(it)
-        }
-    })
-}
+    register("fatJar", Jar::class.java) {
+        archiveBaseName.set("kotsuite-core-fat")
 
-tasks.register("fatJar", Jar::class.java) {
-    archiveBaseName.set("kotsuite-core-fat")
+        dependsOn(mergedJar)
 
-    dependsOn(mergedJar)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        val kotlinRuntime = setOf("kotlin-stdlib-1.8.10.jar", "kotlin-stdlib-1.8.10.jar")
+        val subprojects = setOf("kotsuite-client", "kotsuite-analyzer", "kotsuite-ga", "kotsuite-reuse")
 
-    val kotlinRuntime = setOf("kotlin-stdlib-1.8.10.jar", "kotlin-stdlib-1.8.10.jar")
-    val subprojects = setOf("kotsuite-client", "kotsuite-analyzer", "kotsuite-ga", "kotsuite-reuse")
-
-    manifest {
-        attributes["Manifest-Version"] = "1.0"
-        attributes["Main-Class"] = "org.kotsuite.client.MainKt"
-        attributes["Multi-Release"] = "true"
+        manifest {
+            attributes["Manifest-Version"] = "1.0"
+            attributes["Main-Class"] = "org.kotsuite.client.MainKt"
+            attributes["Multi-Release"] = "true"
 //        attributes["Class-Path"] = "libs/"
+        }
+
+        from({
+            mergedJar.filter {
+                it.name.endsWith("jar") && it.path.contains(rootDir.path)
+            }.map {
+                logger.lifecycle("depending on $it")
+                zipTree(it)
+            }
+        })
+
+        from(
+            configurations.runtimeClasspath.get()
+                .filter { it.name in kotlinRuntime }
+                .map { zipTree(it) }
+                .also { from(it) }
+        )
+
+        from(
+            subprojects.map { project ->
+                project(":$project").configurations.runtimeClasspath.get()
+                    .map {
+                        if (it.isDirectory) it else zipTree(it)
+                    }
+                project(":$project").configurations.testCompileClasspath.get()
+                    .map {
+                        if (it.isDirectory) it else zipTree(it)
+                    }
+            }
+        )
     }
 
-    from({
-        mergedJar.filter {
-            it.name.endsWith("jar") && it.path.contains(rootDir.path)
-        }.map {
-            logger.lifecycle("depending on $it")
-            zipTree(it)
+    shadowJar {
+        archiveBaseName.set("shadow-kotsuite")
+
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        manifest {
+            attributes["Manifest-Version"] = "1.0"
+            attributes["Main-Class"] = "org.kotsuite.client.MainKt"
         }
-    })
 
-    from(
-        configurations.runtimeClasspath.get()
-            .filter { it.name in kotlinRuntime }
-            .map { zipTree(it) }
-            .also { from(it) }
-    )
-
-    from(
-        subprojects.map { project ->
-            project(":$project").configurations.runtimeClasspath.get()
-                .map {
-                    if (it.isDirectory) it else zipTree(it)
-                }
-            project(":$project").configurations.testCompileClasspath.get()
-                .map {
-                    if (it.isDirectory) it else zipTree(it)
-                }
-        }
-    )
-}
-
-tasks.shadowJar {
-    archiveBaseName.set("shadow-kotsuite")
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    manifest {
-        attributes["Manifest-Version"] = "1.0"
-        attributes["Main-Class"] = "org.kotsuite.client.MainKt"
-    }
-
-    from(
-        mergedJar.filter {
-            it.name.endsWith("jar")
-        }.map {
-            logger.lifecycle("depending on $it")
-            zipTree(it)
-        }
-    )
+        from(
+            mergedJar.filter {
+                it.name.endsWith("jar")
+            }.map {
+                logger.lifecycle("depending on $it")
+                zipTree(it)
+            }
+        )
 
 //    mergeServiceFiles()
 //    minimize()
@@ -172,11 +183,14 @@ tasks.shadowJar {
 //    configurations.forEach { configuration ->
 //        from(configuration)
 //    }
+    }
+
+    build {
+//        dependsOn(tasks["fatJar"])
+        dependsOn("fatJar")
+    }
 }
 
-tasks.build {
-    dependsOn(tasks["fatJar"])
-}
 
 publishing {
 
