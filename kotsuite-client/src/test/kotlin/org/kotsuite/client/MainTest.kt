@@ -8,15 +8,38 @@ class MainTest {
     private val strategy = "ga" // ga or random
 
     @Test
+    fun testAdFree() {
+        val projectPath = AdFreeData.projectPath
+        val modulePath = AdFreeData.selectedModulePath
+        val moduleClassPath = AdFreeData.moduleClassPath
+        val sourcePath = AdFreeData.moduleSourcePath
+        val dependency = AdFreeData.dependency.joinToString(File.pathSeparator)
+        val includeRules = AdFreeData.includeRules
+
+        val args = arrayOf(
+            "--project", projectPath,
+            "--module", modulePath,
+            "--classpath", moduleClassPath,
+            "--source", sourcePath,
+            "--includes", includeRules,
+            "--libs", libsPath,
+            "--strategy", strategy,
+            "--dependency", dependency,
+        )
+        main(args)
+    }
+
+    @Test
     fun testMyApplication() {
         val projectPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication"
         val modulePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app"
-        val moduleClassPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/build/tmp/kotlin-classes/release"
+//        val moduleClassPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/build/tmp/kotlin-classes/release"
+        val moduleClassPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/build/intermediates/javac/debug/classes:/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/build/tmp/kotlin-classes/debug:/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/R.jar:/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/build/generated/res/resValues/debug"
         val sourcePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/MyApplication/app/src/main/java"
         val dependency = Data.myApplicationDependencies.joinToString(File.pathSeparator)
 
 //        val includeRules = "com.example.myapplication.Example&com.example.myapplication.jmockk.Example"
-        val includeRules = "com.example.myapplication.jmockk.Example"
+        val includeRules = "com.example.myapplication.playground.DoubleTest"
 
         val args = arrayOf(
             "--project", projectPath,
@@ -44,9 +67,9 @@ class MainTest {
 
 //        val includeRules = "com.simplemobiletools.gallery.pro"
 //        val includeRules = "com.simplemobiletools.gallery.pro.adapters.MediaAdapter"
-//        val includeRules = "com.simplemobiletools.gallery.pro.adapters.DirectoryAdapter"
+        val includeRules = "com.simplemobiletools.gallery.pro.adapters.DirectoryAdapter"
 //        val includeRules = "com.simplemobiletools.gallery.pro.helpers.Config"
-        val includeRules = "com.simplemobiletools.gallery.pro.helpers.MediaFetcher"
+//        val includeRules = "com.simplemobiletools.gallery.pro.helpers.MediaFetcher"
 //        val includeRules = "com.simplemobiletools.gallery.pro.helpers.FilterThumbnailsManager"
 //        val includeRules = "com.simplemobiletools.gallery.pro.helpers.ConstantsKt"
 
@@ -87,8 +110,8 @@ class MainTest {
         val dependency = Data.simpleCommonsDependencies.joinToString(File.pathSeparator)
 
 //        val includeRules = "com.simplemobiletools.commons.helpers.Converters"
-//        val includeRules = "com.simplemobiletools.commons.helpers.AlphanumericComparator"
-        val includeRules = "com.simplemobiletools.commons"
+        val includeRules = "com.simplemobiletools.commons.helpers.AlphanumericComparator"
+//        val includeRules = "com.simplemobiletools.commons"
 
         val args = arrayOf(
             "--project", projectPath,
@@ -107,7 +130,12 @@ class MainTest {
     fun testSimpleCalendar() {
         val projectPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar"
         val modulePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar/app"
-        val moduleClassPath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar/app/build/tmp/kotlin-classes/coreDebug"
+        val moduleClassPath = listOf(
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar/app/build/tmp/kotlin-classes/coreDebug",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar/app/build/intermediates/javac/coreDebug/classes",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar/app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/coreDebug/R.jar!/",
+            "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar/app/build/generated/res/resValues/core/debug",
+        ).joinToString(File.pathSeparator)
         val sourcePath = "/home/yangfeng/Repos/kotsuite-project/test-projects/Simple-Calendar/app/src/main/kotlin"
         val dependency = Data.simpleCalendarDependencies.joinToString(File.pathSeparator)
 
@@ -115,6 +143,7 @@ class MainTest {
         val includeRules = "com.simplemobiletools.calendar.pro.helpers.Formatter"
 //        val includeRules = "com.simplemobiletools.calendar.pro.adapters.EventListAdapter"
 //        val includeRules = "com.simplemobiletools.calendar.pro"
+//        val includeRules = "com.simplemobiletools.calendar.pro.fragments.WeekFragmentsHolder"
 
         val args = arrayOf(
             "--project", projectPath,
