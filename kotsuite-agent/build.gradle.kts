@@ -3,13 +3,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
-group = "org.kotsuite"
-version = "1.2"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation("org.ow2.asm:asm:9.5")
     implementation("org.ow2.asm:asm-commons:9.5")

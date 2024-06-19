@@ -2,10 +2,6 @@ plugins {
     kotlin("jvm")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":kotsuite-common"))
     implementation(project(":kotsuite-reuse"))
@@ -25,6 +21,6 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.20.0")
 }
 
-tasks.getByName<Test>("test") {
+tasks.test {
     useJUnitPlatform()
 }

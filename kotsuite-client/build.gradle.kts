@@ -2,10 +2,6 @@ plugins {
     kotlin("jvm")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":kotsuite-common"))
     implementation(project(":kotsuite-analyzer"))
@@ -24,12 +20,14 @@ dependencies {
     implementation("commons-cli:commons-cli:1.5.0")
 }
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
-}
+tasks {
+    test {
+        useJUnitPlatform()
+    }
 
-tasks.withType<Jar> {
-    manifest {
-        attributes["Main-Class"] = "org.kotsuite.client.Main"
+    withType<Jar> {
+        manifest {
+            attributes["Main-Class"] = "org.kotsuite.client.Main"
+        }
     }
 }

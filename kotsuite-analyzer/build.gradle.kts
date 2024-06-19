@@ -4,10 +4,6 @@ plugins {
     kotlin("jvm")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":kotsuite-common"))
     implementation("org.soot-oss:soot:4.4.1")
@@ -25,15 +21,17 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
-}
+tasks {
+    test {
+        useJUnitPlatform()
+    }
 
-tasks.register("compileTargetsResources") {
-    val directory = file("./src/test/targets-resources")
+    register("compileTargetsResources") {
+        val directory = file("./src/test/targets-resources")
 
-    doLast {
-        Files.createDirectories(directory.toPath())
-        fileTree("./src/test/targets-resources").map { println(it.path) }
+        doLast {
+            Files.createDirectories(directory.toPath())
+            fileTree("./src/test/targets-resources").map { println(it.path) }
+        }
     }
 }

@@ -2,10 +2,6 @@ plugins {
     kotlin("jvm")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":kotsuite-common"))
     implementation(project(":kotsuite-analyzer"))
@@ -14,6 +10,6 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
-tasks.getByName<Test>("test") {
+tasks.test {
     useJUnitPlatform()
 }

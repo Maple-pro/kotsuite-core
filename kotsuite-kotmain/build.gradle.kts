@@ -2,10 +2,6 @@ plugins {
     id("java")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation("junit:junit:4.13.2")
     implementation("commons-cli:commons-cli:1.5.0")

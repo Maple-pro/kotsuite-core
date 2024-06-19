@@ -1,12 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java")
     kotlin("jvm")
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
@@ -17,11 +14,9 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "17"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "17"
+
+kotlin {
+    compilerOptions {
+        apiVersion.set(KotlinVersion.KOTLIN_2_0)
+    }
 }

@@ -24,7 +24,7 @@ plugins {
 }
 
 allprojects {
-    group = "org.kotsuite"
+    group = properties("group")
     version = properties("version")
 }
 
@@ -70,10 +70,6 @@ dependencies {
     mergedJar(project(":kotsuite-common"))
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -86,8 +82,12 @@ kotlin {
 }
 
 tasks {
+    test {
+        useJUnitPlatform()
+    }
+
     wrapper {
-        gradleVersion = "7.4.2"
+        gradleVersion = properties("gradleVersion")
     }
 
     jar {
@@ -191,9 +191,7 @@ tasks {
     }
 }
 
-
 publishing {
-
     repositories {
         maven {
             name = "localRepo"
@@ -210,6 +208,10 @@ publishing {
 
 subprojects {
     apply(plugin = "maven-publish")
+
+    repositories {
+        mavenCentral()
+    }
 
     publishing {
         repositories {
