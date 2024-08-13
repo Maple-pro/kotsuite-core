@@ -10,6 +10,12 @@ import soot.*
 object JimpleGenerator {
     private val log = LogManager.getLogger()
 
+    /**
+     * 根据 [WholeSolution.classSolutions] 生成 SootClass 列表
+     *
+     * @param [generateAssert] 是否需要生成断言
+     * @return [WholeSolution] 中的 SootClass 列表
+     */
     fun WholeSolution.generateJimpleTestClasses(generateAssert: Boolean): List<SootClass> {
         val testClasses = this.classSolutions.map { it.testClass }
         return testClasses.mapNotNull {
