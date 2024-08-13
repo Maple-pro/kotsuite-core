@@ -7,6 +7,13 @@ import soot.SootMethod
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
+/**
+ * 遗传算法种群模型
+ *
+ * @param [targetMethod] 待测方法
+ * @param [round] 当前代数
+ * @param [testCases] 种群中的测试用例
+ */
 class Population(
     val targetMethod: SootMethod,
     var round: Int,
@@ -53,14 +60,14 @@ class Population(
     }
 
     /**
-     * Get population name,
+     * 生成种群中断言文件的文件名
      *
      * e.g., if the target method is `int foo(int)`, and round is 1,
-     * then the population name is `assertions_org.example.MyClass_foo_int_int_round1_id1`
+     * then the assertion filename of the population name is `assertions_org.example.MyClass_foo_int_int_round1_id1`
      *
-     * @return
+     * @return 种群中断言的名字
      */
-    fun getPopulationAssertionName(): String {
+    fun generatePopulationAssertionFileName(): String {
         val parameterTypeString = targetMethod.parameterTypes.joinToString("_")
         return "assertions" +
                 "_" + targetMethod.declaringClass.name +
@@ -71,14 +78,22 @@ class Population(
                 "_" + "id" + id
     }
 
-    fun getPopulationClassName(): String {
+    /**
+     * 生成种群对应的测试类的类名
+     *
+     * @return 种群对应的测试类的类名
+     */
+    fun generatePopulationClassName(): String {
         val targetClass = targetMethod.declaringClass
         val targetClassName = targetClass.shortName
         val capitalizedMethodName = targetMethod.name.replaceFirstChar { it.uppercase() }
         return "Temp$targetClassName${capitalizedMethodName}Round${round}ID$id"
     }
 
-    fun addAssertions(assertFile: File) {
+    /**
+     * 向 assertion 文件中添加断言
+     */
+    fun appendAssertionsToFile(assertFile: File) {
         val gson = Gson()
         val lines = mutableListOf<String>()
         val methodName2Assertion = mutableMapOf<String, Assertion>()

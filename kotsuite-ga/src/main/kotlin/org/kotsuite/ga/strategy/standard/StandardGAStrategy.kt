@@ -75,7 +75,7 @@ object StandardGAStrategy: Strategy() {
 
             // Get test suite coverage info
             log.info("Generating population coverage info...")
-            val assertFileName = curPopulation.getPopulationAssertionName() + ".txt"
+            val assertFileName = curPopulation.generatePopulationAssertionFileName() + ".txt"
             val assertFilePath = Configs.assertOutputPath + File.separatorChar + assertFileName
             PopulationFitness.generatePopulationFitness(curPopulation, assertFilePath)
 

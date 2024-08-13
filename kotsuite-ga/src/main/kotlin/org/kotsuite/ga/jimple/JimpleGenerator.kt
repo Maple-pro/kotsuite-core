@@ -38,7 +38,7 @@ object JimpleGenerator {
     fun Population.generateJimpleTestClass(): SootClass {
         // generate a dummy test class, e.g., `TempExampleFooRound1ID0`
         val targetClass = this.targetMethod.declaringClass
-        val dummyTestClassName = this.getPopulationClassName()
+        val dummyTestClassName = this.generatePopulationClassName()
 
         val dummyTestClass = TestClass(dummyTestClassName, targetClass.packageName, this.round)
         dummyTestClass.testCases = this.testCases.toMutableList()
